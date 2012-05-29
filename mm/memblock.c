@@ -219,6 +219,12 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 	else
 		in_slab = &memblock_reserved_in_slab;
 
+	/* Retrieve the slab flag */
+	if (type == &memblock.memory)
+		in_slab = &memblock_memory_in_slab;
+	else
+		in_slab = &memblock_reserved_in_slab;
+
 	/* Try to find some space for it.
 	 *
 	 * WARNING: We assume that either slab_is_available() and we use it or
@@ -264,6 +270,9 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 	old_array = type->regions;
 	type->regions = new_array;
 	type->max <<= 1;
+	/* Free old array. We needn't free it if the array is the
+	 * static one
+	 */
 	if (*in_slab)
 		kfree(old_array);
 	else if (old_array != memblock_memory_init_regions &&
@@ -275,6 +284,15 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 	 */
 	if (!use_slab)
 		BUG_ON(memblock_reserve(addr, new_alloc_size));
+
+	/* Update slab flag */
+	*in_slab = use_slab;
+
+	/* Reserve the new array if that comes from the memblock.
+	 * Otherwise, we needn't do it
+	 */
+	if (!use_slab)
+		BUG_ON(memblock_reserve(addr, new_size));
 
 	/* Update slab flag */
 	*in_slab = use_slab;
