@@ -1188,7 +1188,6 @@ void __init vmalloc_init(void)
          */
 	for (tmp = vmlist; tmp; tmp = tmp->next) {
 		va = kzalloc(sizeof(struct vmap_area), GFP_NOWAIT);
-		//va->flags = tmp->flags | VM_VM_AREA;
 		va->flags = VM_VM_AREA;
 		va->va_start = (unsigned long)tmp->addr;
 		va->va_end = va->va_start + tmp->size;
