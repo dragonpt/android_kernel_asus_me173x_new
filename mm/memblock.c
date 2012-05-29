@@ -37,11 +37,8 @@ struct memblock memblock __initdata_memblock = {
 
 int memblock_debug __initdata_memblock;
 static int memblock_can_resize __initdata_memblock;
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/659586507ac1f4219d1b2f2d471381e39f7e6961%5E!/#F0
 static int memblock_memory_in_slab __initdata_memblock = 0;
 static int memblock_reserved_in_slab __initdata_memblock = 0;
-
 
 /* inline so we don't get a warning when pr_debug is compiled out */
 static inline const char *memblock_type_name(struct memblock_type *type)
@@ -145,31 +142,7 @@ phys_addr_t __init_memblock memblock_find_in_range(phys_addr_t start,
 	return memblock_find_in_range_node(start, end, size, align,
 					   MAX_NUMNODES);
 }
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/7ad71f960f0f6e06cbded278809674afc515036a
-/*
- * Free memblock.reserved.regions
- */
-//int __init_memblock memblock_free_reserved_regions(void)
-//{
-//	if (memblock.reserved.regions == memblock_reserved_init_regions)
-//		return 0;
-//
-//	return memblock_free(__pa(memblock.reserved.regions),
-//		 sizeof(struct memblock_region) * memblock.reserved.max);
-//}
 
-/*
- * Reserve memblock.reserved.regions
- */
-//int __init_memblock memblock_reserve_reserved_regions(void)
-//{
-//	if (memblock.reserved.regions == memblock_reserved_init_regions)
-//		return 0;
-//
-//	return memblock_reserve(__pa(memblock.reserved.regions),
-//		 sizeof(struct memblock_region) * memblock.reserved.max);
-//}
 
 static void __init_memblock memblock_remove_region(struct memblock_type *type, unsigned long r)
 {
@@ -187,8 +160,6 @@ static void __init_memblock memblock_remove_region(struct memblock_type *type, u
 		memblock_set_region_node(&type->regions[0], MAX_NUMNODES);
 	}
 }
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/7ad71f960f0f6e06cbded278809674afc515036a
 phys_addr_t __init_memblock get_allocated_memblock_reserved_regions_info(
 					phys_addr_t *addr)
 {
@@ -196,15 +167,11 @@ phys_addr_t __init_memblock get_allocated_memblock_reserved_regions_info(
 		return 0;
 
 	*addr = __pa(memblock.reserved.regions);
-
 	return PAGE_ALIGN(sizeof(struct memblock_region) *
 			  memblock.reserved.max);
  }
 
 
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/757fcf2b6df4814604764a4abb54d2b58f422fb5%5E!/#F0
-//static int __init_memblock memblock_double_array(struct memblock_type *type)
 /**
  * memblock_double_array - double the size of the memblock regions array
  * @type: memblock type of the regions array being doubled
@@ -225,16 +192,11 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 						phys_addr_t new_area_size)
 {
 	struct memblock_region *new_array, *old_array;
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/7ad71f960f0f6e06cbded278809674afc515036a
 	phys_addr_t old_alloc_size, new_alloc_size;
-
 	phys_addr_t old_size, new_size, addr;
 	int use_slab = slab_is_available();
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/659586507ac1f4219d1b2f2d471381e39f7e6961%5E!/#F0
 	int *in_slab;
-	
+
 	/* We don't allow resizing until we know about the reserved regions
 	 * of memory that aren't suitable for allocation
 	 */
@@ -244,8 +206,6 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 	/* Calculate new doubled size */
 	old_size = type->max * sizeof(struct memblock_region);
 	new_size = old_size << 1;
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/7ad71f960f0f6e06cbded278809674afc515036a
 	/*
 	 * We need to allocated new one align to PAGE_SIZE,
 	 *   so we can free them completely later.
@@ -270,29 +230,19 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 	 * call into MEMBLOCK while it's still active, or much later when slab is
 	 * active for memory hotplug operations
 	 */
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/40e0484473ac43b557796c9f392c2cb69b1f55ae%5E..40e0484473ac43b557796c9f392c2cb69b1f55ae/#F0
 	if (use_slab) {
 		new_array = kmalloc(new_size, GFP_KERNEL);
 		addr = new_array ? __pa(new_array) : 0;
 	} else {
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/757fcf2b6df4814604764a4abb54d2b58f422fb5%5E!/#F0
-		//addr = memblock_find_in_range(0, MEMBLOCK_ALLOC_ACCESSIBLE, new_size, sizeof(phys_addr_t));
-		/* only exclude range when trying to double reserved.regions */
 		if (type != &memblock.reserved)
 			new_area_start = new_area_size = 0;
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/7ad71f960f0f6e06cbded278809674afc515036a
 		addr = memblock_find_in_range(new_area_start + new_area_size,
 						memblock.current_limit,
 						new_alloc_size, PAGE_SIZE);
-						//new_size, sizeof(phys_addr_t));
 		if (!addr && new_area_size)
 			addr = memblock_find_in_range(0,
 					min(new_area_start, memblock.current_limit),
 					new_alloc_size, PAGE_SIZE);
-					//new_size, sizeof(phys_addr_t));
 
 		new_array = addr ? __va(addr) : 0;
 	}
@@ -301,7 +251,6 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 		       memblock_type_name(type), type->max, type->max * 2);
 		return -1;
 	}
-	//new_array = __va(addr);
 
 	memblock_dbg("memblock: %s array is doubled to %ld at [%#010llx-%#010llx]",
 		 memblock_type_name(type), type->max * 2, (u64)addr, (u64)addr + new_size - 1);
@@ -315,41 +264,17 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 	old_array = type->regions;
 	type->regions = new_array;
 	type->max <<= 1;
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/659586507ac1f4219d1b2f2d471381e39f7e6961%5E!/#F0
-
-
-//	/* If we use SLAB that's it, we are done */
-//	if (use_slab)
-//		return 0;
-//
-//	/* Add the new reserved region now. Should not fail ! */
-//	BUG_ON(memblock_reserve(addr, new_size));
-//
-//	/* If the array wasn't our static init one, then free it. We only do
-//	 * that before SLAB is available as later on, we don't know whether
-//	 * to use kfree or free_bootmem_pages(). Shouldn't be a big deal
-//	 * anyways
-	/* Free old array. We needn't free it if the array is the
-	 * static one
-	 */
-//	if (old_array != memblock_memory_init_regions &&
-//	    old_array != memblock_reserved_init_regions)
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/7ad71f960f0f6e06cbded278809674afc515036a
 	if (*in_slab)
 		kfree(old_array);
 	else if (old_array != memblock_memory_init_regions &&
 		 old_array != memblock_reserved_init_regions)
 		memblock_free(__pa(old_array), old_alloc_size);
-		//memblock_free(__pa(old_array), old_size);
 
 	/* Reserve the new array if that comes from the memblock.
 	 * Otherwise, we needn't do it
 	 */
 	if (!use_slab)
 		BUG_ON(memblock_reserve(addr, new_alloc_size));
-		//BUG_ON(memblock_reserve(addr, new_size));
 
 	/* Update slab flag */
 	*in_slab = use_slab;
@@ -489,12 +414,9 @@ repeat:
 	 * If this was the first round, resize array and repeat for actual
 	 * insertions; otherwise, merge and return.
 	 */
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/757fcf2b6df4814604764a4abb54d2b58f422fb5%5E!/#F0
 	if (!insert) {
 		while (type->cnt + nr_new > type->max)
 		{
-			//if (memblock_double_array(type) < 0)
 			if (memblock_double_array(type, obase, size) < 0)
 				return -ENOMEM;
 		}
@@ -549,7 +471,6 @@ static int __init_memblock memblock_isolate_range(struct memblock_type *type,
 	/* we'll create at most two more regions */
 	while (type->cnt + 2 > type->max)
 	{
-		//if (memblock_double_array(type) < 0)
 		if (memblock_double_array(type, base, size) < 0)
 			return -ENOMEM;
 	}
