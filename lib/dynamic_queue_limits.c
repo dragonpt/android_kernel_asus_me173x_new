@@ -18,7 +18,7 @@
 void dql_completed(struct dql *dql, unsigned int count)
 {
 	unsigned int inprogress, prev_inprogress, limit;
-	unsigned int ovlimit, completed,num_queued;
+	unsigned int ovlimit, completed, num_queued;
 	bool all_prev_completed;
 
 	num_queued = ACCESS_ONCE(dql->num_queued);
