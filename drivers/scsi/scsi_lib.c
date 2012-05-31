@@ -760,11 +760,6 @@ void scsi_io_completion(struct scsi_cmnd *cmd, unsigned int good_bytes)
 	}
 
 	if (req->cmd_type == REQ_TYPE_BLOCK_PC) { /* SG_IO ioctl from block level */
-		//ALPS00445134, add Linux commit for SCSI
-                //a0643ec768bbe63e0004228b550a96f5ef932867 begin
-		//req->errors = result;
-		//a0643ec768bbe63e0004228b550a96f5ef932867 end
-		//ALPS00445134, add Linux commit for SCSI
 		if (result) {
 			if (sense_valid && req->sense) {
 				/*
@@ -780,14 +775,10 @@ void scsi_io_completion(struct scsi_cmnd *cmd, unsigned int good_bytes)
 			if (!sense_deferred)
 				error = __scsi_error_from_host_byte(cmd, result);
 		}
-
-		//ALPS00445134, add Linux commit for SCSI
-                //a0643ec768bbe63e0004228b550a96f5ef932867 begin
 		/*
 		 * __scsi_error_from_host_byte may have reset the host_byte
 		 */
-		req->errors = cmd->result;		
-		//Ainge a0643ec768bbe63e0004228b550a96f5ef932867 end
+		req->errors = cmd->result;
 
 		req->resid_len = scsi_get_resid(cmd);
 
