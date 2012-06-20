@@ -240,6 +240,7 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 		new_array = kmalloc(new_size, GFP_KERNEL);
 		addr = new_array ? __pa(new_array) : 0;
 	} else {
+		/* only exclude range when trying to double reserved.regions */
 		if (type != &memblock.reserved)
 			new_area_start = new_area_size = 0;
 		addr = memblock_find_in_range(new_area_start + new_area_size,
