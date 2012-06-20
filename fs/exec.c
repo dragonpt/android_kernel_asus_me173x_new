@@ -823,12 +823,6 @@ static int exec_mmap(struct mm_struct *mm)
 	/* Notify parent that we're no longer interested in the old VM */
 	tsk = current;
 	old_mm = current->mm;
-        /*
-         * kernel patch
-         * commit: 21017faf87a93117ca7a14aa8f0dd2f315fdeb08
-         * https://android.googlesource.com/kernel/common/+/21017faf87a93117ca7a14aa8f0dd2f315fdeb08%5E!/#F0
-         */
-	//sync_mm_rss(old_mm);
 	mm_release(tsk, old_mm);
 
 	if (old_mm) {
