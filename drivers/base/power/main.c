@@ -1183,10 +1183,9 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
 	}
 
 	device_unlock(dev);
-
 	dpm_wd_clear(&wd);
 
-Complete:
+ Complete:
 	complete_all(&dev->power.completion);
 
 	if (error) {
