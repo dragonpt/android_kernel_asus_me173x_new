@@ -805,8 +805,6 @@ void __init iotable_init(struct map_desc *io_desc, int nr)
 	}
 }
 
-//Update Patch from Google
-//https://android.googlesource.com/kernel/common/+/937bff779cd840aca9f74dd7f2d43dafad3979bb%5E..937bff779cd840aca9f74dd7f2d43dafad3979bb/#F0
 
 #ifndef CONFIG_ARM_LPAE
 
@@ -881,7 +879,10 @@ static void __init fill_pmd_gaps(void)
 #define fill_pmd_gaps() do { } while (0)
 #endif
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 937bff7... ARM: 7438/1: fill possible PMD empty section gaps
 static void * __initdata vmalloc_min =
 	(void *)(VMALLOC_END - (240 << 20) - VMALLOC_OFFSET);
 
@@ -1163,9 +1164,13 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	 */
 	if (mdesc->map_io)
 		mdesc->map_io();
+<<<<<<< HEAD
         //Update Patch from Google
         //https://android.googlesource.com/kernel/common/+/937bff779cd840aca9f74dd7f2d43dafad3979bb%5E..937bff779cd840aca9f74dd7f2d43dafad3979bb/#F0
         fill_pmd_gaps();
+=======
+	fill_pmd_gaps();
+>>>>>>> 937bff7... ARM: 7438/1: fill possible PMD empty section gaps
 
 	/*
 	 * Finally flush the caches and tlb to ensure that we're in a
