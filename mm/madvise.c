@@ -13,11 +13,6 @@
 #include <linux/hugetlb.h>
 #include <linux/sched.h>
 #include <linux/ksm.h>
-/*
- * kernel patch
- * commit: 0c4ad5cc8c01f62fe5211b5ce9563c27f795a4ab
- * https://android.googlesource.com/kernel/common/+/0c4ad5cc8c01f62fe5211b5ce9563c27f795a4ab%5E!/#F0
- */
 #include <linux/file.h>
 
 /*
@@ -209,11 +204,6 @@ static long madvise_remove(struct vm_area_struct *vma,
 	struct address_space *mapping;
 	loff_t offset, endoff;
 	int error;
-/*
- * kernel patch
- * commit: 0c4ad5cc8c01f62fe5211b5ce9563c27f795a4ab
- * https://android.googlesource.com/kernel/common/+/0c4ad5cc8c01f62fe5211b5ce9563c27f795a4ab%5E!/#F0
- */
 	struct file *f;
 
 	*prev = NULL;	/* tell sys_madvise we drop mmap_sem */
@@ -221,13 +211,6 @@ static long madvise_remove(struct vm_area_struct *vma,
 	if (vma->vm_flags & (VM_LOCKED|VM_NONLINEAR|VM_HUGETLB))
 		return -EINVAL;
 
-/*
- * kernel patch
- * commit: 0c4ad5cc8c01f62fe5211b5ce9563c27f795a4ab
- * https://android.googlesource.com/kernel/common/+/0c4ad5cc8c01f62fe5211b5ce9563c27f795a4ab%5E!/#F0
- */
-	//if (!vma->vm_file || !vma->vm_file->f_mapping
-	//	|| !vma->vm_file->f_mapping->host) {
 	f = vma->vm_file;
 
 	if (!f || !f->f_mapping || !f->f_mapping->host) {
@@ -244,11 +227,6 @@ static long madvise_remove(struct vm_area_struct *vma,
 	endoff = (loff_t)(end - vma->vm_start - 1)
 			+ ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
 
-/*
- * kernel patch
- * commit: 0c4ad5cc8c01f62fe5211b5ce9563c27f795a4ab
- * https://android.googlesource.com/kernel/common/+/0c4ad5cc8c01f62fe5211b5ce9563c27f795a4ab%5E!/#F0
- */
 	/*
 	 * vmtruncate_range may need to take i_mutex.  We need to
 	 * explicitly grab a reference because the vma (and hence the
