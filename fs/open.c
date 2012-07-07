@@ -425,12 +425,10 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
 {
 	struct file *file;
 	struct inode *inode;
-	int error;
-	int fput_needed;	//++ for linux kernel patch 20120718
+	int error, fput_needed;
 
 	error = -EBADF;
-	//file = fget(fd);								//-- for linux kernel patch 20120718
-	file = fget_raw_light(fd, &fput_needed);	//++ for linux kernel patch 20120718
+	file = fget_raw_light(fd, &fput_needed);
 	if (!file)
 		goto out;
 
@@ -444,8 +442,7 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
 	if (!error)
 		set_fs_pwd(current->fs, &file->f_path);
 out_putf:
-	//fput(file);						//-- for linux kernel patch 20120718
-	fput_light(file, fput_needed);	//++ for linux kernel patch 20120718
+	fput_light(file, fput_needed);
 out:
 	return error;
 }
