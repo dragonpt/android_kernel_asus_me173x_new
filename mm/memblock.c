@@ -143,7 +143,6 @@ phys_addr_t __init_memblock memblock_find_in_range(phys_addr_t start,
 					   MAX_NUMNODES);
 }
 
-
 static void __init_memblock memblock_remove_region(struct memblock_type *type, unsigned long r)
 {
 	type->total_size -= type->regions[r].size;
@@ -171,6 +170,18 @@ phys_addr_t __init_memblock get_allocated_memblock_reserved_regions_info(
 			  memblock.reserved.max);
  }
 
+
+phys_addr_t __init_memblock get_allocated_memblock_reserved_regions_info(
+					phys_addr_t *addr)
+{
+	if (memblock.reserved.regions == memblock_reserved_init_regions)
+		return 0;
+
+	*addr = __pa(memblock.reserved.regions);
+
+	return PAGE_ALIGN(sizeof(struct memblock_region) *
+			  memblock.reserved.max);
+}
 
 /**
  * memblock_double_array - double the size of the memblock regions array
@@ -212,12 +223,6 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 	 */
 	old_alloc_size = PAGE_ALIGN(old_size);
 	new_alloc_size = PAGE_ALIGN(new_size);
-
-	/* Retrieve the slab flag */
-	if (type == &memblock.memory)
-		in_slab = &memblock_memory_in_slab;
-	else
-		in_slab = &memblock_reserved_in_slab;
 
 	/* Retrieve the slab flag */
 	if (type == &memblock.memory)
@@ -285,15 +290,6 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
 	 */
 	if (!use_slab)
 		BUG_ON(memblock_reserve(addr, new_alloc_size));
-
-	/* Update slab flag */
-	*in_slab = use_slab;
-
-	/* Reserve the new array if that comes from the memblock.
-	 * Otherwise, we needn't do it
-	 */
-	if (!use_slab)
-		BUG_ON(memblock_reserve(addr, new_size));
 
 	/* Update slab flag */
 	*in_slab = use_slab;
