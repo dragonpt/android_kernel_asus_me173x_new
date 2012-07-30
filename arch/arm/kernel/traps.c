@@ -382,7 +382,6 @@ static int call_undef_hook(struct pt_regs *regs, unsigned int instr)
 asmlinkage void __exception do_undefinstr(struct pt_regs *regs)
 {
 	struct thread_info *thread = current_thread_info();
-	unsigned int correction = thumb_mode(regs) ? 2 : 4;
 	unsigned int instr;
 	siginfo_t info;
 	void __user *pc;
@@ -396,13 +395,6 @@ asmlinkage void __exception do_undefinstr(struct pt_regs *regs)
 			aee_stop_nested_panic(regs);
 		}
 	}
-
-	/*
-	 * According to the ARM ARM, PC is 2 or 4 bytes ahead,
-	 * depending whether we're in Thumb mode or not.
-	 * Correct this offset.
-	 */
-	regs->ARM_pc -= correction;
 
 	pc = (void __user *)instruction_pointer(regs);
 
