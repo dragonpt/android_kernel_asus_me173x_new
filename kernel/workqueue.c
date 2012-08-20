@@ -1050,8 +1050,9 @@ static void __queue_work(unsigned int cpu, struct workqueue_struct *wq,
 		 * be queued on that cpu to guarantee non-reentrance.
 		 */
 		gcwq = get_gcwq(cpu);
-		if (wq->flags & WQ_NON_REENTRANT &&
-		    (last_gcwq = get_work_gcwq(work)) && last_gcwq != gcwq) {
+		last_gcwq = get_work_gcwq(work);
+
+		if (last_gcwq && last_gcwq != gcwq) {
 			struct worker *worker;
 
 			spin_lock_irqsave(&last_gcwq->lock, flags);
