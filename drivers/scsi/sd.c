@@ -2951,10 +2951,6 @@ static int __init init_sd(void)
 	if (err)
 		goto err_out;
 
-	err = scsi_register_driver(&sd_template.gendrv);
-	if (err)
-		goto err_out_class;
-
 	sd_cdb_cache = kmem_cache_create("sd_ext_cdb", SD_EXT_CDB_SIZE,
 					 0, 0, NULL);
 	if (!sd_cdb_cache) {
@@ -2968,7 +2964,14 @@ static int __init init_sd(void)
 		goto err_out_cache;
 	}
 
+	err = scsi_register_driver(&sd_template.gendrv);
+	if (err)
+		goto err_out_driver;
+
 	return 0;
+
+err_out_driver:
+	mempool_destroy(sd_cdb_pool);
 
 err_out_cache:
 	kmem_cache_destroy(sd_cdb_cache);
@@ -2995,10 +2998,10 @@ static void __exit exit_sd(void)
 	printk(KERN_DEBUG "%s, line %d: \n", __func__, __LINE__);
 	//ALPS00445134, add more debug message for CR debugging
 
+	scsi_unregister_driver(&sd_template.gendrv);
 	mempool_destroy(sd_cdb_pool);
 	kmem_cache_destroy(sd_cdb_cache);
 
-	scsi_unregister_driver(&sd_template.gendrv);
 	class_unregister(&sd_disk_class);
 
 	for (i = 0; i < SD_MAJORS; i++)
