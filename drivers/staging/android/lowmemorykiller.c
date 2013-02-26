@@ -109,15 +109,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 	other_file = global_page_state(NR_FILE_PAGES) -
 						global_page_state(NR_SHMEM);
 
-	if (nr_to_scan > 0 && other_free > other_file) {
-		/*
-		 * If the number of free pages is going to affect the decision
-		 * of which process is selected then ensure only free pages
-		 * which can satisfy the request are considered.
-		 */
-		other_free = nr_free_pages(sc->gfp_mask);
-	}
-
 	if (lowmem_adj_size < array_size)
 		array_size = lowmem_adj_size;
 	if (lowmem_minfree_size < array_size)
