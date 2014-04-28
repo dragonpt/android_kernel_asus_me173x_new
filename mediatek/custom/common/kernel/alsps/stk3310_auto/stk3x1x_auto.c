@@ -1369,14 +1369,15 @@ static int stk3x1x_ps_tune_zero_val(void)
 	lii = 800;			
 	else
 	{
+		lii = 800;	
 		APS_ERR("%s: unsupported PS_IT(0x%x)\n", __FUNCTION__, mode);
-		return -1;
+		//return -1;
 	}
 	
 	if(word_data > lii)	
 	{
 		APS_LOG( "%s: word_data=%d, lii=%d\n", __FUNCTION__, word_data, lii);		
-		return 0xFFFF;	
+		//return 0xFFFF;	
 	}
 	return 0;
 }

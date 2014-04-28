@@ -233,6 +233,7 @@ extern unsigned int mtkfb_get_fb_va(void);
 #define MTK_HDMI_GET_SLTDATA      HDMI_IOWR(39, CEC_GETSLT_DATA)
 #endif
 
+#define MTK_HDMI_USBOTG_STATUS	HDMI_IOWR(50, int)
 
 struct ext_memory_info{
 	unsigned int buffer_num;

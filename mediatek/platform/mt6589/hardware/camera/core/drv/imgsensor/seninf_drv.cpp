@@ -1118,15 +1118,20 @@ int SeninfDrvImp::initTg1CSI2(bool csi2_en)
        temp = *(mpCSI2RxConfigRegAddr + (0x38/4));//MIPI_RX_HW_CAL_START
        mt65xx_reg_sync_writel(temp|0x00000004, mpCSI2RxConfigRegAddr + (0x38/4));        
        LOG_MSG("[initCSI2]:CSI0 calibration start !\n");
-        usleep(100);       
-       while(!((*(mpCSI2RxConfigRegAddr + (0x44/4)) & 0x10001) && (*(mpCSI2RxConfigRegAddr + (0x48/4)) & 0x101))){}
-       LOG_MSG("[initCSI2]:CSI0 calibration end !\n");
-
+ 
+       usleep(500);       
+       if(!((*(mpCSI2RxConfigRegAddr + (0x44/4)) & 0x10001) && (*(mpCSI2RxConfigRegAddr + (0x48/4)) & 0x101))){
+        LOG_ERR("[initCSI2]:CSI0 calibration failed!, CSI2Config Reg 0x44=0x%x, 0x48=0x%x\n",*(mpCSI2RxConfigRegAddr + (0x44/4)),*(mpCSI2RxConfigRegAddr + (0x48/4))); 
+        //ret = -1;
+       }
        SENINF_WRITE_BITS(pSeninf, SENINF1_CSI2_DBG, LNC_HSRXDB_EN, 0);
        SENINF_WRITE_BITS(pSeninf, SENINF1_CSI2_DBG, LN0_HSRXDB_EN, 0);
        SENINF_WRITE_BITS(pSeninf, SENINF1_CSI2_DBG, LN1_HSRXDB_EN, 0);
        SENINF_WRITE_BITS(pSeninf, SENINF1_CSI2_DBG, LN2_HSRXDB_EN, 0);
        SENINF_WRITE_BITS(pSeninf, SENINF1_CSI2_DBG, LN3_HSRXDB_EN, 0);
+
+       LOG_MSG("[initCSI2]:CSI0 calibration end !\n"); 
+             
 	}
 
     return ret;
@@ -1231,12 +1236,18 @@ int SeninfDrvImp::initTg2CSI2(bool csi2_en)
          temp = *(mpCSI2RxConfigRegAddr + (0x38/4));//MIPI_RX_HW_CAL_START
          mt65xx_reg_sync_writel(temp|0x00000004, mpCSI2RxConfigRegAddr + (0x38/4));
         LOG_MSG("[initCSI2]:CSI1 calibration start !\n");
-        usleep(1000);
-        while(!(*(mpCSI2RxConfigRegAddr + (0x4C/4)) & 0x10001)) {}
-        LOG_MSG("[initCSI2]:CSI1 calibration end !\n");
+       
+        usleep(500);       
+       if(!(*(mpCSI2RxConfigRegAddr + (0x4C/4)) & 0x10001)){
+        LOG_ERR("[initCSI2]:CSI0 calibration failed!, CSI2Config Reg 0x4C=0x%x\n",*(mpCSI2RxConfigRegAddr + (0x4C/4))); 
+        //ret = -1;
+       }  
         SENINF_WRITE_BITS(pSeninf, SENINF2_CSI2_DBG, LNC_HSRXDB_EN, 0);
         SENINF_WRITE_BITS(pSeninf, SENINF2_CSI2_DBG, LN0_HSRXDB_EN, 0);
         SENINF_WRITE_BITS(pSeninf, SENINF2_CSI2_DBG, LN1_HSRXDB_EN, 0);
+
+      
+        LOG_MSG("[initCSI2]:CSI1 calibration end !\n");       
      }
 
 

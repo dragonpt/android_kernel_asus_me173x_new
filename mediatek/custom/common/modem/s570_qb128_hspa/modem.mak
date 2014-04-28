@@ -35,6 +35,21 @@
 
 # Generated at 2013-02-26 10:48:29
 
+DUAL_SIM_HOT_SWAP_CO_DECK = FALSE     # TRUE:Support dual SIM card hot plug in the same deck
+                                      # FALSE:upport dual SIM card hot plug in different deck
+
+
+ICUSB_SUPPORT = FALSE     # TRUE:Enable ICUSB feature support
+                          # FALSE:Disable ICUSB feature support
+
+
+CTA_ECC_SUPPORT = TRUE     # TRUE:Enable ECC 122 support for CTA
+                           # FALSE:Disable ECC 122 support for CTA
+
+
+2G_TX_AUTO_CAL_ENHANCEMENT_SUPPORT = FALSE     # TRUE, FALSE
+
+
 # ------------------------------ Modem specification
 MODEM_SPEC = MTK_MODEM_3G_WCDMA
   # Description:
@@ -115,7 +130,7 @@ UMTS_RF_MODULE = CUSTOM_MT6167_SKY_128
   #   Non-switchable
 
 # ------------------------------ Verno information
-VERNO = MOLY.WR8.W1248.MD.WG.MP.V7.P10
+VERNO = MOLY.WR8.W1248.MD.WG.MP.V7.P14
 BUILD = BUILD_NO
 BRANCH = WR8.W1248.MD.WG.MP
 # ------------------------------ System configurations

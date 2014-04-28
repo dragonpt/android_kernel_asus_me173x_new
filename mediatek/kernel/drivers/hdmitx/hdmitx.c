@@ -342,6 +342,8 @@ static int* hdmi_buffer_queue = 0;
 static int hdmi_buffer_end = 0;
 static int hdmi_buffer_start = 0;
 static int hdmi_buffer_fill_count = 0;
+static bool otg_enable_status = false;
+
 static DEFINE_SEMAPHORE(hdmi_buffer_mutex);
 
 static void hdmi_buffer_init(int num)
@@ -2771,6 +2773,7 @@ static long hdmi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 
             if (arg)
             {
+                RETIF(otg_enable_status, 0);
                 hdmi_power_on();
             }
             else
@@ -2779,6 +2782,26 @@ static long hdmi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
                 switch_set_state(&hdmi_switch_data, HDMI_STATE_NO_DEVICE);
 				#endif
                 hdmi_power_off();
+            }
+            break;
+        }
+
+        case MTK_HDMI_USBOTG_STATUS:
+        {
+            HDMI_LOG("MTK_HDMI_USBOTG_STATUS, arg=%d, enable %d\n", arg, p->is_enabled);
+			RETIF(!p->is_enabled, 0);
+            RETIF((hdmi_params->cabletype != MHL_CABLE), 0);
+
+            if (arg)
+            {
+                otg_enable_status = true;
+            }
+            else
+            {
+                otg_enable_status = false;
+                RETIF(p->is_force_disable, 0);
+                hdmi_power_on();
+                
             }
             break;
         }

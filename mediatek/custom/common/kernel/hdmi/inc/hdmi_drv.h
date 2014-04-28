@@ -7,7 +7,7 @@
 #include "mt8193edid.h"
 #include "mt8193cec.h"
 
-#define AVD_TMR_ISR_TICKS   5
+#define AVD_TMR_ISR_TICKS   10
 #define MDI_BOUCING_TIMING  50//20 //20ms
 
 typedef enum
@@ -98,6 +98,11 @@ typedef enum{
     HDMI_OUTPUT_MODE_DPI_BYPASS
 }HDMI_OUTPUT_MODE;
 
+typedef enum{
+    HDMI_CABLE,
+    MHL_CABLE
+}HDMI_CABLE_TYPE;
+
 typedef struct
 {
 	unsigned int width;
@@ -134,6 +139,7 @@ typedef struct
 
     unsigned int scaling_factor; // determine the scaling of output screen size, valid value 0~10
                                  // 0 means no scaling, 5 means scaling to 95%, 10 means 90%
+     HDMI_CABLE_TYPE cabletype;
 }HDMI_PARAMS;
 
 typedef enum{
@@ -202,6 +208,7 @@ typedef struct
 	void (*setceccmd)(CEC_SEND_MSG_T* msg);
 	void (*cecenable)(u8 u1EnCec);
 	void (*getcecaddr)(CEC_ADDRESS *cecaddr);
+	void (*mutehdmi)(u8 u1flagvideomute, u8 u1flagaudiomute);
 	#endif
 } HDMI_DRIVER;
 

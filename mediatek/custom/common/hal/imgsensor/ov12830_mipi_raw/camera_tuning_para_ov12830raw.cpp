@@ -640,4 +640,3 @@ impGetDefaultData(CAMERA_DATA_TYPE_ENUM const CameraDataType, VOID*const pDataBu
     return 0;
 }};  //  NSFeature
 
-

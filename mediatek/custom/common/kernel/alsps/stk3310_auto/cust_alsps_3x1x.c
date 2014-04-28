@@ -74,7 +74,7 @@ static struct alsps_hw cust_alsps_hw = {
 	//.als_value  = {9,  13,  40, 80, 124, 160, 210, 270, 470, 824, 1580, 2600, 3072, 5120, 8192, 10240},  /* lux */// {0, 24, 40, 80, 124, 160, 210, 270, 470, 824, 1580, 2600, 3072, 5120, 8192, 10240},    /* lux */
 
    	.state_val = 0x0,		/* disable all */
-	.psctrl_val = 0x63,		/* ps_persistance=4, ps_gain=64X, PS_IT=0.391ms */
+	.psctrl_val = 0x73,		/* ps_persistance=4, ps_gain=64X, PS_IT=0.391ms */
 	.alsctrl_val = 0x39,	/* als_persistance=1, als_gain=64X, ALS_IT=50ms */
 	.ledctrl_val = 0xFF,	/* 100mA IRDR, 64/64 LED duty */
 	.wait_val = 0x7,		/* 50 ms */

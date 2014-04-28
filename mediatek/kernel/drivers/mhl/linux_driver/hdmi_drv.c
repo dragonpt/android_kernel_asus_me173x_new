@@ -594,6 +594,7 @@ static void hdmi_drv_get_params(HDMI_PARAMS *params)
 	params->io_driving_current = IO_DRIVING_CURRENT_2MA;
 	params->intermediat_buffer_num = 4;
     params->scaling_factor = 5;
+    params->cabletype = MHL_CABLE;
 }
 
 void hdmi_drv_suspend(void)

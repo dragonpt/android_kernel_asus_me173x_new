@@ -847,19 +847,19 @@ static int KXCJK_ReadSensorData(struct i2c_client *client, char *buf, int bufsiz
 	}
 	else
 	{
-		GSE_LOG("raw data obj->cali_sw[KXCJK_AXIS_X]=%d, obj->cali_sw[KXCJK_AXIS_Y]=%d, obj->cali_sw[KXCJK_AXIS_Z]=%d \n",obj->cali_sw[KXCJK_AXIS_X],obj->cali_sw[KXCJK_AXIS_Y],obj->cali_sw[KXCJK_AXIS_Z]);
+		//GSE_LOG("raw data obj->cali_sw[KXCJK_AXIS_X]=%d, obj->cali_sw[KXCJK_AXIS_Y]=%d, obj->cali_sw[KXCJK_AXIS_Z]=%d \n",obj->cali_sw[KXCJK_AXIS_X],obj->cali_sw[KXCJK_AXIS_Y],obj->cali_sw[KXCJK_AXIS_Z]);
 
 		obj->data[KXCJK_AXIS_X] += obj->cali_sw[KXCJK_AXIS_X];
 		obj->data[KXCJK_AXIS_Y] += obj->cali_sw[KXCJK_AXIS_Y];
 		obj->data[KXCJK_AXIS_Z] += obj->cali_sw[KXCJK_AXIS_Z];
-		GSE_LOG("raw data x=%d, y=%d, z=%d \n",obj->data[KXCJK_AXIS_X],obj->data[KXCJK_AXIS_Y],obj->data[KXCJK_AXIS_Z]);
+		//GSE_LOG("raw data x=%d, y=%d, z=%d \n",obj->data[KXCJK_AXIS_X],obj->data[KXCJK_AXIS_Y],obj->data[KXCJK_AXIS_Z]);
 		
 		
 		/*remap coordinate*/
 		acc[obj->cvt.map[KXCJK_AXIS_X]] = obj->cvt.sign[KXCJK_AXIS_X]*obj->data[KXCJK_AXIS_X];
 		acc[obj->cvt.map[KXCJK_AXIS_Y]] = obj->cvt.sign[KXCJK_AXIS_Y]*obj->data[KXCJK_AXIS_Y];
 		acc[obj->cvt.map[KXCJK_AXIS_Z]] = obj->cvt.sign[KXCJK_AXIS_Z]*obj->data[KXCJK_AXIS_Z];
-		GSE_LOG("cali_sw acc[obj->cvt.map[KXCJK_AXIS_X]]=%d, acc[obj->cvt.map[KXCJK_AXIS_Y]]=%d, z=%d \n",acc[obj->cvt.map[KXCJK_AXIS_X]],acc[obj->cvt.map[KXCJK_AXIS_Y]],acc[obj->cvt.map[KXCJK_AXIS_Z]]);
+		//GSE_LOG("cali_sw acc[obj->cvt.map[KXCJK_AXIS_X]]=%d, acc[obj->cvt.map[KXCJK_AXIS_Y]]=%d, z=%d \n",acc[obj->cvt.map[KXCJK_AXIS_X]],acc[obj->cvt.map[KXCJK_AXIS_Y]],acc[obj->cvt.map[KXCJK_AXIS_Z]]);
 		
 
 
@@ -869,7 +869,7 @@ static int KXCJK_ReadSensorData(struct i2c_client *client, char *buf, int bufsiz
 		acc[KXCJK_AXIS_Y] = acc[KXCJK_AXIS_Y] * GRAVITY_EARTH_1000 / obj->reso->sensitivity;
 		acc[KXCJK_AXIS_Z] = acc[KXCJK_AXIS_Z] * GRAVITY_EARTH_1000 / obj->reso->sensitivity;		
 		
-		GSE_LOG("Mapped gsensor data: %d, %d, %d!\n", acc[KXCJK_AXIS_X], acc[KXCJK_AXIS_Y], acc[KXCJK_AXIS_Z]);
+		//GSE_LOG("Mapped gsensor data: %d, %d, %d!\n", acc[KXCJK_AXIS_X], acc[KXCJK_AXIS_Y], acc[KXCJK_AXIS_Z]);
 	
 
 		sprintf(buf, "%04x %04x %04x", acc[KXCJK_AXIS_X], acc[KXCJK_AXIS_Y], acc[KXCJK_AXIS_Z]);
@@ -1623,7 +1623,7 @@ static int kxcjk_gsensor_operate(void* self, uint32_t command, void* buff_in, in
 					&gsensor_data->values[1], &gsensor_data->values[2]);				
 				gsensor_data->status = SENSOR_STATUS_ACCURACY_MEDIUM;				
 				gsensor_data->value_divide = 1000;
-GSE_LOG("kxcjk SENSOR_GET_DATA gsensor_data->values[0] =%d , gsensor_data->values[1] =%d , gsensor_data->values[2] =%d \n", gsensor_data->values[0], gsensor_data->values[1], gsensor_data->values[2]);
+//GSE_LOG("kxcjk SENSOR_GET_DATA gsensor_data->values[0] =%d , gsensor_data->values[1] =%d , gsensor_data->values[2] =%d \n", gsensor_data->values[0], gsensor_data->values[1], gsensor_data->values[2]);
 			}
 			break;
 		default:

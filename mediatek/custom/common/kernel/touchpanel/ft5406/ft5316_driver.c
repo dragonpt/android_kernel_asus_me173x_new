@@ -394,12 +394,12 @@ static  void tpd_up(int x, int y,int *count) {
 	i2c_smbus_read_i2c_block_data(i2c_client, 0xa6, 1, &(data[40]));
 	
 	//TPD_DEBUG("FW version=%x]\n",data[24]);
-	TPD_DEBUG("FW version=%x]\n",data[40]);
+	//TPD_DEBUG("FW version=%x]\n",data[40]);
 	//zhaoshaopeng end
-	TPD_DEBUG("received raw data from touch panel as following:\n");
-	TPD_DEBUG("[data[0]=%x,data[1]= %x ,data[2]=%x ,data[3]=%x ,data[4]=%x ,data[5]=%x]\n",data[0],data[1],data[2],data[3],data[4],data[5]);
-	TPD_DEBUG("[data[9]=%x,data[10]= %x ,data[11]=%x ,data[12]=%x]\n",data[9],data[10],data[11],data[12]);
-	TPD_DEBUG("[data[15]=%x,data[16]= %x ,data[17]=%x ,data[18]=%x]\n",data[15],data[16],data[17],data[18]);
+	//TPD_DEBUG("received raw data from touch panel as following:\n");
+	//TPD_DEBUG("[data[0]=%x,data[1]= %x ,data[2]=%x ,data[3]=%x ,data[4]=%x ,data[5]=%x]\n",data[0],data[1],data[2],data[3],data[4],data[5]);
+	//TPD_DEBUG("[data[9]=%x,data[10]= %x ,data[11]=%x ,data[12]=%x]\n",data[9],data[10],data[11],data[12]);
+	//TPD_DEBUG("[data[15]=%x,data[16]= %x ,data[17]=%x ,data[18]=%x]\n",data[15],data[16],data[17],data[18]);
 
         /* Device Mode[2:0] == 0 :Normal operating Mode*/
         if(data[0] & 0x70 != 0) return false; 
@@ -599,7 +599,7 @@ static  void tpd_up(int x, int y,int *count) {
 reset_proc:   
 	i2c_client = client;
 
-       printk("\r\n zhaoshaopeng add to test ft_5306t tpd_i2c_probe\r\n ");
+      // printk("\r\n zhaoshaopeng add to test ft_5306t tpd_i2c_probe\r\n ");
 #ifdef __FT5X06_HASE_KEYS__
        int key;
        for(key=0;key<TOUCHKEYNONE;key++)
@@ -749,7 +749,7 @@ reset_proc:
  {
 
  
-  TPD_DMESG("Focaltech FT5306t I2C Touchscreen Driver (Built %s @ %s)\n", __DATE__, __TIME__);
+  //TPD_DMESG("Focaltech FT5306t I2C Touchscreen Driver (Built %s @ %s)\n", __DATE__, __TIME__);
  
  
    if(i2c_add_driver(&tpd_i2c_driver)!=0)

@@ -730,7 +730,7 @@ else if(currSensorName && ((0 == strcmp(SENSOR_DRVNAME_OV12830_MIPI_RAW,currSens
             //return -EIO;
             goto _kdCISModulePowerOn_exit_;
         }
-        mdelay(50);
+        mdelay(10);
         //zhaoshaopeng af
         if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_A2, VOL_2800,mode_name))
         {
@@ -738,7 +738,7 @@ else if(currSensorName && ((0 == strcmp(SENSOR_DRVNAME_OV12830_MIPI_RAW,currSens
             //return -EIO;
             goto _kdCISModulePowerOn_exit_;
         } 
-	 mdelay(50);
+	 mdelay(10);
 	 //zhaoshaopeng vcore
 	 {
             if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_D, VOL_1500,mode_name))//ov8825 8830
@@ -797,17 +797,20 @@ else if(currSensorName && ((0 == strcmp(SENSOR_DRVNAME_OV12830_MIPI_RAW,currSens
             //return -EIO;
             goto _kdCISModulePowerOn_exit_;
         }
+            mdelay(5);    
         if(TRUE != hwPowerDown(CAMERA_POWER_VCAM_A2,mode_name))
         {
             PK_DBG("[CAMERA SENSOR] Fail to enable analog power\n");
             //return -EIO;
             goto _kdCISModulePowerOn_exit_;
-        }     	
+        } 
+            mdelay(5);        	
         if(TRUE != hwPowerDown(CAMERA_POWER_VCAM_D, mode_name)) {
             PK_DBG("[CAMERA SENSOR] Fail to OFF digital power\n");
             //return -EIO;
             goto _kdCISModulePowerOn_exit_;
         }
+               mdelay(5); 
         if(TRUE != hwPowerDown(CAMERA_POWER_VCAM_D2,mode_name))
         {
             PK_DBG("[CAMERA SENSOR] Fail to enable digital power\n");
