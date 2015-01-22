@@ -379,3 +379,12 @@ config CLEANCACHE
 	  in a negligible performance hit.
 
 	  If unsure, say Y to enable cleancache
+
+config DYNAMIC_PAGE_WRITEBACK
+	bool "Dynamically manage the dirty page writebacks during suspend/resume"
+	default n
+	help
+	  This feature allows to use different dirty page writeback intervals
+	  when the system is suspended and when the system has been resumed.
+
+	  If unsure, say N to disable this feature
