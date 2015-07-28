@@ -65,6 +65,7 @@ do {	\
 #define MSG(evt, fmt, args...) do{}while(0)
 #define MSG_FUNC_ENTRY(f)	   do{}while(0)
 #endif
+#define vibrator_debug 0
 
 
 /******************************************************************************
@@ -105,15 +106,19 @@ extern void dct_pmic_VIBR_enable(kal_bool dctEnable);
 static int vibr_Enable(void)
 {
 	if(!ldo_state) {
-		printk("[vibrator]vibr_Enable before\n");
+		if(vibrator_debug) {
+			printk("[vibrator]vibr_Enable before\n");
+		}
 		/*
 		if(hwPowerOn(MT65XX_POWER_LDO_VIBR, VOL_2800, "VIBR")) {
 			ldo_state=1;
 		}
 		*/
 		dct_pmic_VIBR_enable(1);
-		printk("vibrator enable register = 0x%x\n", vibr_pmic_pwrap_read(0x0466));
-		printk("[vibrator]vibr_Enable After\n");
+		if(vibrator_debug) {
+			printk("vibrator enable register = 0x%x\n", vibr_pmic_pwrap_read(0x0466));
+			printk("[vibrator]vibr_Enable After\n");
+		}
 		ldo_state=1;
 	}
 	return 0;
@@ -122,15 +127,19 @@ static int vibr_Enable(void)
 static int vibr_Disable(void)
 {
 	if(ldo_state) {
-		printk("[vibrator]vibr_Disable before\n");
+		if(vibrator_debug) {
+			printk("[vibrator]vibr_Disable before\n");
+		}
 		/*
 		if(hwPowerDown(MT65XX_POWER_LDO_VIBR, "VIBR")) {
 			ldo_state=0;
 		}
 		*/
 		dct_pmic_VIBR_enable(0);
-		printk("vibrator disable register = 0x%x\n", vibr_pmic_pwrap_read(0x0466));
-		printk("[vibrator]vibr_Disable After\n");
+		if(vibrator_debug) {
+			printk("vibrator disable register = 0x%x\n", vibr_pmic_pwrap_read(0x0466));
+			printk("[vibrator]vibr_Disable After\n");
+		}
 		ldo_state=0;
 	}
    	return 0;
@@ -165,22 +174,29 @@ static void vibrator_enable(struct timed_output_dev *dev, int value)
 		struct vibrator_hw* hw = get_cust_vibrator_hw(); 
 
 #endif
-		printk("[vibrator]vibrator_enable: vibrator first in value = %d\n", value);
+		if(vibrator_debug) {
+			printk("[vibrator]vibrator_enable: vibrator first in value = %d\n", value);
+		}
 
 		spin_lock_irqsave(&vibe_lock, flags);
-		while(hrtimer_cancel(&vibe_timer))
-                {
-                      printk("[vibrator]vibrator_enable: try to cancel hrtimer \n");
-                }
-
+		if(vibrator_debug) {
+			while(hrtimer_cancel(&vibe_timer))
+					{
+						printk("[vibrator]vibrator_enable: try to cancel hrtimer \n");
+					}
+		}
 		if (value == 0 || shutdown_flag == 1) {
-			printk("[vibrator]vibrator_enable: shutdown_flag = %d\n", shutdown_flag);
+			if(vibrator_debug) {
+				printk("[vibrator]vibrator_enable: shutdown_flag = %d\n", shutdown_flag);
+			}
 			vibe_state = 0;
 		}
 		else 
 		{
 #if 1
-			printk("[vibrator]vibrator_enable: vibrator cust timer: %d \n", hw->vib_timer);
+			if(vibrator_debug) {
+				printk("[vibrator]vibrator_enable: vibrator cust timer: %d \n", hw->vib_timer);
+			}
 #ifdef CUST_VIBR_LIMIT
 			if(value > hw->vib_limit && value < hw->vib_timer)
 				
@@ -197,14 +213,18 @@ static void vibrator_enable(struct timed_output_dev *dev, int value)
 							HRTIMER_MODE_REL);
 		}
 		spin_unlock_irqrestore(&vibe_lock, flags);
-        printk("[vibrator]vibrator_enable: vibrator start: %d \n", value); 
+		if(vibrator_debug) {
+			printk("[vibrator]vibrator_enable: vibrator start: %d \n", value); 
+		}
 		queue_work(vibrator_queue, &vibrator_work);
 }
 
 static enum hrtimer_restart vibrator_timer_func(struct hrtimer *timer)
 {
  		vibe_state = 0;
-         printk(KERN_DEBUG "[vibrator]vibrator_timer_func: vibrator will disable \n");
+        	if(vibrator_debug) {
+			printk(KERN_DEBUG "[vibrator]vibrator_timer_func: vibrator will disable \n");
+		}
  		queue_work(vibrator_queue, &vibrator_work);
  		return HRTIMER_NORESTART;
 }
@@ -229,11 +249,15 @@ static int vib_remove(struct platform_device *pdev)
 static void vib_shutdown(struct platform_device *pdev)
 {
     unsigned long  flags;
-	printk("[vibrator]vib_shutdown: enter!\n");
+	if(vibrator_debug) {
+		printk("[vibrator]vib_shutdown: enter!\n");
+	}
 	spin_lock_irqsave(&vibe_lock, flags);
 	shutdown_flag = 1;
 	if(vibe_state) {
-        	printk("[vibrator]vib_shutdown: vibrator will disable \n");
+        	if(vibrator_debug) {
+			printk("[vibrator]vib_shutdown: vibrator will disable \n");
+		}
 		vibe_state = 0;
 		vibr_Disable();
 	}
@@ -263,7 +287,9 @@ static ssize_t store_vibr_on(struct device *dev,struct device_attribute *attr, c
 {
 	if(buf != NULL && size != 0)
 	{
-		printk("[vibrator]buf is %s and size is %d \n",buf,size);
+		if(vibrator_debug) {
+			printk("[vibrator]buf is %s and size is %d \n",buf,size);
+		}
 		if(buf[0]== '0')
 		{
 			vibr_Disable();
@@ -298,17 +324,23 @@ static s32 __devinit vib_mod_init(void)
 {	
 	s32 ret;
 
-	printk("MediaTek MTK vibrator driver register, version %s\n", VERSION);
+	if(vibrator_debug) {
+		printk("MediaTek MTK vibrator driver register, version %s\n", VERSION);
+	}
 
 	ret = platform_device_register(&vibrator_device);
 	if (ret != 0){
-		printk("[vibrator]Unable to register vibrator device (%d)\n", ret);
-        	return ret;
+		if(vibrator_debug) {
+			printk("[vibrator]Unable to register vibrator device (%d)\n", ret);
+		}
+        return ret;
 	}
 
 	vibrator_queue = create_singlethread_workqueue(VIB_DEVICE);
 	if(!vibrator_queue) {
-		printk("[vibrator]Unable to create workqueue\n");
+		if(vibrator_debug) {
+			printk("[vibrator]Unable to create workqueue\n");
+		}
 		return -ENODATA;
 	}
 	INIT_WORK(&vibrator_work, update_vibrator);
@@ -325,17 +357,23 @@ static s32 __devinit vib_mod_init(void)
 
     if(ret) 
     {
-		printk("[vibrator]Unable to register vibrator driver (%d)\n", ret);
+		if(vibrator_debug) {
+			printk("[vibrator]Unable to register vibrator driver (%d)\n", ret);
+		}
 		return ret;
     }	
 
 	ret = device_create_file(mtk_vibrator.dev,&dev_attr_vibr_on);
     if(ret)
     {
-        printk("[vibrator]device_create_file vibr_on fail! \n");
+        if(vibrator_debug) {
+			printk("[vibrator]device_create_file vibr_on fail! \n");
+	}
     }
     
-	printk("[vibrator]vib_mod_init Done \n");
+	if(vibrator_debug) {
+		printk("[vibrator]vib_mod_init Done \n");
+	}
  
     return RSUCCESS;
 }
@@ -359,11 +397,15 @@ static s32 __devinit vib_mod_init(void)
  
 static void __exit vib_mod_exit(void)
 {
-	printk("MediaTek MTK vibrator driver unregister, version %s \n", VERSION);
+	if(vibrator_debug) {
+		printk("MediaTek MTK vibrator driver unregister, version %s \n", VERSION);
+	}
 	if(vibrator_queue) {
 		destroy_workqueue(vibrator_queue);
 	}
-	printk("[vibrator]vib_mod_exit Done \n");
+	if(vibrator_debug) {
+		printk("[vibrator]vib_mod_exit Done \n");
+	}
 }
 
 module_init(vib_mod_init);
