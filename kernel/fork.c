@@ -298,6 +298,9 @@ static struct task_struct *dup_task_struct(struct task_struct *orig)
         printk("[%d:%s] fork fail at arch_dup_task_struct, err:%d \n", current->pid, current->comm, err);
 		goto out;
     }
+
+	tsk->flags &= ~PF_SU;
+
 	tsk->stack = ti;
 
 	setup_thread_stack(tsk, orig);
