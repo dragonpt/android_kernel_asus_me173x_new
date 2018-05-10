@@ -28,6 +28,7 @@
 #include <linux/cpufreq.h>
 
 #include <linux/atomic.h>
+#include <asm/bugs.h>
 #include <asm/cacheflush.h>
 #include <asm/cpu.h>
 #include <asm/cputype.h>
@@ -303,6 +304,9 @@ asmlinkage void __cpuinit secondary_start_kernel(void)
 	 */
 	set_cpu_online(cpu, true);
 	aee_rr_rec_hoplug(cpu, 10, 0);
+
+	check_other_bugs();
+
 	complete(&cpu_running);
 	aee_rr_rec_hoplug(cpu, 11, 0);
 
