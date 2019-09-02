@@ -111,12 +111,6 @@ long last_int_time; // global variable
 s32 i2c_read_bytes(struct i2c_client *client, u16 addr, u8 *rxbuf, int len);
 s32 i2c_write_bytes(struct i2c_client *client, u16 addr, u8 *txbuf, int len);
 static struct proc_dir_entry *gt927_config_proc = NULL;
-#if GTP_RAWDATA_PROC
-static struct proc_dir_entry *gt927_rawdata_proc = NULL;
-#endif
-#if GTP_DIFFDATA_PROC
-static struct proc_dir_entry *gt927_diffdata_proc = NULL;
-#endif
 
 #define VELOCITY_CUSTOM
 #ifdef VELOCITY_CUSTOM
@@ -335,143 +329,6 @@ s32 tpd_ps_operate(void *self, u32 command, void *buff_in, s32 size_in,
     }
 
     return err;
-}
-#endif
-
-#if GTP_RAWDATA_PROC
-static int gt927_rawdata_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data)
-{
-    int driving_num = 0;
-    int sensing_num = 0;
-    int i;
-    char *ptr = page;
-    u8 *buf;
-    int raw_temp;
-
-    mt65xx_eint_mask(CUST_EINT_TOUCH_PANEL_NUM);
-
-    driving_num += (config[27 + GTP_ADDR_LENGTH] & 0x1F);
-    driving_num += (config[28 + GTP_ADDR_LENGTH] & 0x1F);
-    sensing_num += (config[29 + GTP_ADDR_LENGTH] & 0x0F);
-    sensing_num += (config[29 + GTP_ADDR_LENGTH] & 0xF0) >> 4;
-    GTP_INFO("TPD driving_num %d", driving_num);
-    GTP_INFO("TPD sensing_num %d", sensing_num);
-    buf = (u8 *)kzalloc(driving_num * sensing_num * 2, GFP_KERNEL);
-
-    //0x8040 write 1 for rawdata/diff access
-    buf[0] = 1;
-    i2c_write_bytes(i2c_client_point, GTP_REG_SLEEP, buf, 1);
-
-    // wait for normal INT finished
-    while (tpd_flag == 1)
-    {
-        msleep(20);
-    }
-
-    msleep(100);
-
-    //check for raw data ready
-    i2c_read_bytes(i2c_client_point, GTP_READ_COOR_ADDR, buf, 1);
-
-    while (buf[0] == 0)
-    {
-        //wait for data ready
-        GTP_INFO("Wati for raw data");
-        i2c_read_bytes(i2c_client_point, GTP_READ_COOR_ADDR, buf, 1);
-        buf[0] &= 0x80;
-        msleep(5);
-    }
-
-    i2c_read_bytes(i2c_client_point, GTP_RAWDATA_REG, buf, driving_num * sensing_num * 2);
-
-    for (i = 0 ; i < driving_num * sensing_num * 2; i = i + 2)
-    {
-        raw_temp = buf[i] * 256 + buf[i + 1];
-        ptr += sprintf(ptr, "%d\t", raw_temp);
-
-        if ((i % (sensing_num * 2)) == (sensing_num - 1) * 2)
-            ptr += sprintf(ptr, "\n");
-    }
-
-    //clear data ready status
-    buf[0] = 0;
-    i2c_write_bytes(i2c_client_point, GTP_READ_COOR_ADDR, buf, 1);
-
-    //0x8040 write 0 for leaving rawdata/diff access mode
-    buf[0] = 0;
-    i2c_write_bytes(i2c_client_point, GTP_REG_SLEEP, buf, 1);
-
-    mt65xx_eint_unmask(CUST_EINT_TOUCH_PANEL_NUM);
-    kfree(buf);
-    *eof = 1;
-    return (ptr - page);
-}
-#endif
-
-#if GTP_DIFFDATA_PROC
-static int gt927_diffdata_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data)
-{
-    int driving_num = 0;
-    int sensing_num = 0;
-    int i;
-    char *ptr = page;
-    u8 *buf;
-    mt65xx_eint_mask(CUST_EINT_TOUCH_PANEL_NUM);
-    driving_num += (config[27 + GTP_ADDR_LENGTH] & 0x1F);
-    driving_num += (config[28 + GTP_ADDR_LENGTH] & 0x1F);
-    sensing_num += (config[29 + GTP_ADDR_LENGTH] & 0x0F);
-    sensing_num += (config[29 + GTP_ADDR_LENGTH] & 0xF0) >> 4;
-    GTP_INFO("TPD driving_num %d", driving_num);
-    GTP_INFO("TPD sensing_num %d", sensing_num);
-    buf = (u8 *)kzalloc(driving_num * sensing_num, GFP_KERNEL);
-
-    //0x8040 write 1 for rawdata/diff access
-    buf[0] = 1;
-    i2c_write_bytes(i2c_client_point, GTP_REG_SLEEP, buf, 1);
-
-    // wait for normal INT finished
-    while (tpd_flag == 1)
-    {
-        msleep(20);
-    }
-
-    msleep(100);
-
-    //check for raw data ready
-    i2c_read_bytes(i2c_client_point, GTP_READ_COOR_ADDR, buf, 1);
-
-    while (buf[0] == 0)
-    {
-        //wait for data ready
-        GTP_INFO("Wati for raw data");
-        i2c_read_bytes(i2c_client_point, GTP_READ_COOR_ADDR, buf, 1);
-        GTP_INFO("0x814E : %2X", buf[0]);
-        buf[0] &=  0x80;
-        msleep(5);
-    }
-
-    i2c_read_bytes(i2c_client_point, GTP_DIFFDATA_REG, buf, driving_num * sensing_num);
-
-    for (i = 0 ; i < driving_num * sensing_num; i = i + 1)
-    {
-        ptr += sprintf(ptr, "%d\t", buf[i]);
-
-        if ((i % (sensing_num)) == (sensing_num - 1))
-            ptr += sprintf(ptr, "\n");
-    }
-
-    //clear data ready status
-    buf[0] = 0;
-    i2c_write_bytes(i2c_client_point, GTP_READ_COOR_ADDR, buf, 1);
-
-    //0x8040 write 0 for leaving rawdata/diff access mode
-    buf[0] = 0;
-    i2c_write_bytes(i2c_client_point, GTP_REG_SLEEP, buf, 1);
-
-    mt65xx_eint_unmask(CUST_EINT_TOUCH_PANEL_NUM);
-    kfree(buf);
-    *eof = 1;
-    return (ptr - page);
 }
 #endif
 
@@ -1005,15 +862,6 @@ reset_proc:
         }
     }
 
-#if GTP_FW_DOWNLOAD
-    ret = gup_init_fw_proc(client);
-
-    if (ret < 0)
-    {
-        GTP_ERROR("Create fw download thread error.");
-    }
-
-#endif
     return ret;
 }
 
@@ -1038,19 +886,6 @@ static s32 tpd_i2c_probe(struct i2c_client *client, const struct i2c_device_id *
         GTP_ERROR("I2C communication ERROR!");
         return 0;
     }
-
-#if GTP_AUTO_UPDATE
-    GTP_INFO("GTP_AUTO_UPDATE!\n");
-    ret = gup_init_update_proc(client);
-
-    if (ret < 0)
-    {
-        GTP_ERROR("Create update thread error.");
-    }
-
-#endif
-
-
 
 #ifdef VELOCITY_CUSTOM
 
@@ -1089,34 +924,6 @@ static s32 tpd_i2c_probe(struct i2c_client *client, const struct i2c_device_id *
         gt927_config_proc->read_proc = gt927_config_read_proc;
         gt927_config_proc->write_proc = gt927_config_write_proc;
     }
-
-#if GTP_RAWDATA_PROC
-    gt927_rawdata_proc = create_proc_entry(GT927_RAWDATA_PROC_FILE, 0666, NULL);
-
-    if (gt927_rawdata_proc == NULL)
-    {
-        GTP_ERROR("create_proc_entry %s failed\n", GT927_RAWDATA_PROC_FILE);
-    }
-    else
-    {
-        gt927_rawdata_proc->read_proc = gt927_rawdata_read_proc;
-
-    }
-#endif
-
-#if GTP_DIFFDATA_PROC
-    gt927_diffdata_proc = create_proc_entry(GT927_DIFFDATA_PROC_FILE, 0666, NULL);
-
-    if (gt927_diffdata_proc == NULL)
-    {
-        GTP_ERROR("create_proc_entry %s failed\n", GT927_DIFFDATA_PROC_FILE);
-    }
-    else
-    {
-        gt927_diffdata_proc->read_proc = gt927_diffdata_read_proc;
-
-    }
-#endif
 
 #if GTP_CREATE_WR_NODE
     init_wr_node(client);
@@ -1351,18 +1158,6 @@ static void tpd_up(s32 x, s32 y, s32 id)
     }
 
 #endif
-}
-
-/*Coordination mapping*/
-static void tpd_calibrate_driver(int *x, int *y)
-{
-    int tx;
-    
-    GTP_DEBUG("Call tpd_calibrate of this driver ..\n");
-    
-    tx = ( (tpd_calmat_driver[0] * (*x)) + (tpd_calmat_driver[1] * (*y)) + (tpd_calmat_driver[2]) ) >> 12;
-    *y = ( (tpd_calmat_driver[3] * (*x)) + (tpd_calmat_driver[4] * (*y)) + (tpd_calmat_driver[5]) ) >> 12;
-    *x = tx;
 }
 
 static int touch_event_handler(void *unused)
