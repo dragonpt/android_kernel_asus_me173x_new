@@ -15,7 +15,6 @@ static int tpd_flag = 0;
 static int tpd_halt = 0;
 static struct task_struct *thread = NULL;
 static DECLARE_WAIT_QUEUE_HEAD(waiter);
-static DEFINE_MUTEX(i2c_access);
 
 #ifdef TPD_HAVE_BUTTON
 static int tpd_keys_local[TPD_KEY_COUNT] = TPD_KEYS;
@@ -23,7 +22,7 @@ static int tpd_keys_dim_local[TPD_KEY_COUNT][4] = TPD_KEYS_DIM;
 #endif
 
 #if GTP_HAVE_TOUCH_KEY
-const u16 touch_key_array[] = { KEY_MENU, KEY_HOMEPAGE, KEY_BACK, KEY_SEARCH };
+const u16 touch_key_array[] = { KEY_MENU, KEY_HOMEPAGE, KEY_BACK};
 #define GTP_MAX_KEY_NUM ( sizeof( touch_key_array )/sizeof( touch_key_array[0] ) )
 #endif
 
@@ -102,10 +101,6 @@ u32 abs_x_max = 0;
 u32 abs_y_max = 0;
 u8 gtp_rawdiff_mode = 0;
 u8 cfg_len = 0;
-
-#if GTP_DEBUG_ON
-long last_int_time; // global variable
-#endif
 
 /* proc file system */
 s32 i2c_read_bytes(struct i2c_client *client, u16 addr, u8 *rxbuf, int len);
@@ -868,8 +863,8 @@ static s32 tpd_i2c_probe(struct i2c_client *client, const struct i2c_device_id *
     s32 err = 0;
     s32 ret = 0;
 
-    //u16 version_info;
-#if GTP_HAVE_TOUCH_KEY
+    u16 version_info;
+#ifdef GTP_HAVE_TOUCH_KEY
     s32 idx = 0;
 #endif
 #ifdef TPD_PROXIMITY
@@ -882,7 +877,7 @@ static s32 tpd_i2c_probe(struct i2c_client *client, const struct i2c_device_id *
     if (ret < 0)
     {
         GTP_ERROR("superdragonpt I2C communication ERROR!");
-        return 0;
+        return -1;//superdragonpt, powerON offen fails, so just return
     }
 
 #ifdef VELOCITY_CUSTOM
@@ -996,17 +991,6 @@ static s32 tpd_i2c_probe(struct i2c_client *client, const struct i2c_device_id *
 
 static void tpd_eint_interrupt_handler(void)
 {
-#if GTP_DEBUG_ON
-    struct timeval t;
-    long current_time;
-    int report_rate;
-    do_gettimeofday(&t);
-    current_time = (t.tv_sec & 0xFFF) * 1000000 + t.tv_usec;
-    report_rate = 1 * 1000000 / (current_time - last_int_time);
-    GTP_DEBUG("Report Rate: %d Hz", report_rate);
-    last_int_time = current_time;
-#endif
-
     TPD_DEBUG_PRINT_INT;
     tpd_flag = 1;
     wake_up_interruptible(&waiter);
@@ -1194,15 +1178,6 @@ static int touch_event_handler(void *unused)
         TPD_DEBUG_SET_TIME;
         set_current_state(TASK_RUNNING);
 
-        mutex_lock(&i2c_access);
-
-        if (tpd_halt)
-        {
-            mutex_unlock(&i2c_access);
-            GTP_DEBUG("return for interrupt after suspend...  ");
-            continue;
-        }
-        
         ret = gtp_i2c_read(i2c_client_point, point_data, 12);
 
         if (ret < 0)
@@ -1338,7 +1313,6 @@ exit_work_func:
             }
         }
 
-        mutex_unlock(&i2c_access);
     }
     while (!kthread_should_stop());
 
@@ -1373,16 +1347,8 @@ static int tpd_local_init(void)
 #endif
 
 #if (defined(TPD_HAVE_CALIBRATION) && !defined(TPD_CUSTOM_CALIBRATION))
-    if (FACTORY_BOOT == get_boot_mode())
-    {
-        TPD_DEBUG("Factory mode is detected! \n");
-        memcpy(tpd_calmat_driver, tpd_def_calmat_local_factory, sizeof(tpd_calmat_driver));
-    }
-    else
-    {
-        TPD_DEBUG("Normal mode is detected! \n");
-        memcpy(tpd_calmat_driver, tpd_def_calmat_local_normal, sizeof(tpd_calmat_driver));
-    }
+    memcpy(tpd_calmat, tpd_def_calmat_local, 8 * 4);
+    memcpy(tpd_def_calmat, tpd_def_calmat_local, 8 * 4);
 #endif
 
     // set vendor string
@@ -1509,8 +1475,6 @@ static void tpd_suspend(struct early_suspend *h)
     s32 ret = -1;
     tpd_halt = 1;
             printk("superdragonpt tpd_suspend\n ");
-    
-    mutex_lock(&i2c_access);
 
 #if GTP_ESD_PROTECT
     cancel_delayed_work_sync(&gtp_esd_check_work);
@@ -1524,15 +1488,12 @@ static void tpd_suspend(struct early_suspend *h)
     }
 
 #endif
-
     ret = gtp_enter_sleep(i2c_client_point);
-    mutex_unlock(&i2c_access);
 
     if (ret < 0)
     {
         GTP_ERROR("GTP early suspend failed.");
     }
-
     mt65xx_eint_mask(CUST_EINT_TOUCH_PANEL_NUM);
 }
 
