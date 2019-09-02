@@ -93,7 +93,7 @@ extern int i2c_read_bytes(struct i2c_client *client, u16 addr, u8 *rxbuf, int le
 
 //#define TPD_PROXIMITY
 #define TPD_HAVE_BUTTON               //report key as coordinate,Vibration feedback
-//#define TPD_WARP_X
+#define TPD_WARP_X                    //superdragonpt: Rotate X axis
 //#define TPD_WARP_Y
 
 #define GTP_DEBUG_ON          1 //0
@@ -225,9 +225,7 @@ a sample config, send this config should cause the chip cannot work normally*/
 
 #ifdef TPD_WARP_X
 #undef TPD_WARP_X
-#define TPD_WARP_X(x_max, x) ( x_max - 1 - x )
-#else
-#define TPD_WARP_X(x_max, x) x
+#define TPD_WARP_X(x_max, x) ( x_max - 1 - x ) //x_max - 1 - x = Rotate the X axis
 #endif
 
 #ifdef TPD_WARP_Y
