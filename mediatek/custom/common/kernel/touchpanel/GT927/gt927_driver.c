@@ -34,9 +34,7 @@ static int tpd_wb_end_local[TPD_WARP_CNT]   = TPD_WARP_END;
 
 #if (defined(TPD_HAVE_CALIBRATION) && !defined(TPD_CUSTOM_CALIBRATION))
 //static int tpd_calmat_local[8]     = TPD_CALIBRATION_MATRIX;
-static int tpd_calmat_driver[8]    = {0};
-static int tpd_def_calmat_local_normal[8]  = TPD_CALIBRATION_MATRIX_ROTATION_NORMAL;
-static int tpd_def_calmat_local_factory[8] = TPD_CALIBRATION_MATRIX_ROTATION_FACTORY;
+static int tpd_def_calmat_local[8] = TPD_CALIBRATION_MATRIX;
 #endif
 
 s32 gtp_send_cfg(struct i2c_client *client);
