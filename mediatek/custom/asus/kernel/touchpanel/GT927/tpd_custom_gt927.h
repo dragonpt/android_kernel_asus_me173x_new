@@ -96,9 +96,9 @@ extern int i2c_read_bytes(struct i2c_client *client, u16 addr, u8 *rxbuf, int le
 #define TPD_WARP_X                    //superdragonpt: Rotate X axis
 //#define TPD_WARP_Y
 
-#define GTP_DEBUG_ON          1 //0
-#define GTP_DEBUG_ARRAY_ON    1 //0
-#define GTP_DEBUG_FUNC_ON     1 //0
+#define GTP_DEBUG_ON          0
+#define GTP_DEBUG_ARRAY_ON    0
+#define GTP_DEBUG_FUNC_ON     0
 
 //***************************PART2:TODO define**********************************
 //STEP_1(REQUIRED):Change config table.
