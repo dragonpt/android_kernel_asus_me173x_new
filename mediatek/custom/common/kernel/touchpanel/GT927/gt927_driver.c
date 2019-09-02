@@ -987,12 +987,10 @@ static int tpd_power_on(struct i2c_client *client)
     int reset_count = 0;
 
 reset_proc:
-
-    //Power on
-    hwPowerOn(MT65XX_POWER_LDO, VOL_2800, "TP");
-    #ifdef MT65XX_POWER_LDO_1800
-    hwPowerOn(MT65XX_POWER_LDO_1800, VOL_1800, "TP");
-    #endif
+#ifdef MT6589
+    //power on
+    hwPowerOn(MT65XX_POWER_LDO_VGP3, VOL_1800, "TP");
+#endif
 
     gtp_reset_guitar(client, 20);
 
@@ -1238,16 +1236,20 @@ static void force_reset_guitar(void)
     GTP_INFO("force_reset_guitar\n");
 
     //Power off TP
-    hwPowerDown(MT65XX_POWER_LDO, "TP");
-    #ifdef MT65XX_POWER_LDO_1800
-    hwPowerDown(MT65XX_POWER_LDO_1800, "TP");
-    #endif
+#ifdef MT6589
+    hwPowerDown(MT65XX_POWER_LDO_VGP3, "TP");
     msleep(30);
     //Power on TP
-    hwPowerOn(MT65XX_POWER_LDO, VOL_2800, "TP");
-    #ifdef MT65XX_POWER_LDO_1800
-    hwPowerOn(MT65XX_POWER_LDO_1800, VOL_1800, "TP");
-    #endif
+    hwPowerOn(MT65XX_POWER_LDO_VGP3, VOL_1800, "TP");	
+    msleep(30);
+#else
+    //Power off TP
+    mt_set_gpio_out(GPIO_CTP_RST_PIN, GPIO_OUT_ZERO);
+    msleep(30);
+    //Power on TP
+    mt_set_gpio_out(GPIO_CTP_RST_PIN, GPIO_OUT_ONE);
+    msleep(30);
+#endif
 
     msleep(30);
 
@@ -1618,10 +1620,14 @@ Output:
 static s8 gtp_enter_sleep(struct i2c_client *client)
 {
     s8 ret = -1;
-#if !GTP_POWER_CTRL_SLEEP
     s8 retry = 0;
     u8 i2c_control_buf[3] = {(u8)(GTP_REG_SLEEP >> 8), (u8)GTP_REG_SLEEP, 5};
-    
+	
+#if GTP_POWER_CTRL_SLEEP
+    hwPowerDown(MT65XX_POWER_LDO_VGP3, "TP");
+    GTP_INFO("GTP enter sleep!");
+    return 0;
+#else
     GTP_GPIO_OUTPUT(GTP_INT_PORT, 0);
     msleep(5);
 
@@ -1637,23 +1643,6 @@ static s8 gtp_enter_sleep(struct i2c_client *client)
 
         msleep(10);
     }
-
-#else
-
-    GTP_GPIO_OUTPUT(GTP_RST_PORT, 0);
-    msleep(5);
-
-#ifdef TPD_POWER_SOURCE_CUSTOM
-    hwPowerDown(TPD_POWER_SOURCE_CUSTOM, "TP");
-#else
-    hwPowerDown(MT65XX_POWER_LDO, "TP");
-#endif
-#ifdef TPD_POWER_SOURCE_1800
-    hwPowerDown(TPD_POWER_SOURCE_1800, "TP");
-#endif
-
-    GTP_INFO("GTP enter sleep!");
-    return 0;
 
 #endif
     GTP_ERROR("GTP send sleep cmd failed.");
