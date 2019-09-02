@@ -92,7 +92,7 @@ extern int i2c_read_bytes(struct i2c_client *client, u16 addr, u8 *rxbuf, int le
 #define GUP_USE_HEADER_FILE   0
 
 //#define TPD_PROXIMITY
-//#define TPD_HAVE_BUTTON               //report key as coordinate,Vibration feedback
+#define TPD_HAVE_BUTTON               //report key as coordinate,Vibration feedback
 //#define TPD_WARP_X
 //#define TPD_WARP_Y
 
