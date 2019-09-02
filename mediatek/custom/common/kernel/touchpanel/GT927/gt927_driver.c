@@ -1030,8 +1030,6 @@ static void force_reset_guitar(void)
     msleep(30);
 #endif
 
-    msleep(30);
-
     for (i = 0; i < 5; i++)
     {
         //Reset Guitar
@@ -1090,15 +1088,14 @@ static void tpd_down(s32 x, s32 y, s32 size, s32 id)
             printk("GTP superdragonpt tpd_down\n ");
     if ((!size) && (!id))
     {
-        input_report_abs(tpd->dev, ABS_MT_PRESSURE, 1);
-        input_report_abs(tpd->dev, ABS_MT_TOUCH_MAJOR, 1);
+        input_report_abs(tpd->dev, ABS_MT_PRESSURE, 100);
+        input_report_abs(tpd->dev, ABS_MT_TOUCH_MAJOR, 100);
     }
     else
     {
         input_report_abs(tpd->dev, ABS_MT_PRESSURE, size);
         input_report_abs(tpd->dev, ABS_MT_TOUCH_MAJOR, size);
         /* track id Start 0 */
-        input_report_abs(tpd->dev, ABS_MT_TRACKING_ID, id);
     }
 
     input_report_key(tpd->dev, BTN_TOUCH, 1);
@@ -1107,14 +1104,6 @@ static void tpd_down(s32 x, s32 y, s32 size, s32 id)
     input_mt_sync(tpd->dev);
     TPD_EM_PRINT(x, y, x, y, id, 1);
 
-#if (defined(MT6575)||defined(MT6577))
-
-    if (FACTORY_BOOT == get_boot_mode() || RECOVERY_BOOT == get_boot_mode())
-    {
-        tpd_button(x, y, 1);
-    }
-
-#endif
 }
 
 static void tpd_up(s32 x, s32 y, s32 id)
@@ -1125,14 +1114,6 @@ static void tpd_up(s32 x, s32 y, s32 id)
     input_mt_sync(tpd->dev);
     TPD_EM_PRINT(x, y, x, y, id, 0);
 
-#if (defined(MT6575)||defined(MT6577))
-
-    if (FACTORY_BOOT == get_boot_mode() || RECOVERY_BOOT == get_boot_mode())
-    {
-        tpd_button(x, y, 0);
-    }
-
-#endif
 }
 
 static int touch_event_handler(void *unused)
@@ -1152,6 +1133,10 @@ static int touch_event_handler(void *unused)
     s32 id = 0;
     s32 i  = 0;
     s32 ret = -1;
+
+    u8 key1 = 0, key2 = 0, key3 = 0;
+    static u8 key1_old = 0, key2_old = 0, key3_old = 0;
+	
 #ifdef TPD_PROXIMITY
     s32 err = 0;
     hwm_sensor_data sensor_data;
@@ -1258,6 +1243,44 @@ static int touch_event_handler(void *unused)
             pre_touch = 0;
         }
 
+#else
+        key1 = (key_value & 0x01);
+        key2 = (key_value & 0x02);
+        key3 = (key_value & 0x04);
+
+        if (key1 == 1)
+        {
+            tpd_down(key_1, 0, 0);
+        }
+        else if ((key1_old == 1) & (key1 == 0))
+        {
+            tpd_up(key_1, 0);
+        }
+
+        if (key2 == 2)
+        {
+            tpd_down(key_2, 0, 0);
+        }
+        else if ((key2_old == 2) & (key2 == 0))
+        {
+            tpd_up(key_2, 0);
+        }
+
+        if (key3 == 4)
+        {
+            tpd_down(key_3, 0, 0);
+        }
+        else if ((key3_old == 4) & (key3 == 0))
+        {
+            tpd_up(key_3, 0);
+        }
+
+        key1_old = key1;
+        key2_old = key2;
+        key3_old = key3;
+
+
+
 #endif
         pre_key = key_value;
 
@@ -1269,30 +1292,23 @@ static int touch_event_handler(void *unused)
             {
                 coor_data = &point_data[i * 8 + 3];
 
-                id = coor_data[0];
+                id = coor_data[0]&0x0F;
                 input_x  = coor_data[1] | coor_data[2] << 8;
                 input_y  = coor_data[3] | coor_data[4] << 8;
                 input_w  = coor_data[5] | coor_data[6] << 8;
-                
-                GTP_DEBUG("Original touch point : [X:%04d, Y:%04d]", input_x, input_y);
 
                 input_x = TPD_WARP_X(abs_x_max, input_x);
-                input_y = TPD_WARP_Y(abs_y_max, input_y);                
-                tpd_calibrate_driver(&input_x, &input_y);
-                
-                GTP_DEBUG("Touch point after calibration: [X:%04d, Y:%04d]", input_x, input_y);
-                
+                input_y = TPD_WARP_Y(abs_y_max, input_y);
                 tpd_down(input_x, input_y, input_w, id);
             }
         }
-        else if (pre_touch)
+        else if (pre_touch
         {
             GTP_DEBUG("Touch Release!");
             tpd_up(0, 0, 0);
         }
 
         pre_touch = touch_num;
-        input_report_key(tpd->dev, BTN_TOUCH, (touch_num || key_value));
 
         if (tpd != NULL && tpd->dev != NULL)
         {
