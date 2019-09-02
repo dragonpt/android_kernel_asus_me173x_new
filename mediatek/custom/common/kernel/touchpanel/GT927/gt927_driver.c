@@ -833,6 +833,7 @@ static int tpd_power_on(struct i2c_client *client)
 reset_proc:
 #ifdef MT6589
     //power on
+    hwPowerOn(MT65XX_POWER_LDO_VGP5, VOL_2800, "TP");
     hwPowerOn(MT65XX_POWER_LDO_VGP3, VOL_1800, "TP");
 #endif
     gtp_reset_guitar(client, 20);
@@ -845,6 +846,7 @@ reset_proc:
         //superdragonpt add start
         #ifdef MT6589
             //power on, need confirm with SA
+            hwPowerDown(MT65XX_POWER_LDO_VGP5,"TP");
             hwPowerDown(MT65XX_POWER_LDO_VGP3,"TP");
         #endif
 	  msleep(5);
@@ -936,23 +938,17 @@ static s32 tpd_i2c_probe(struct i2c_client *client, const struct i2c_device_id *
     }
 
 #endif
+	hwPowerOn(MT65XX_POWER_LDO_VGP5, VOL_2800, "TP");
+	msleep(1);
+	hwPowerOn(MT65XX_POWER_LDO_VGP3, VOL_1800, "TP");
 
-    /*
-    #ifndef TPD_RESET_ISSUE_WORKAROUND
-        mt_set_gpio_out(GPIO_CTP_RST_PIN, GPIO_OUT_ZERO);
-        msleep(10);
-    #endif
-    */
-
-    // set INT mode
-    mt_set_gpio_mode(GPIO_CTP_EINT_PIN, GPIO_CTP_EINT_PIN_M_EINT);
+	mt_set_gpio_mode(GPIO_CTP_EINT_PIN, GPIO_CTP_EINT_PIN_M_EINT);
     mt_set_gpio_dir(GPIO_CTP_EINT_PIN, GPIO_DIR_IN);
     mt_set_gpio_pull_enable(GPIO_CTP_EINT_PIN, GPIO_PULL_DISABLE);
-
     msleep(50);
-
-    mt65xx_eint_set_sens(CUST_EINT_TOUCH_PANEL_NUM, CUST_EINT_TOUCH_PANEL_SENSITIVE);
-    mt65xx_eint_set_hw_debounce(CUST_EINT_TOUCH_PANEL_NUM, CUST_EINT_TOUCH_PANEL_DEBOUNCE_CN);
+ 
+	  mt65xx_eint_set_sens(CUST_EINT_TOUCH_PANEL_NUM, CUST_EINT_TOUCH_PANEL_SENSITIVE);
+	  mt65xx_eint_set_hw_debounce(CUST_EINT_TOUCH_PANEL_NUM, CUST_EINT_TOUCH_PANEL_DEBOUNCE_CN);
 
     if (!int_type)
     {
@@ -1018,9 +1014,11 @@ static void force_reset_guitar(void)
 
     //Power off TP
 #ifdef MT6589
+    hwPowerDown(MT65XX_POWER_LDO_VGP5, "TP");
     hwPowerDown(MT65XX_POWER_LDO_VGP3, "TP");
     msleep(30);
     //Power on TP
+    hwPowerOn(MT65XX_POWER_LDO_VGP5, VOL_2800, "TP");
     hwPowerOn(MT65XX_POWER_LDO_VGP3, VOL_1800, "TP");	
     msleep(30);
 #else
@@ -1381,6 +1379,7 @@ static s8 gtp_enter_sleep(struct i2c_client *client)
             printk("superdragonpt gtp_enter_sleep\n ");
 	
 #if GTP_POWER_CTRL_SLEEP
+    hwPowerDown(MT65XX_POWER_LDO_VGP5, "TP");
     hwPowerDown(MT65XX_POWER_LDO_VGP3, "TP");
     GTP_INFO("GTP enter sleep!");
     return 0;
