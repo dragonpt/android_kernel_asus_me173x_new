@@ -181,6 +181,8 @@ a sample config, send this config should cause the chip cannot work normally*/
 #endif
 #define GTP_MAX_TOUCH      5
 #define GTP_ESD_CHECK_CIRCLE  2000
+#define TPD_VELOCITY_CUSTOM_X 30 //superdragonpt
+#define TPD_VELOCITY_CUSTOM_Y 30 //default is 15
 
 //STEP_4(optional):If this project have touch key,Set touch key config.                                    
 #if GTP_HAVE_TOUCH_KEY
