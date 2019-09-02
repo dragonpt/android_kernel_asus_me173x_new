@@ -1480,7 +1480,7 @@ static s8 gtp_wakeup_sleep(struct i2c_client *client)
 
 #else
 
-    while (retry++ < 10)
+    while (retry++ < 5)
     {
         GTP_GPIO_OUTPUT(GTP_INT_PORT, 1);
         msleep(5);
