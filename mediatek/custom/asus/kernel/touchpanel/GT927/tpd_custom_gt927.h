@@ -38,14 +38,14 @@
 
 /* Pre-defined definition */
 
-#define TPD_KEY_COUNT   4
-#define key_1           60,850              //auto define  
-#define key_2           180,850
-#define key_3           300,850
-#define key_4           420,850
+#define TPD_KEY_COUNT   3  //4
+#define key_1           180,1330              //auto define  
+#define key_2           360,1330
+#define key_3           540,1330
+//#define key_4           420,850
 
-#define TPD_KEYS        {KEY_BACK, KEY_HOME, KEY_MENU, KEY_SEARCH}
-#define TPD_KEYS_DIM    {{key_1,50,30},{key_2,50,30},{key_3,50,30},{key_4,50,30}}
+#define TPD_KEYS        {KEY_MENU, KEY_HOMEPAGE, KEY_BACK}// , KEY_SEARCH}
+#define TPD_KEYS_DIM    {{key_1,50,100},{key_2,50,100},{key_3,50,100}} //,{key_4,50,30}}
 
 struct goodix_ts_data {
     spinlock_t irq_lock;
