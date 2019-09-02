@@ -175,8 +175,8 @@ a sample config, send this config should cause the chip cannot work normally*/
   #define GTP_MAX_WIDTH    480
   #define GTP_INT_TRIGGER  0    //0:Rising 1:Falling
 #else
-  #define GTP_MAX_HEIGHT   4096
-  #define GTP_MAX_WIDTH    4096
+  #define GTP_MAX_HEIGHT   800
+  #define GTP_MAX_WIDTH    1280
   #define GTP_INT_TRIGGER  1
 #endif
 #define GTP_MAX_TOUCH      5
@@ -213,7 +213,7 @@ a sample config, send this config should cause the chip cannot work normally*/
 #define I2C_MASTER_CLOCK              300
 #define MAX_I2C_TRANSFER_SIZE         (MAX_TRANSACTION_LENGTH - GTP_ADDR_LENGTH)
 #define TPD_MAX_RESET_COUNT           3
-#define TPD_CALIBRATION_MATRIX        {962,0,0,0,1600,0,0,0};
+#define TPD_CALIBRATION_MATRIX        {2562,0,0,0,1600,0,0,0};
 
 
 #define TPD_RESET_ISSUE_WORKAROUND
