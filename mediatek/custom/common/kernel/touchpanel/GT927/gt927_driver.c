@@ -1302,7 +1302,7 @@ static int touch_event_handler(void *unused)
                 tpd_down(input_x, input_y, input_w, id);
             }
         }
-        else if (pre_touch
+        else if (pre_touch)
         {
             GTP_DEBUG("Touch Release!");
             tpd_up(0, 0, 0);
