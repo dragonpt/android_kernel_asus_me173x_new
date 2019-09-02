@@ -361,11 +361,6 @@ static int gt927_config_read_proc(char *page, char **start, off_t off, int count
             ptr += sprintf(ptr, "\n");
     }
 
-    i2c_read_bytes(i2c_client_point, GTP_REG_VERSION, temp_data, 6);
-    ptr += sprintf(ptr, "PID: %c%c%c%c VID: 0x%02X%02X\n", temp_data[0], temp_data[1], temp_data[2], temp_data[3], temp_data[5], temp_data[4]);
-
-    i2c_read_bytes(i2c_client_point, 0x800D, temp_data, 4);
-    ptr += sprintf(ptr, "Real VID: 0x%c%c%c%c\n", temp_data[0],temp_data[1],temp_data[2],temp_data[3]);
 
     *eof = 1;
     return (ptr - page);
@@ -411,19 +406,15 @@ int i2c_read_bytes(struct i2c_client *client, u16 addr, u8 *rxbuf, int len)
 
     struct i2c_msg msg[2] =
     {
-        {            
-            .addr = (client->addr & I2C_MASK_FLAG),
-            //.addr = ((client->addr &I2C_MASK_FLAG) | (I2C_PUSHPULL_FLAG)),
-            .ext_flag = (client->ext_flag | I2C_ENEXT_FLAG),
+        {
+            .addr = ((client->addr & I2C_MASK_FLAG) | (I2C_ENEXT_FLAG)),
             .flags = 0,
             .buf = buffer,
             .len = GTP_ADDR_LENGTH,
             .timing = I2C_MASTER_CLOCK
         },
         {
-            .addr = (client->addr & I2C_MASK_FLAG),
-            //.addr = ((client->addr &I2C_MASK_FLAG) | (I2C_PUSHPULL_FLAG)),
-            .ext_flag = (client->ext_flag | I2C_ENEXT_FLAG),
+            .addr = ((client->addr & I2C_MASK_FLAG) | (I2C_ENEXT_FLAG)),
             .flags = I2C_M_RD,
             .timing = I2C_MASTER_CLOCK
         },
@@ -497,9 +488,7 @@ int i2c_write_bytes(struct i2c_client *client, u16 addr, u8 *txbuf, int len)
 
     struct i2c_msg msg =
     {
-        .addr = (client->addr & I2C_MASK_FLAG),
-        //.addr = ((client->addr &I2C_MASK_FLAG) | (I2C_PUSHPULL_FLAG)),
-        .ext_flag = (client->ext_flag | I2C_ENEXT_FLAG),
+        .addr = ((client->addr & I2C_MASK_FLAG) | (I2C_ENEXT_FLAG)),
         .flags = 0,
         .buf = buffer,
         .timing = I2C_MASTER_CLOCK,
@@ -622,7 +611,7 @@ s32 gtp_read_version(struct i2c_client *client, u16 *version)
 
     GTP_DEBUG_FUNC();
 
-    ret = gtp_i2c_read(client, buf, sizeof(buf) + GTP_ADDR_LENGTH);
+    ret = gtp_i2c_read(client, buf, sizeof(buf));
 
     if (ret < 0)
     {
@@ -702,9 +691,10 @@ static s32 gtp_init_panel(struct i2c_client *client)
         {
             GTP_ERROR("Read SENSOR ID failed,default use group1 config!");
             rd_cfg_buf[GTP_ADDR_LENGTH] = 0;
+            goto out;
         }
 
-        rd_cfg_buf[GTP_ADDR_LENGTH] &= 0x03;
+        rd_cfg_buf[GTP_ADDR_LENGTH] &= 0x07;
     }
 
     GTP_INFO("SENSOR ID:%d", rd_cfg_buf[GTP_ADDR_LENGTH]);
@@ -775,13 +765,14 @@ static s32 gtp_init_panel(struct i2c_client *client)
     if (ret < 0)
     {
         GTP_ERROR("Send config error.");
+        goto out;
     }
 
     GTP_DEBUG("X_MAX = %d,Y_MAX = %d,TRIGGER = 0x%02x", abs_x_max, abs_y_max, int_type);
 
     msleep(10);
-
-    return 0;
+out:
+    return ret;
 }
 
 static s8 gtp_i2c_test(struct i2c_client *client)
@@ -797,7 +788,7 @@ static s8 gtp_i2c_test(struct i2c_client *client)
     {
         ret = i2c_read_bytes(client, GTP_REG_HW_INFO, (u8 *)&hw_info, sizeof(hw_info));
 
-        if ((!ret) & (hw_info == 0x00900600))
+        if ((!ret) && (hw_info == 0x00900600))
         {
             return ret;
         }
@@ -849,7 +840,6 @@ reset_proc:
     //power on
     hwPowerOn(MT65XX_POWER_LDO_VGP3, VOL_1800, "TP");
 #endif
-
     gtp_reset_guitar(client, 20);
 
     ret = gtp_i2c_test(client);
@@ -857,7 +847,13 @@ reset_proc:
     if (ret < 0)
     {
         GTP_ERROR("I2C communication ERROR!");
-
+        //superdragonpt add start
+        #ifdef MT6589
+            //power on, need confirm with SA
+            hwPowerDown(MT65XX_POWER_LDO_VGP3,"TP");
+        #endif
+	  msleep(5);
+        //superdragonpt end
         if (reset_count < TPD_MAX_RESET_COUNT)
         {
             reset_count++;
@@ -867,7 +863,6 @@ reset_proc:
 
     return ret;
 }
-
 static s32 tpd_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id)
 {
     s32 err = 0;
@@ -906,14 +901,12 @@ static s32 tpd_i2c_probe(struct i2c_client *client, const struct i2c_device_id *
         GTP_ERROR("GTP init panel failed.");
     }
 
-    /*    
     ret = gtp_read_version(client, &version_info);
 
     if (ret < 0)
     {
         GTP_ERROR("Read version failed.");
     }
-    */
 
     // Create proc file system
     gt927_config_proc = create_proc_entry(GT927_CONFIG_PROC_FILE, 0666, NULL);
