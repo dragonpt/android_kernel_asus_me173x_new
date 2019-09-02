@@ -807,7 +807,7 @@ Note:
 void gtp_int_sync()
 {
     GTP_GPIO_OUTPUT(GTP_INT_PORT, 0);
-    msleep(50);
+    msleep(75);
     GTP_GPIO_AS_INT(GTP_INT_PORT);
 }
 
