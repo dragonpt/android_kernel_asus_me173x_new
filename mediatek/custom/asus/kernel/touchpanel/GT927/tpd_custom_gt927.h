@@ -142,8 +142,8 @@ a sample config, send this config should cause the chip cannot work normally*/
     }
 
 //STEP_2(REQUIRED):Change I/O define & I/O operation mode.
-#define GTP_RST_PORT    GPIO_CTP_RST_PIN
-#define GTP_INT_PORT    GPIO_CTP_EINT_PIN
+#define GTP_RST_PORT    GPIO_CTP_RST_PIN  //superdragonpt GPIO 140 on my codegen
+#define GTP_INT_PORT    GPIO_CTP_EINT_PIN //superdragonpt GPIO 124 on my codegen --> EINT 5
 
 #define GTP_GPIO_AS_INPUT(pin)          do{\
                                             if(pin == GPIO_CTP_EINT_PIN)\
