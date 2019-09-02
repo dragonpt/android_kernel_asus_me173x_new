@@ -87,7 +87,7 @@ extern int i2c_read_bytes(struct i2c_client *client, u16 addr, u8 *rxbuf, int le
 #define GTP_HAVE_TOUCH_KEY    0
 #define GTP_POWER_CTRL_SLEEP  0       //turn off power on suspend
 #define GTP_CHANGE_X2Y        0				//set for se1
-#define GTP_ESD_PROTECT       0
+#define GTP_ESD_PROTECT       1
 #define GTP_CREATE_WR_NODE    0
 #define GUP_USE_HEADER_FILE   0
 
