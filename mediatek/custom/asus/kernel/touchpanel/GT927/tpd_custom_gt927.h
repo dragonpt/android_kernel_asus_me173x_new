@@ -73,7 +73,7 @@ extern u8 gtp_rawdiff_mode;
 
 extern s32 gtp_send_cfg(struct i2c_client *client);
 extern void gtp_reset_guitar(struct i2c_client *client, s32 ms);
-extern void gtp_int_sync();
+extern void gtp_int_sync(void);
 extern u8 gup_init_update_proc(struct i2c_client *client);
 extern u8 gup_init_fw_proc(struct i2c_client *client);
 extern s32 gtp_i2c_read(struct i2c_client *client, u8 *buf, s32 len);
