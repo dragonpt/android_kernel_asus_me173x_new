@@ -195,7 +195,7 @@ a sample config, send this config should cause the chip cannot work normally*/
 #define GT927_CONFIG_PROC_FILE     "gt927_config"
 #define GTP_POLL_TIME               10
 #define GTP_ADDR_LENGTH             2
-#define GTP_CONFIG_MAX_LENGTH       240
+#define GTP_CONFIG_MAX_LENGTH       186 //240
 #define FAIL                        0
 #define SUCCESS                     1
 
