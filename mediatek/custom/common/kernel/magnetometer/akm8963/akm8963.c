@@ -54,8 +54,8 @@
 #define DRIVER_VERSION          "1.0.1"
 /*----------------------------------------------------------------------------*/
 #define AKM8963_DEBUG		1
-#define AKM8963_DEBUG_MSG	0
-#define AKM8963_DEBUG_FUNC	0
+#define AKM8963_DEBUG_MSG	1 //0
+#define AKM8963_DEBUG_FUNC	1 //0
 #define AKM8963_DEBUG_DATA	1
 #define MAX_FAILURE_COUNT	3
 #define AKM8963_RETRY_COUNT	10
