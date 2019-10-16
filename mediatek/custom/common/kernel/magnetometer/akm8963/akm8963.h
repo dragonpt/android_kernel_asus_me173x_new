@@ -8,7 +8,7 @@
 
 #define AKM8963_I2C_NAME "akm8963"
 
-#define AKM8963_I2C_ADDRESS 	0x18	// CAD0 = 0, CAD1 =0
+#define AKM8963_I2C_ADDRESS 	0x1A	//superdragonpt: for Asus me173x
 #define AKM8963_BUFSIZE		0x20
 
 

@@ -95,7 +95,10 @@ static int factory_mode=0;
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
 static const struct i2c_device_id akm8963_i2c_id[] = {{AKM8963_DEV_NAME,0},{}};
-static struct i2c_board_info __initdata i2c_akm8963={ I2C_BOARD_INFO("akm8963", (0x18>>1))};
+//superdragonpt for i2c adress: ASUS change to 0x1A = 3-000d
+//static struct i2c_board_info __initdata i2c_akm8963={ I2C_BOARD_INFO("akm8963", (0x18>>1))};
+static struct i2c_board_info __initdata i2c_akm8963={ I2C_BOARD_INFO("akm8963", (0x1A>>1))};
+//superdragonpt, end
 /*the adapter id will be available in customization*/
 //static unsigned short akm8963_force[] = {0x00, AKM8963_I2C_ADDRESS, I2C_CLIENT_END, I2C_CLIENT_END};
 //static const unsigned short *const akm8963_forces[] = { akm8963_force, NULL };
