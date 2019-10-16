@@ -24,7 +24,7 @@
 	 
 #include <linux/ioctl.h>
 	 
-#define KXTJ2_1009_I2C_SLAVE_ADDR		0x1C
+#define KXTJ2_1009_I2C_SLAVE_ADDR		0x1E //superdragonpt for Asus me173x
 	 
  /* KXTJ2_1009 Register Map  (Please refer to KXTJ2_1009 Specifications) */
 #define KXTJ2_1009_REG_DEVID			0x0F
