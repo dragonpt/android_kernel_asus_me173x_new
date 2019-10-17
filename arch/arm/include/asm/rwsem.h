@@ -35,6 +35,16 @@
 #define RWSEM_ACTIVE_READ_BIAS		RWSEM_ACTIVE_BIAS
 #define RWSEM_ACTIVE_WRITE_BIAS		(RWSEM_WAITING_BIAS + RWSEM_ACTIVE_BIAS)
 
+extern void __init_rwsem(struct rw_semaphore *sem, const char *name,
+			 struct lock_class_key *key);
+
+#define init_rwsem(sem)				\
+do {						\
+	static struct lock_class_key __key;	\
+						\
+	__init_rwsem((sem), #sem, &__key);	\
+} while (0)
+
 /*
  * lock for reading
  */
