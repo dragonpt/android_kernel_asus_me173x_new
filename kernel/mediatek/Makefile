@@ -1,1 +1,0 @@
-../../mediatek/build/kernel/Makefile
