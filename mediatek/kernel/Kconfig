@@ -78,9 +78,9 @@ endchoice
 
 
 if ARCH_MT6589
-source "../mediatek/platform/mt6589/kernel/Kconfig/Kernel"
-source "../mediatek/platform/mt6589/kernel/Kconfig/Board"
-source "../mediatek/platform/mt6589/kernel/Kconfig/Drivers"
+source "./mediatek/platform/mt6589/kernel/Kconfig/Kernel"
+source "./mediatek/platform/mt6589/kernel/Kconfig/Board"
+source "./mediatek/platform/mt6589/kernel/Kconfig/Drivers"
 endif
 
 endif
