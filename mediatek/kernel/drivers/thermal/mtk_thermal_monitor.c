@@ -60,10 +60,11 @@
 #endif 
 
 #if defined(CONFIG_ARCH_MT6589)
-#if defined(MTK_FAN5405_SUPPORT) || defined(MTK_NCP1851_SUPPORT) || defined(MTK_BQ24196_SUPPORT) // supported charger IC
+#if defined(MTK_FAN5405_SUPPORT) || defined(MTK_NCP1851_SUPPORT) || defined(MTK_BQ24196_SUPPORT) || defined(MTK_BQ24156_SUPPORT) // supported charger IC
 #define CONFIG_MTK_THERMAL_TIME_BASE_PROTECTION
 #endif
 #endif
+//<2019/09/16 superdragonpt Integrate charging IC BQ24156
 
 #if defined(CONFIG_MTK_SMART_BATTERY)
 // global variable from battery driver...

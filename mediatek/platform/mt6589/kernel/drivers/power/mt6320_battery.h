@@ -52,9 +52,9 @@
 /*****************************************************************************
  *  BATTERY TIMER
  ****************************************************************************/
-//#define MAX_CHARGING_TIME                   8*60*60 	// 8hr
-//#define MAX_CHARGING_TIME                   12*60*60 	// 12hr
-#define MAX_CHARGING_TIME                   24*60*60 	// 24hr
+//<2019/09/16 superdragonpt Integrate charging IC BQ24156
+#define MAX_CHARGING_TIME                   8*60*60 	// 8hr
+#define MAX_CHARGING_TIME_AC_CHARGER        4*60*60 + 10*60
 #define MAX_POSTFULL_SAFETY_TIME       		1*30*60 	// 30mins
 #define MAX_PreCC_CHARGING_TIME         	1*30*60  	// 0.5hr
 #define MAX_CV_CHARGING_TIME              	3*60*60 	// 3hr
@@ -139,6 +139,11 @@ typedef enum
 #ifdef MTK_FAN5405_SUPPORT
 #define TEMP_NEG_10_THRESHOLD  0
 #define TEMP_NEG_10_THRES_PLUS_X_DEGREE  0
+//<2019/09/16 superdragonpt Integrate charging IC BQ24156
+#elif defined(MTK_BQ24156_SUPPORT)
+#define TEMP_NEG_10_THRESHOLD  0
+#define TEMP_NEG_10_THRES_PLUS_X_DEGREE  0
+//<2019/09/16 superdragonpt Integrate charging IC BQ24156
 #elif defined( MTK_BQ24158_SUPPORT)
 #define TEMP_NEG_10_THRESHOLD  0
 #define TEMP_NEG_10_THRES_PLUS_X_DEGREE  0

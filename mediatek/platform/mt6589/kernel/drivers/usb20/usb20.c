@@ -122,6 +122,12 @@ static void mtk_set_vbus(struct musb *musb, int is_on)
         bq24158_set_opa_mode(1);
 	bq24158_set_otg_pl(1);
 	bq24158_set_otg_en(1);
+//<2019/09/16 superdragonpt Integrate charging IC BQ24156 TODO
+//    #elif defined(MTK_BQ24156_SUPPORT)
+//        bq24156_set_opa_mode(1);
+//        bq24156_set_otg_pl(1);
+//        bq24156_set_otg_en(1);
+//<2019/09/16 superdragonpt Integrate charging IC BQ24156
     #elif defined(MTK_NCP1851_SUPPORT) || defined(MTK_BQ24196_SUPPORT)
         tbl_charger_otg_vbus((work_busy(&musb->id_pin_work.work)<< 8)| 1);
     #else
@@ -135,6 +141,11 @@ static void mtk_set_vbus(struct musb *musb, int is_on)
     #elif defined(MTK_BQ24158_SUPPORT)
         bq24158_config_interface_reg(0x01,0x30);
 	bq24158_config_interface_reg(0x02,0x8e);
+//<2019/09/16 superdragonpt Integrate charging IC BQ24156 TODO
+    //#elif defined(MTK_BQ24156_SUPPORT)
+        //bq24156_config_interface_liao(0x01,0x30);
+	//bq24156_config_interface_liao(0x02,0x8e);
+//<2019/09/16 superdragonpt Integrate charging IC BQ24156 TODO
     #elif defined(MTK_NCP1851_SUPPORT) || defined(MTK_BQ24196_SUPPORT)
         tbl_charger_otg_vbus((work_busy(&musb->id_pin_work.work)<< 8)| 0);
     #else
@@ -726,12 +737,15 @@ int __init musb_platform_init(struct musb *musb)
 		musb->board_set_vbus = mtk_set_vbus;
 		#ifndef CONFIG_MT6589_FPGA
 		#ifndef MTK_BQ24196_SUPPORT
+		#ifndef MTK_BQ24156_SUPPORT //superdragonpt TODO check this
 		mt_set_gpio_mode(GPIO_OTG_DRVVBUS_PIN,GPIO_OTG_DRVVBUS_PIN_M_GPIO);//should set GPIO2 as gpio mode.
 		mt_set_gpio_dir(GPIO_OTG_DRVVBUS_PIN,GPIO_DIR_OUT);
 		mt_get_gpio_pull_enable(GPIO_OTG_DRVVBUS_PIN);
 		mt_set_gpio_pull_select(GPIO_OTG_DRVVBUS_PIN,GPIO_PULL_UP);
 		#endif
 		#endif
+		#endif
+		//<2019/09/16 superdragonpt Integrate charging IC BQ24156
 	}
 #endif
 

@@ -130,6 +130,13 @@ extern void bq24158_set_opa_mode(kal_uint32 val);
 extern void bq24158_set_otg_pl(kal_uint32 val);
 extern void bq24158_set_otg_en(kal_uint32 val);
 extern kal_uint32 bq24158_config_interface_reg (kal_uint8 RegNum, kal_uint8 val);
+//<2019/09/16 superdragonpt Integrate charging IC BQ24156
+#elif defined(MTK_BQ24156_SUPPORT)
+extern void bq24156_set_opa_mode(kal_uint32 val);
+extern void bq24156_set_otg_pl(kal_uint32 val);
+extern void bq24156_set_otg_en(kal_uint32 val);
+extern kal_uint32 bq24156_config_interface_liao(kal_uint8 RegNum, kal_uint8 val);
+//<2019/09/16 superdragonpt Integrate charging IC BQ24156
 #endif
 
 void musb_otg_reset_usb(void){
