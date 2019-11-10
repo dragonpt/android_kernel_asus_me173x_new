@@ -58,12 +58,10 @@
 #define PART_SEC_RO "SEC_RO" 
 #define PART_MISC "MISC" 
 #define PART_LOGO "LOGO" 
-#define PART_EBR2 "EBR2" 
 #define PART_EXPDB "EXPDB" 
 #define PART_ANDROID "ANDROID" 
 #define PART_CACHE "CACHE" 
 #define PART_USRDATA "USRDATA" 
-#define PART_FAT "FAT" 
 #define PART_BMTPOOL "BMTPOOL" 
 /*preloader re-name*/
 #define PART_SECURE "SECURE" 
@@ -78,7 +76,7 @@
 #define PART_FLAG_END              0x2 
 #define PART_MAGIC              0x58881688 
 
-#define PART_SIZE_PRELOADER			(6144*KB)
+#define PART_SIZE_PRELOADER			(12288*KB)
 #define PART_SIZE_MBR			(512*KB)
 #define PART_SIZE_EBR1			(512*KB)
 #define PART_SIZE_PMT			(4096*KB)
@@ -87,30 +85,30 @@
 #define PART_SIZE_PROTECT_F			(10240*KB)
 #define PART_SIZE_PROTECT_S			(10240*KB)
 #define PART_SIZE_SECCFG			(128*KB)
-#define PART_OFFSET_SECCFG			(0x2700000)
+#define PART_OFFSET_SECCFG			(0x2d00000)
 #define PART_SIZE_UBOOT			(384*KB)
 #define PART_SIZE_BOOTIMG			(6144*KB)
 #define PART_SIZE_RECOVERY			(6144*KB)
 #define PART_SIZE_SEC_RO			(6144*KB)
-#define PART_OFFSET_SEC_RO			(0x3380000)
+#define PART_OFFSET_SEC_RO			(0x3980000)
 #define PART_SIZE_MISC			(512*KB)
 #define PART_SIZE_LOGO			(3072*KB)
-#define PART_SIZE_EBR2			(512*KB)
 #define PART_SIZE_EXPDB			(10240*KB)
-#define PART_SIZE_ANDROID			(665600*KB)
-#define PART_SIZE_CACHE			(129024*KB)
-#define PART_SIZE_USRDATA			(1048576*KB)
-#define PART_SIZE_FAT			(0*KB)
+#define PART_SIZE_ANDROID			(1572864*KB)
+#define PART_SIZE_CACHE			(1048576*KB)
+#define PART_SIZE_USRDATA			(12679168*KB)
 #define PART_SIZE_BMTPOOL			(0xa8)
 
 
-#define PART_NUM			22
+
+
+#define PART_NUM			20
 
 
 
 #define PART_MAX_COUNT			 40
 
-#define MBR_START_ADDRESS_BYTE			(6144*KB)
+#define MBR_START_ADDRESS_BYTE			(12288*KB)
 
 #define WRITE_SIZE_Byte		512
 typedef enum  {
