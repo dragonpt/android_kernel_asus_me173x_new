@@ -157,7 +157,7 @@ static long tpd_unlocked_ioctl(struct file *file, unsigned int cmd,
 
     if (err)
     {
-        printk("tpd: access error: %08X, (%2d, %2d)\n", cmd, _IOC_DIR(cmd), _IOC_SIZE(cmd));
+        //printk("tpd: access error: %08X, (%2d, %2d)\n", cmd, _IOC_DIR(cmd), _IOC_SIZE(cmd));
         return -EFAULT;
     }
 
@@ -198,7 +198,7 @@ static long tpd_unlocked_ioctl(struct file *file, unsigned int cmd,
             break;
 
         default:
-            printk("tpd: unknown IOCTL: 0x%08x\n", cmd);
+            //printk("tpd: unknown IOCTL: 0x%08x\n", cmd);
             err = -ENOIOCTLCMD;
             break;
 
@@ -247,13 +247,13 @@ static s32 tpd_enable_ps(s32 enable)
     {
         state = 1;
         tpd_proximity_flag = 1;
-        printk("TPD proximity function to be on.");
+        //printk("TPD proximity function to be on.");
     }
     else
     {
         state = 0;
         tpd_proximity_flag = 0;
-        printk("TPD proximity function to be off.");
+        //printk("TPD proximity function to be off.");
     }
 
     ret = i2c_write_bytes(i2c_client_point, TPD_PROXIMITY_ENABLE_REG, &state, 1);
@@ -264,7 +264,7 @@ static s32 tpd_enable_ps(s32 enable)
         return ret;
     }
 
-    printk("TPD proximity function %s success.", state ? "enable" : "disable");
+    //printk("TPD proximity function %s success.", state ? "enable" : "disable");
     return 0;
 }
 
@@ -629,8 +629,8 @@ s32 gtp_read_version(struct i2c_client *client, u16 *version)
         tpd_info.pid |= ((buf[i + 2] - 0x30) << ((3 - i) * 4));
     }
 
-    printk("IC VERSION:%c%c%c%c_%02x%02x",
-             buf[2], buf[3], buf[4], buf[5], buf[7], buf[6]);
+    /*printk("IC VERSION:%c%c%c%c_%02x%02x",
+             buf[2], buf[3], buf[4], buf[5], buf[7], buf[6]);*/
 
     return ret;
 }
@@ -670,7 +670,7 @@ static s32 gtp_init_panel(struct i2c_client *client)
         }
     }
 
-    printk("len1=%d,len2=%d,len3=%d,get_len=%d", cfg_info_len[0], cfg_info_len[1], cfg_info_len[2], cfg_len);
+    //printk("len1=%d,len2=%d,len3=%d,get_len=%d", cfg_info_len[0], cfg_info_len[1], cfg_info_len[2], cfg_len);
 
     if ((!cfg_info_len[1]) && (!cfg_info_len[2]))
     {
@@ -738,7 +738,7 @@ static s32 gtp_init_panel(struct i2c_client *client)
         abs_y_max = GTP_MAX_HEIGHT;
         int_type = GTP_INT_TRIGGER;
         goto out;
-        printk("GTP superdragonpt 1st custom calibration sent");
+        //printk("GTP superdragonpt 1st custom calibration sent");
     }
 
 #endif //endif GTP_DRIVER_SEND_CFG
@@ -752,7 +752,7 @@ static s32 gtp_init_panel(struct i2c_client *client)
         GTP_ERROR("GTP resolution & max_touch_num invalid, use default value!");
         abs_x_max = GTP_MAX_WIDTH;
         abs_y_max = GTP_MAX_HEIGHT;
-        printk("GTP superdragonpt custom 2nd calibration sent");
+        //printk("GTP superdragonpt custom 2nd calibration sent");
     }
 
     ret = gtp_send_cfg(client);
@@ -886,7 +886,7 @@ static s32 tpd_i2c_probe(struct i2c_client *client, const struct i2c_device_id *
 
     if ((err = misc_register(&tpd_misc_device)))
     {
-        printk("mtk_tpd: tpd_misc_device register failed\n");
+        //printk("mtk_tpd: tpd_misc_device register failed\n");
     }
 
 #endif
@@ -960,7 +960,7 @@ static s32 tpd_i2c_probe(struct i2c_client *client, const struct i2c_device_id *
     }
 
     mt65xx_eint_unmask(CUST_EINT_TOUCH_PANEL_NUM);
-    printk("superdragonpt tpd_load_status=%d\n",tpd_load_status);
+    //printk("superdragonpt tpd_load_status=%d\n",tpd_load_status);
 
 #ifdef TPD_PROXIMITY
     //obj_ps.self = cm3623_obj;
@@ -1010,7 +1010,7 @@ static void force_reset_guitar(void)
     s32 i;
     s32 ret;
 
-    printk("force_reset_guitar\n");
+    //printk("force_reset_guitar\n");
 
     //Power off TP
 #ifdef MT6589
@@ -1085,7 +1085,7 @@ static void gtp_esd_check_func(struct work_struct *work)
 
 static void tpd_down(s32 x, s32 y, s32 size, s32 id)
 {
-            printk("GTP superdragonpt tpd_down\n ");
+            //printk("GTP superdragonpt tpd_down\n ");
     if ((!size) && (!id))
     {
         input_report_abs(tpd->dev, ABS_MT_PRESSURE, 100);
@@ -1142,7 +1142,7 @@ static int touch_event_handler(void *unused)
     hwm_sensor_data sensor_data;
     u8 proximity_status;
 #endif
-            printk("superdragonpt touch_event_handler\n ");
+            //printk("superdragonpt touch_event_handler\n ");
 
     sched_setscheduler(current, SCHED_RR, &param);
 
@@ -1230,7 +1230,7 @@ static int touch_event_handler(void *unused)
       key_value = point_data[3 + 8 * touch_num];
 #if GTP_HAVE_TOUCH_KEY
      
-            printk("superdragonpt touch_event_handler key_value =%d\n ",key_value);
+            //printk("superdragonpt touch_event_handler key_value =%d\n ",key_value);
 
         if (key_value || pre_key)
         {
@@ -1335,7 +1335,7 @@ exit_work_func:
 
 static int tpd_local_init(void)
 {
-            printk("superdragonpt tpd_local_init\n ");
+            //printk("superdragonpt tpd_local_init\n ");
 
     if (i2c_add_driver(&tpd_i2c_driver) != 0)
     {
@@ -1392,7 +1392,7 @@ static s8 gtp_enter_sleep(struct i2c_client *client)
     s8 ret = -1;
     s8 retry = 0;
     u8 i2c_control_buf[3] = {(u8)(GTP_REG_SLEEP >> 8), (u8)GTP_REG_SLEEP, 5};
-            printk("superdragonpt gtp_enter_sleep\n ");
+            //printk("superdragonpt gtp_enter_sleep\n ");
 	
 #if GTP_POWER_CTRL_SLEEP
     hwPowerDown(MT65XX_POWER_LDO_VGP5, "TP");
@@ -1436,7 +1436,7 @@ static s8 gtp_wakeup_sleep(struct i2c_client *client)
     u8 retry = 0;
     s8 ret = -1;
 
-            printk("superdragonpt gtp_wakeup_sleep\n ");
+            //printk("superdragonpt gtp_wakeup_sleep\n ");
 
     GTP_INFO("GTP wakeup begin.");
 #if GTP_POWER_CTRL_SLEEP
@@ -1489,7 +1489,7 @@ static void tpd_suspend(struct early_suspend *h)
 {
     s32 ret = -1;
     tpd_halt = 1;
-            printk("superdragonpt tpd_suspend\n ");
+            //printk("superdragonpt tpd_suspend\n ");
 
 #if GTP_ESD_PROTECT
     cancel_delayed_work_sync(&gtp_esd_check_work);
