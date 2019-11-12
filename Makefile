@@ -199,7 +199,7 @@ export KBUILD_BUILDHOST := $(SUBARCH)
 #ARCH		?= $(SUBARCH)
 #CROSS_COMPILE	?= $(CONFIG_CROSS_COMPILE:"%"=%)
 ARCH		?= arm
-CROSS_COMPILE	?= arm-linux-androideabi-
+CROSS_COMPILE	?= ./toolchain/arm-cortex_a9-linux-gnueabihf-linaro_4.9.1-2014.05/bin/arm-eabi-
 
 # Architecture as present in compile.h
 UTS_MACHINE 	:= $(ARCH)

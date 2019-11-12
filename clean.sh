@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export CROSS_COMPILE="./toolchain/arm-unknown-linux-gnueabi-linaro_4.6.4-2013.05/bin/arm-gnueabi-"
+export CROSS_COMPILE="./toolchain/arm-cortex_a9-linux-gnueabihf-linaro_4.9.1-2014.05/bin/arm-eabi-"
 export TARGET_PRODUCT=asus
 export MTK_ROOT_CUSTOM=./mediatek
 
