@@ -21,7 +21,7 @@
 #include <mach/mt_gpio.h>
 #include <linux/xlog.h>
 #include <mach/mt_pm_ldo.h>
-#include <mach/mt_pmic.h>
+//#include <mach/mt_pmic.h>
 #include <mach/upmu_common.h>
 #endif
 
