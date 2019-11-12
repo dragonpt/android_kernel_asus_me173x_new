@@ -36,7 +36,7 @@ endif
 
 obj-y   += i2c/
 obj-y   += dispsys/
-obj-y   += dual_ccci/
+#obj-y   += dual_ccci/
 obj-y   += accdet/
 obj-y   += vibrator/
 obj-y   += wdt/

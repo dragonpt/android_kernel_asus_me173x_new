@@ -2,8 +2,8 @@ include $(MTK_PATH_BUILD)/common.mk
 #$(call all-subdir-src-or-makefile)
 
 obj-y   +=  aee/
-obj-y   +=  ccci/
-obj-y   +=  dual_ccci/
+#obj-y   +=  ccci/
+#obj-y   +=  dual_ccci/
 obj-y   +=  fmradio/
 obj-y   +=  gps/
 obj-y   +=  hwmon/
