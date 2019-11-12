@@ -591,7 +591,8 @@ typedef struct
     void (*suspend)(void);
     void (*resume)(void);
 
-    // for power-on sequence refinement    
+    // for power-on sequence refinement
+    void (*init_power)(void);
     void (*suspend_power)(void);
     void (*resume_power)(void);
 
