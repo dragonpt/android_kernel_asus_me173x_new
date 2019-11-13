@@ -10,19 +10,18 @@
 
 #define MAX_BOOTING_TIME_FGCURRENT	1*10 // 10s
 
-#if defined(CONFIG_POWER_EXT)
-#define OCV_BOARD_COMPESATE	72 //mV 
-#define R_FG_BOARD_BASE		1000
-#define R_FG_BOARD_SLOPE	1000 //slope
-#else
+/* cust battery meter parameters */
+#define CHANGE_TRACKING_POINT
+#define CUST_TRACKING_POINT  1
+#define AGING_TUNING_VALUE   103
+
 #define OCV_BOARD_COMPESATE	0 //mV 
 #define R_FG_BOARD_BASE		1000
 #define R_FG_BOARD_SLOPE	1000 //slope
-#endif
 
 #define Q_MAX_POS_50	4074
 #define Q_MAX_POS_25	4032
-#define Q_MAX_POS_0	3864
+#define Q_MAX_POS_0	    3864
 #define Q_MAX_NEG_10	3254
 
 #define Q_MAX_POS_50_H_CURRENT	4039
@@ -31,7 +30,7 @@
 #define Q_MAX_NEG_10_H_CURRENT	2275
 
 #define R_FG_VALUE 				20 // mOhm, base is 20
-#define CURRENT_DETECT_R_FG	10  //1mA
+#define CURRENT_DETECT_R_FG	    10 //1mA
 
 #define OSR_SELECT_7			0
 

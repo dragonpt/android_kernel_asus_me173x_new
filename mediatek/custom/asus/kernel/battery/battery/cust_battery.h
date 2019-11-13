@@ -41,8 +41,20 @@ typedef struct{
 #define USB_CHARGER_CURRENT_UNCONFIGURED	Cust_CC_70MA	// def CONFIG_USB_IF
 #define USB_CHARGER_CURRENT_CONFIGURED		Cust_CC_450MA	// def CONFIG_USB_IF
 #define USB_CHARGER_CURRENT					Cust_CC_450MA
-#define AC_CHARGER_CURRENT					Cust_CC_650MA	
-#define bq24158_AC_CHARGING_CURRENT_950 950
+#define AC_CHARGER_CURRENT					Cust_CC_1300MA
+/******************************************************************************
+                                  superdragonpt
+                             for AC_CHARGER_CURRENT
+real measurements:
+Cust_CC_1300MA = real 1.08 AMP
+Cust_CC_1200MA = real 0.98 AMP / 980 MA
+Cust_CC_1000MA = real 0.78 AMP / 780 MA
+Cust_CC_800MA  = real 0.60 AMP / 600 MA
+Cust_CC_650MA  = real 0.50 AMP / 500 MA
+
+------------------------------------------
+Stock kernel: Maximum charge of 1.20 AMP
+*******************************************************************************/
 
 /* Battery Meter Solution */
 #define CONFIG_ADC_SOLUTION 	1
@@ -64,8 +76,7 @@ VBAT_TO_PERCENT Batt_VoltToPercent_Table[] = {
 };
 
 /* Precise Tunning */
-#define BATTERY_AVERAGE_SIZE 	12
-//#define BATTERY_AVERAGE_SIZE   3
+#define BATTERY_AVERAGE_SIZE 	12 //TODO 30
 
 /* Common setting */
 #define R_CURRENT_SENSE 2				// 0.2 Ohm
@@ -79,10 +90,8 @@ VBAT_TO_PERCENT Batt_VoltToPercent_Table[] = {
 #define V_CHARGER_ENABLE 0				// 1:ON , 0:OFF
 
 /* Teperature related setting */
-#define RBAT_PULL_UP_R             39000
-#define RBAT_PULL_UP_VOLT          1800
-//#define TBAT_OVER_CRITICAL_LOW     68237
-//#define TBAT_OVER_CRITICAL_LOW     483954
+#define RBAT_PULL_UP_R             24000 //39000
+#define RBAT_PULL_UP_VOLT          2800  //1800
 #define TBAT_OVER_CRITICAL_LOW     67790
 #define BAT_TEMP_PROTECT_ENABLE    1
 #define BAT_NTC_10 1
