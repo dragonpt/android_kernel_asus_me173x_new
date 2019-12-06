@@ -51,7 +51,7 @@
 /*----------------------------------------------------------------------------*/
 #define C_MAX_REG_LEN (4)
 /*----------------------------------------------------------------------------*/
-//#define HWMSEN_DEBUG
+#define HWMSEN_DEBUG //superdragonpt: turn ON debug
 /******************************************************************************
  * Functions 
 ******************************************************************************/
@@ -172,8 +172,8 @@ int hwmsen_read_block(struct i2c_client *client, u8 addr, u8 *data, u8 len)
         }
 
         err = i2c_transfer(client->adapter, msgs, sizeof(msgs)/sizeof(msgs[0]));
-        if (err != 2) {
-            HWM_ERR("i2c_transfer error: (%d %p %d) %d\n", addr, data, len, err);
+        if (err != 2) {                                                           //superdragonpt: TODO for accelerometer
+            HWM_ERR("i2c_transfer error: (%d %p %d) %d\n", addr, data, len, err); //LOG:<HWMSEN> hwmsen_read_block 176 : i2c_transfer error: (6 dd225ce2 6) -121
             err = -EIO;
         } else {
 #if defined(HWMSEN_DEBUG)        
