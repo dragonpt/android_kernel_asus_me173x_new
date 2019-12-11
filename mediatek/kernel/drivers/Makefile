@@ -12,7 +12,7 @@ obj-y   +=  mhl/
 obj-y   +=  mtprof/
 obj-y   +=  sched/
 obj-y   +=  usb11/
-obj-y   +=  almk/
+#obj-y   +=  almk/
 ifneq ($(MTK_PROJECT), mt6589fpga_ca7_ldvt)
 obj-y   +=  video/
 endif
