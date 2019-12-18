@@ -406,10 +406,6 @@ static struct scsi_target *scsi_alloc_target(struct device *parent,
 	struct scsi_target *found_target;
 	int error;
 
-	//ALPS00445134, add more debug message for CR debugging
-	printk(KERN_DEBUG "%s, line %d: \n", __func__, __LINE__);
-	//ALPS00445134, add more debug message for CR debugging
-
 	starget = kzalloc(size, GFP_KERNEL);
 	if (!starget) {
 		printk(KERN_ERR "%s: allocation failure\n", __func__);
@@ -420,11 +416,6 @@ static struct scsi_target *scsi_alloc_target(struct device *parent,
 	starget->reap_ref = 1;
 	dev->parent = get_device(parent);
 	dev_set_name(dev, "target%d:%d:%d", shost->host_no, channel, id);
-
-	//ALPS00445134, add more debug message for CR debugging
-	printk(KERN_DEBUG "%s, line %d: dev(starget->dev) = %s,  shost->host_no = %d \n", __func__, __LINE__, dev_name(dev),  shost->host_no);
-	//ALPS00445134, add more debug message for CR debugging
-
 	dev->bus = &scsi_bus_type;
 	dev->type = &scsi_target_type;
 	starget->id = id;
@@ -1723,15 +1714,9 @@ static void scsi_sysfs_add_devices(struct Scsi_Host *shost)
 {
 	struct scsi_device *sdev;
 	shost_for_each_device(sdev, shost) {
-		//ALPS00445134, add Linux commit for SCSI
-		//10f8d5b86743b33d841a175303e2bf67fd620f42
 		/* target removed before the device could be added */
-		printk("%s, line %d:  called, sdev->sdev_state is sdev->sdev_state = %d", __func__, __LINE__, sdev->sdev_state);
 		if (sdev->sdev_state == SDEV_DEL)
-			continue;		
-		//10f8d5b86743b33d841a175303e2bf67fd620f42
-		//ALPS00445134, add Linux commit for SCSI
-
+			continue;
 		if (!scsi_host_scan_allowed(shost) ||
 		    scsi_sysfs_add_sdev(sdev) != 0)
 			__scsi_remove_device(sdev);
@@ -1803,10 +1788,6 @@ static void scsi_finish_async_scan(struct async_scan_data *data)
 	struct Scsi_Host *shost;
 	unsigned long flags;
 
-	//ALPS00445134, add more debug message for CR debugging
-	printk(KERN_DEBUG "%s, line %d: \n", __func__, __LINE__);
-	//ALPS00445134, add more debug message for CR debugging
-
 	if (!data)
 		return;
 
@@ -1859,9 +1840,6 @@ static void do_scsi_scan_host(struct Scsi_Host *shost)
 		scsi_scan_host_selected(shost, SCAN_WILD_CARD, SCAN_WILD_CARD,
 				SCAN_WILD_CARD, 0);
 	}
-	//ALPS00445134, add more debug message for CR debugging
-	printk(KERN_DEBUG "%s, line %d: \n", __func__, __LINE__);
-	//ALPS00445134, add more debug message for CR debugging
 }
 
 static int do_scan_async(void *_data)
@@ -1869,9 +1847,6 @@ static int do_scan_async(void *_data)
 	struct async_scan_data *data = _data;
 	struct Scsi_Host *shost = data->shost;
 
-	//ALPS00445134, add more debug message for CR debugging
-	printk(KERN_DEBUG "%s, line %d: shost->host_no = %d \n", __func__, __LINE__, shost->host_no);
-	//ALPS00445134, add more debug message for CR debugging
 	do_scsi_scan_host(shost);
 	scsi_finish_async_scan(data);
 	return 0;
@@ -1885,10 +1860,6 @@ void scsi_scan_host(struct Scsi_Host *shost)
 {
 	struct task_struct *p;
 	struct async_scan_data *data;
-
-	//ALPS00445134, add more debug message for CR debugging
-	printk(KERN_DEBUG "%s, line %d: shost->host_no = %d \n", __func__, __LINE__, shost->host_no);
-	//ALPS00445134, add more debug message for CR debugging
 
 	if (strncmp(scsi_scan_type, "none", 4) == 0)
 		return;
