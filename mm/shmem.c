@@ -1367,14 +1367,6 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
 	struct splice_pipe_desc spd = {
 		.pages = pages,
 		.partial = partial,
-<<<<<<< HEAD
-                /*
-                 * kernel patch
-                 * commit: 2c07f25ea7800adb36cd8da9b58c4ecd3fc3d064
-                 * https://android.googlesource.com/kernel/common/+/2c07f25ea7800adb36cd8da9b58c4ecd3fc3d064%5E!/#F0
-                 */
-=======
->>>>>>> 2c07f25... splice: fix racy pipe->buffers uses
 		.nr_pages_max = PIPE_DEF_BUFFERS,
 		.flags = flags,
 		.ops = &page_cache_pipe_buf_ops,
@@ -1464,15 +1456,6 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
 	if (spd.nr_pages)
 		error = splice_to_pipe(pipe, &spd);
 
-<<<<<<< HEAD
-        /*
-         * kernel patch
-         * commit: 2c07f25ea7800adb36cd8da9b58c4ecd3fc3d064
-         * https://android.googlesource.com/kernel/common/+/2c07f25ea7800adb36cd8da9b58c4ecd3fc3d064%5E!/#F0
-         */
-	//splice_shrink_spd(pipe, &spd);
-=======
->>>>>>> 2c07f25... splice: fix racy pipe->buffers uses
 	splice_shrink_spd(&spd);
 
 	if (error > 0) {

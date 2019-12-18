@@ -1712,14 +1712,6 @@ int skb_splice_bits(struct sk_buff *skb, unsigned int offset,
 	struct splice_pipe_desc spd = {
 		.pages = pages,
 		.partial = partial,
-<<<<<<< HEAD
-                /*
-                 * kernel patch
-                 * commit: 2c07f25ea7800adb36cd8da9b58c4ecd3fc3d064
-                 * https://android.googlesource.com/kernel/common/+/2c07f25ea7800adb36cd8da9b58c4ecd3fc3d064%5E!/#F0
-                 */
-=======
->>>>>>> 2c07f25... splice: fix racy pipe->buffers uses
 		.nr_pages_max = MAX_SKB_FRAGS,
 		.flags = flags,
 		.ops = &sock_pipe_buf_ops,
@@ -1767,15 +1759,6 @@ done:
 		lock_sock(sk);
 	}
 
-<<<<<<< HEAD
-        /*
-         * kernel patch
-         * commit: 2c07f25ea7800adb36cd8da9b58c4ecd3fc3d064
-         * https://android.googlesource.com/kernel/common/+/2c07f25ea7800adb36cd8da9b58c4ecd3fc3d064%5E!/#F0
-         */
-	//splice_shrink_spd(pipe, &spd);
-=======
->>>>>>> 2c07f25... splice: fix racy pipe->buffers uses
 	splice_shrink_spd(&spd);
 	return ret;
 }

@@ -48,18 +48,9 @@ struct partial_page {
 /*
  * Passed to splice_to_pipe
  */
-/*
- * kernel patch
- * commit: 2c07f25ea7800adb36cd8da9b58c4ecd3fc3d064
- * https://android.googlesource.com/kernel/common/+/2c07f25ea7800adb36cd8da9b58c4ecd3fc3d064%5E!/#F0
- */
 struct splice_pipe_desc {
 	struct page **pages;		/* page map */
 	struct partial_page *partial;	/* pages[] may not be contig */
-<<<<<<< HEAD
-	//int nr_pages;			/* number of pages in map */
-=======
->>>>>>> 2c07f25... splice: fix racy pipe->buffers uses
 	int nr_pages;			/* number of populated pages in map */
 	unsigned int nr_pages_max;	/* pages[] & partial[] arrays size */
 	unsigned int flags;		/* splice flags */
@@ -95,17 +86,6 @@ extern ssize_t splice_direct_to_actor(struct file *, struct splice_desc *,
 /*
  * for dynamic pipe sizing
  */
-<<<<<<< HEAD
-/*
- * kernel patch
- * commit: 2c07f25ea7800adb36cd8da9b58c4ecd3fc3d064
- * https://android.googlesource.com/kernel/common/+/2c07f25ea7800adb36cd8da9b58c4ecd3fc3d064%5E!/#F0
- */
-//extern int splice_grow_spd(struct pipe_inode_info *, struct splice_pipe_desc *);
-//extern void splice_shrink_spd(struct pipe_inode_info *,
-//				struct splice_pipe_desc *);
-=======
->>>>>>> 2c07f25... splice: fix racy pipe->buffers uses
 extern int splice_grow_spd(const struct pipe_inode_info *, struct splice_pipe_desc *);
 extern void splice_shrink_spd(struct splice_pipe_desc *);
 extern void spd_release_page(struct splice_pipe_desc *, unsigned int);
