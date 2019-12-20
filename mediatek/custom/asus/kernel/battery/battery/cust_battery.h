@@ -76,7 +76,7 @@ VBAT_TO_PERCENT Batt_VoltToPercent_Table[] = {
 };
 
 /* Precise Tunning */
-#define BATTERY_AVERAGE_SIZE 	12 //TODO 30
+#define BATTERY_AVERAGE_SIZE 	30
 
 /* Common setting */
 #define R_CURRENT_SENSE 2				// 0.2 Ohm
