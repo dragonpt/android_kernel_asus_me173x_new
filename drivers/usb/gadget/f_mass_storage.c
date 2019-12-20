@@ -2950,7 +2950,7 @@ buffhds_first_it:
 		 /* Assume product name dependent on the first LUN */
 		 cfg->product_name ?: (common->luns->cdrom
 				     ? "File-Stor Gadget"
-				     : "BQ AQUARIS"),
+				     : "ASUS ME173X"),
 		 i);
 
 	/*

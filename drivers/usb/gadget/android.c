@@ -77,8 +77,8 @@ static const char longname[] = "Gadget Android";
 #define PRODUCT_ID		0x0001
 
 /* Default manufacturer and product string , overridden by userspace */
-#define MANUFACTURER_STRING "bq"
-#define PRODUCT_STRING "BQ AQUARIS"
+#define MANUFACTURER_STRING "asus"
+#define PRODUCT_STRING "ASUS ME173X"
 
 #define USB_LOG "USB"
 
