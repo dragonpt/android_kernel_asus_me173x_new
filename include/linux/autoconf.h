@@ -1,7 +1,7 @@
 /*
  *
  * Automatically generated file; DO NOT EDIT.
- * Linux/arm 3.4.5 Kernel Configuration
+ * Linux/arm 3.4.11 Kernel Configuration
  *
  */
 #define CONFIG_IP6_NF_SECURITY 1
@@ -194,6 +194,7 @@
 #define CONFIG_IP6_NF_IPTABLES 1
 #define CONFIG_NL80211_TESTMODE 1
 #define CONFIG_CPU_FREQ_GOV_USERSPACE 1
+#define CONFIG_ANDROID_LOW_MEMORY_KILLER_AUTODETECT_OOM_ADJ_VALUES 1
 #define CONFIG_INET_IPCOMP 1
 #define CONFIG_HID_CYPRESS 1
 #define CONFIG_NLS_ISO8859_1 1
