@@ -63,16 +63,16 @@ Stock kernel: Maximum charge of 1.20 AMP
 VBAT_TO_PERCENT Batt_VoltToPercent_Table[] = {
 	/*BattVolt,BattPercent*/
 	{3400,0},
-	{3691,10},
-	{3736,20},
-	{3772,30},
-	{3797,40},
-	{3828,50},
-	{3888,60},
-	{3944,70},
-	{4010,80},
-	{4100,90},
-	{4176,100},
+	{3641,10},
+	{3708,20},
+	{3741,30},
+	{3765,40},
+	{3793,50},
+	{3836,60},
+	{3891,70},
+	{3960,80},
+	{4044,90},
+	{4183,100},
 };
 
 /* Precise Tunning */
@@ -90,17 +90,17 @@ VBAT_TO_PERCENT Batt_VoltToPercent_Table[] = {
 #define V_CHARGER_ENABLE 0				// 1:ON , 0:OFF
 
 /* Teperature related setting */
-#define RBAT_PULL_UP_R             24000 //39000
-#define RBAT_PULL_UP_VOLT          2800  //1800
-#define TBAT_OVER_CRITICAL_LOW     67790
+#define RBAT_PULL_UP_R             39000
+#define RBAT_PULL_UP_VOLT          1800
+#define TBAT_OVER_CRITICAL_LOW     68237
 #define BAT_TEMP_PROTECT_ENABLE    1
 #define BAT_NTC_10 1
 #define BAT_NTC_47 0
 //#define BAT_NTC_CG103JF103F
 
 /* Battery Notify */
-#define BATTERY_NOTIFY_CASE_0001
-#define BATTERY_NOTIFY_CASE_0002
+//#define BATTERY_NOTIFY_CASE_0001
+//#define BATTERY_NOTIFY_CASE_0002
 //#define BATTERY_NOTIFY_CASE_0003
 //#define BATTERY_NOTIFY_CASE_0004
 //#define BATTERY_NOTIFY_CASE_0005

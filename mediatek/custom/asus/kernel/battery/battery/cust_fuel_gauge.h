@@ -15,7 +15,7 @@
 #define CUST_TRACKING_POINT  1
 #define AGING_TUNING_VALUE   103
 
-#define OCV_BOARD_COMPESATE	0 //mV 
+#define OCV_BOARD_COMPESATE	72 //mV 
 #define R_FG_BOARD_BASE		1000
 #define R_FG_BOARD_SLOPE	1000 //slope
 
@@ -31,8 +31,8 @@
 #define Q_MAX_NEG_10_H_CURRENT	1788
 
 /* Hardware Fuel gauge  */
-#define R_FG_VALUE 				10 // mOhm, base is 20
-#define CURRENT_DETECT_R_FG	    10 //1mA
+#define R_FG_VALUE 				20 // mOhm, base is 20
+#define CURRENT_DETECT_R_FG	    100 //1mA
 
 #define OSR_SELECT_7			0
 
