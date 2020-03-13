@@ -58,7 +58,7 @@ struct logger_entry {
 #ifdef CONFIG_SMP
 /* mingjian, 20101208: define buffer size based on different products {*/
 #ifndef __MAIN_BUF_SIZE
-#define __MAIN_BUF_SIZE 256*1024
+#define __MAIN_BUF_SIZE 32*1024
 #endif
 
 #ifndef __EVENTS_BUF_SIZE
@@ -75,19 +75,19 @@ struct logger_entry {
 #else
 /* mingjian, 20101208: define buffer size based on different products {*/
 #ifndef __MAIN_BUF_SIZE
-#define __MAIN_BUF_SIZE 256*1024
+#define __MAIN_BUF_SIZE 32*1024
 #endif
 
 #ifndef __EVENTS_BUF_SIZE
-#define __EVENTS_BUF_SIZE 256*1024 
+#define __EVENTS_BUF_SIZE 32*1024 
 #endif
 
 #ifndef __RADIO_BUF_SIZE
-#define __RADIO_BUF_SIZE 64*1024
+#define __RADIO_BUF_SIZE 32*1024
 #endif
 
 #ifndef __SYSTEM_BUF_SIZE
-#define __SYSTEM_BUF_SIZE 64*1024
+#define __SYSTEM_BUF_SIZE 32*1024
 #endif
 #endif
 #define LOGGER_LOG_RADIO	"log_radio"	/* radio-related messages */
