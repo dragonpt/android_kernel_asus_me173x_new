@@ -34,6 +34,8 @@
 
 #define LCM_ID_NT35521 (0x80)
 
+#define LCM_DSI_CMD_MODE									0
+
 #define GPIO_LCD_PANEL_RESETINNO    GPIO142 //reset
 // ---------------------------------------------------------------------------
 //  Local Variables
@@ -866,7 +868,11 @@ static void lcm_get_params(LCM_PARAMS *params)
     params->width  					= FRAME_WIDTH;
     params->height 					= FRAME_HEIGHT;
 
+    #if (LCM_DSI_CMD_MODE)
+	params->dsi.mode   = CMD_MODE;
+    #else
     params->dsi.mode   = BURST_VDO_MODE;
+    #endif
 
     // DSI
     /* Command mode setting */

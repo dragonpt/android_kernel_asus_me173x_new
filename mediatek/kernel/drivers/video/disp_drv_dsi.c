@@ -246,7 +246,7 @@ void init_dsi(BOOL isDsiPoweredOn)
 {
     DSI_CHECK_RET(DSI_Init(isDsiPoweredOn));
 
-	if(0 < lcm_params->dsi.compatibility_for_nvk){
+	if(1 < lcm_params->dsi.compatibility_for_nvk){
     	DSI_CHECK_RET(DSI_TXRX_Control(TRUE,                    //cksm_en
                                    TRUE,                    //ecc_en
                                    lcm_params->dsi.LANE_NUM, //ecc_en
@@ -300,7 +300,7 @@ void init_dsi(BOOL isDsiPoweredOn)
 	{
 		DSI_Set_VM_CMD(lcm_params);
 		DSI_Config_VDO_Timing(lcm_params);
-		if(0 < lcm_params->dsi.compatibility_for_nvk)
+		if(1 < lcm_params->dsi.compatibility_for_nvk)
 			DSI_Config_VDO_FRM_Mode();
 #ifndef MT65XX_NEW_DISP
         DSI_CHECK_RET(DSI_PS_Control(lcm_params->dsi.PS, lcm_params->width * dsiTmpBufBpp));
