@@ -1210,27 +1210,6 @@ static long disp_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned lo
     DISP_DBG("cmd=0x%x, arg=0x%x \n", cmd, (unsigned int)arg);
     switch(cmd)
     {   
-        case DISP_IOCTL_WRITE_REG:
-            
-            if(copy_from_user(&wParams, (void *)arg, sizeof(DISP_WRITE_REG )))
-            {
-                DISP_ERR("DISP_IOCTL_WRITE_REG, copy_from_user failed\n");
-                return -EFAULT;
-            }
-
-            DISP_DBG("write  0x%x = 0x%x (0x%x)\n", wParams.reg, wParams.val, wParams.mask);
-            if(wParams.reg>DISPSYS_REG_ADDR_MAX || wParams.reg<DISPSYS_REG_ADDR_MIN)
-            {
-                DISP_ERR("reg write, addr invalid, addr min=0x%x, max=0x%x, addr=0x%x \n", 
-                    DISPSYS_REG_ADDR_MIN, 
-                    DISPSYS_REG_ADDR_MAX, 
-                    wParams.reg);
-                return -EFAULT;
-            }
-            
-            *(volatile unsigned int*)wParams.reg = (*(volatile unsigned int*)wParams.reg & ~wParams.mask) | (wParams.val & wParams.mask);
-            //mt65xx_reg_sync_writel(wParams.reg, value);
-            break;
             
         case DISP_IOCTL_READ_REG:
             if(copy_from_user(&rParams, (void *)arg, sizeof(DISP_READ_REG)))
