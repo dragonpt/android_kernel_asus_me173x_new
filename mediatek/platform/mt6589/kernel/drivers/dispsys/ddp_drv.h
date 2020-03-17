@@ -351,7 +351,6 @@ typedef struct {
 
 #define DISP_IOCTL_RUN_DPF         _IOW     (DISP_IOCTL_MAGIC, 30, int)
 #define DISP_IOCTL_CHECK_OVL       _IOR     (DISP_IOCTL_MAGIC, 31, int)
-#define DISP_IOCTL_GET_OVL         _IOWR    (DISP_IOCTL_MAGIC, 32, DISP_OVL_INFO)
 
 //Add for AAL control - S
 //0 : disable AAL event, 1 : enable AAL event
