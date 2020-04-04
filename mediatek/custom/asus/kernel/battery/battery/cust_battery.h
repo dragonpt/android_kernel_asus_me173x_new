@@ -39,8 +39,8 @@ typedef struct{
 #define CONFIG_USB_IF 						0   
 #define USB_CHARGER_CURRENT_SUSPEND			Cust_CC_0MA		// def CONFIG_USB_IF
 #define USB_CHARGER_CURRENT_UNCONFIGURED	Cust_CC_70MA	// def CONFIG_USB_IF
-#define USB_CHARGER_CURRENT_CONFIGURED		Cust_CC_450MA	// def CONFIG_USB_IF
-#define USB_CHARGER_CURRENT					Cust_CC_450MA
+#define USB_CHARGER_CURRENT_CONFIGURED		Cust_CC_650MA	// def CONFIG_USB_IF
+#define USB_CHARGER_CURRENT					Cust_CC_650MA
 #define AC_CHARGER_CURRENT					Cust_CC_1300MA
 /******************************************************************************
                                   superdragonpt
