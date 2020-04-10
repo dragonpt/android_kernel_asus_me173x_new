@@ -163,10 +163,10 @@ ssize_t GPS_read(struct file *filp, char __user *buf, size_t count, loff_t *f_po
         /* if we are signaled */
         if (val) {
             if (-ERESTARTSYS == val) {
-                GPS_INFO_FUNC("signaled by -ERESTARTSYS(%ld) \n ", val);
+                GPS_DBG_FUNC("signaled by -ERESTARTSYS(%ld) \n ", val);
             }
             else {
-                GPS_INFO_FUNC("signaled by %ld \n ", val);
+                GPS_DBG_FUNC("signaled by %ld \n ", val);
             }
             break;
         }
@@ -217,7 +217,7 @@ long GPS_unlocked_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
     switch(cmd)
     {
         case 0: // enable/disable STP
-            GPS_INFO_FUNC(KERN_INFO "GPS_ioctl(): disable STP control from GPS dev\n");
+            GPS_DBG_FUNC("GPS_ioctl(): disable STP control from GPS dev\n");
             retval = -EINVAL;
 #if 1
 #else
@@ -227,7 +227,7 @@ long GPS_unlocked_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
             break;
 
         case 1: // send raw data
-            GPS_INFO_FUNC(KERN_INFO "GPS_ioctl(): disable raw data from GPS dev \n");
+            GPS_DBG_FUNC("GPS_ioctl(): disable raw data from GPS dev\n");
             retval = -EINVAL;
             break;
 
@@ -235,7 +235,7 @@ long GPS_unlocked_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
             /*get combo hw version*/            
             hw_ver_sym = mtk_wcn_wmt_hwver_get();
 
-            GPS_INFO_FUNC(KERN_INFO "GPS_ioctl(): get hw version = %d, sizeof(hw_ver_sym) = %d\n", hw_ver_sym, sizeof(hw_ver_sym));
+            GPS_DBG_FUNC("GPS_ioctl(): get hw version = %d, sizeof(hw_ver_sym) = %zd\n", hw_ver_sym, sizeof(hw_ver_sym));
             if(copy_to_user((int __user *)arg, &hw_ver_sym, sizeof(hw_ver_sym))){
                retval = -EFAULT;
             }
@@ -263,20 +263,20 @@ static void gps_cdev_rst_cb(
     */
     ENUM_WMTRSTMSG_TYPE_T rst_msg;
 
-    GPS_INFO_FUNC("sizeof(ENUM_WMTRSTMSG_TYPE_T) = %d\n", sizeof(ENUM_WMTRSTMSG_TYPE_T));
+    GPS_DBG_FUNC("sizeof(ENUM_WMTRSTMSG_TYPE_T) = %d\n", sizeof(ENUM_WMTRSTMSG_TYPE_T));
     if(sz <= sizeof(ENUM_WMTRSTMSG_TYPE_T)){ 
         memcpy((char *)&rst_msg, (char *)buf, sz);
-        GPS_INFO_FUNC("src = %d, dst = %d, type = %d, buf = 0x%x sz = %d, max = %d\n", src, dst, type, rst_msg, sz, WMTRSTMSG_RESET_MAX);
+        GPS_DBG_FUNC("src = %d, dst = %d, type = %d, buf = 0x%x sz = %d, max = %d\n", src, dst, type, rst_msg, sz, WMTRSTMSG_RESET_MAX);
         if((src==WMTDRV_TYPE_WMT) && 
             (dst == WMTDRV_TYPE_GPS) &&
                 (type == WMTMSG_TYPE_RESET)){                
                     if(rst_msg == WMTRSTMSG_RESET_START){
-                        GPS_INFO_FUNC("gps restart start!\n");
+                        GPS_DBG_FUNC("gps restart start!\n");
 
                         /*reset_start message handling*/
                         
                     } else if(rst_msg == WMTRSTMSG_RESET_END){
-                        GPS_INFO_FUNC("gps restart end!\n");
+                        GPS_DBG_FUNC("gps restart end!\n");
 
                         /*reset_end message handling*/
                     }
@@ -302,7 +302,7 @@ static int GPS_open(struct inode *inode, struct file *file)
         return -ENODEV;
     } else {
         mtk_wcn_wmt_msgcb_reg(WMTDRV_TYPE_GPS, gps_cdev_rst_cb);
-        GPS_INFO_FUNC("WMT turn on GPS OK!\n");
+        GPS_DBG_FUNC("WMT turn on GPS OK!\n");
     }
 #endif
 
@@ -347,7 +347,7 @@ static int GPS_close(struct inode *inode, struct file *file)
         return -EIO;    //mostly, native programer does not care this return vlaue, but we still return error code.
     }
     else {       
-        GPS_INFO_FUNC("WMT turn off GPS OK!\n");
+        GPS_DBG_FUNC("WMT turn off GPS OK!\n");
     }
 
     return 0;
