@@ -368,7 +368,8 @@ mtk_cfg80211_set_default_key (
 
     /* not implemented */
 
-    return -EINVAL;
+	/*work around aosp defualt supplicant fail */
+	return WLAN_STATUS_SUCCESS;
 }
 
 
