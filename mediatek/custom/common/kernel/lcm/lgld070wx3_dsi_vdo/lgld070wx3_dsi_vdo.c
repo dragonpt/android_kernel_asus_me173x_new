@@ -111,6 +111,95 @@ static void init_lcm_registers(void)
 		/*data_array[0] = 0x10CC1500;
 		dsi_set_cmdq(data_array, 1, 1);*/ // superdragonpt: TODO Test user feedback: TOP right corner ESD lines.
 
+//superdragonpt: TODO mdelay here? (120)
+
+	data_array[0] =0x00010500;
+	dsi_set_cmdq(data_array, 1, 1);
+	MDELAY(20);
+
+	data_array[0] = 0x00053902;
+	data_array[1] = 0xA555AAFF;
+	data_array[2] = 0x00000080;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = (((FRAME_HEIGHT/2)&0xFF) << 16) | (((FRAME_HEIGHT/2)>>8) << 8) | 0x44;
+	dsi_set_cmdq(data_array, 2, 1);
+	MDELAY(20);
+
+	data_array[0] = 0x00351500;
+	dsi_set_cmdq(data_array, 1, 1);
+	MDELAY(20);
+
+	data_array[0]=0x703A1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x0000116F;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x000020F7;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x066F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0xA0F71500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x196F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x12F71500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x086F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x40FA1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x116F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x01F31500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00063902;
+	data_array[1] = 0x52AA55F0;
+	data_array[2] = 0x00000008;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x000168B1;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x08B61500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x026F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x08B81500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x005454BB;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x000505BC;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x01C71500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00063902;
+	data_array[1] = 0x0CB002BD;
+	data_array[2] = 0x0000000A;
+	dsi_set_cmdq(data_array, 3, 1);
+
 
 
 // ---------------------------------------------------------------------------
