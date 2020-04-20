@@ -811,7 +811,7 @@ static void lcm_init_power(void)
 	SET_RESET_PIN(1);
 	SET_RESET_PIN(0);
 	MDELAY(1);
-	SET_RESET_PIN(1);
+	SET_RESET_PIN(1); //superdragonpt: check if this is needed for LG
 	MDELAY(115);
 }
 
@@ -819,9 +819,9 @@ static void lcm_init(void)
 {
 
 #ifndef BUILD_LK
-    printk("[LCM] superdragonpt NT35521 lcm init() enter\n");
+    printk("[LCM] superdragonpt LG lcm init() enter\n");
 #else
-	init_lcm_registers();
+	init_lcm_registers(); //loop
 #endif
 
 }
@@ -832,11 +832,8 @@ static void lcm_suspend_power(void)
 	printk("[DDP] %s\n", __func__);
 #endif
 
-		MDELAY(105);
-		MDELAY(1);
-
 		lcd_power_en(0);
-		MDELAY(1);
+		MDELAY(1005);
 }
 
 
@@ -846,13 +843,17 @@ static void lcm_suspend(void)
 #ifndef BUILD_LK
 	printk("[DDP] %s\n", __func__);
 #endif
+
+		/*lcd_backlight_en(0);
+		MDELAY(1);*/ // superdragonpt: User feedback: NOT used on LG
+
 		/* set display off */
-		data_array[0] = 0x00280500;
+		data_array[0]=0x00280500;
 		dsi_set_cmdq(data_array, 1, 1);
-		MDELAY(10);
+		MDELAY(1);
 
 		/* enter sleep mode */
-		data_array[0] = 0x00100500;
+		data_array[0] = 0x00111500;
 		dsi_set_cmdq(data_array, 1, 1);
 	}
 
