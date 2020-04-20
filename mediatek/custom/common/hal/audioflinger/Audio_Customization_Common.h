@@ -41,8 +41,8 @@
 /****************************************************
 * Define Volume Range of  sound & Voice.
 *****************************************************/
-#define DEVICE_MAX_VOLUME           (12)
-#define DEVICE_VOICE_MAX_VOLUME     (12)
+#define DEVICE_MAX_VOLUME           (15)
+#define DEVICE_VOICE_MAX_VOLUME     (15)
 #define DEVICE_MIN_VOLUME           (-4)
 #define DEVICE_VOICE_MIN_VOLUME     (-4)
 #define DEVICE_VOLUME_RANGE     (64)
