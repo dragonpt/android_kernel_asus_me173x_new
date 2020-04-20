@@ -795,7 +795,11 @@ static void lcm_get_params(LCM_PARAMS *params)
 		// Bit rate calculation
 		params->dsi.pll_select=1;
 		//1 Every lane speed
-		params->dsi.PLL_CLOCK = LCM_DSI_6589_PLL_CLOCK_240_5; //LCM_DSI_6589_PLL_CLOCK_208;
+        //Bit rate extra params
+		params->dsi.PLL_CLOCK = LCM_DSI_6589_PLL_CLOCK_208;
+		params->dsi.CLK_ZERO = 47;
+		params->dsi.HS_ZERO = 36;
+
     params->dsi.compatibility_for_nvk 	= 2;
 
 }
