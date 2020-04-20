@@ -863,9 +863,13 @@ static void lcm_resume_power(void)
 #ifndef BUILD_LK
 	printk("[DDP] %s\n", __func__);
 #endif
-		MDELAY(8);
 		lcd_power_en(1);
 		MDELAY(1);
+		SET_RESET_PIN(1);
+		SET_RESET_PIN(0);
+		MDELAY(1);
+		SET_RESET_PIN(1);
+		MDELAY(115); //superdragonpt: TODO maybe too much?
 	}
 
 static void lcm_resume(void)
@@ -876,18 +880,9 @@ static void lcm_resume(void)
 	printk("[DDP] %s\n", __func__);
 #endif
 
-		/* exit sleep mode */
-		data_array[0] = 0x00110500;
-		dsi_set_cmdq(data_array, 1, 1);
-		MDELAY(10);
-
-		/* set display on */
-		data_array[0] = 0x00290500;
-		dsi_set_cmdq(data_array, 1, 1);
-		MDELAY(50);
-
 		init_lcm_registers();
-		MDELAY(8);
+
+		//MDELAY(8); //superdragonpt: TODO should not be needed, avoid delay
 
 }
 
