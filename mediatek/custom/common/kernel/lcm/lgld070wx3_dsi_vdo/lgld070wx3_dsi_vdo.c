@@ -97,300 +97,16 @@ static void init_lcm_registers(void)
 	printk("[DDP] %s\n", __func__);
 #endif
 
-		data_array[0] = 0x0BAE1500;
-		dsi_set_cmdq(data_array, 1, 1);
-		data_array[0] = 0xEAEE1500;
-		dsi_set_cmdq(data_array, 1, 1);
-		data_array[0] = 0x5FEF1500;
-		dsi_set_cmdq(data_array, 1, 1);
-		data_array[0] = 0x68F21500;
-		dsi_set_cmdq(data_array, 1, 1);
-		data_array[0] = 0x03A71500;
-		dsi_set_cmdq(data_array, 1, 1);
-
-		/*data_array[0] = 0x10CC1500;
-		dsi_set_cmdq(data_array, 1, 1);*/ // superdragonpt: TODO Test user feedback: TOP right corner ESD lines.
-
-//superdragonpt: TODO mdelay here? (120)
-
-	data_array[0] =0x00010500;
+	data_array[0] = 0x0BAE1500;
 	dsi_set_cmdq(data_array, 1, 1);
-	MDELAY(20);
-
-	data_array[0] = 0x00053902;
-	data_array[1] = 0xA555AAFF;
-	data_array[2] = 0x00000080;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = (((FRAME_HEIGHT/2)&0xFF) << 16) | (((FRAME_HEIGHT/2)>>8) << 8) | 0x44;
-	dsi_set_cmdq(data_array, 2, 1);
-	MDELAY(20);
-
-	data_array[0] = 0x00351500;
+	data_array[0] = 0xEAEE1500;
 	dsi_set_cmdq(data_array, 1, 1);
-	MDELAY(20);
-
-	data_array[0]=0x703A1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x0000116F;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x000020F7;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x066F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0xA0F71500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x196F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x12F71500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x086F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x40FA1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x116F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x01F31500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00063902;
-	data_array[1] = 0x52AA55F0;
-	data_array[2] = 0x00000008;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x000168B1;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x08B61500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x026F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x08B81500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x005454BB;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x000505BC;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x01C71500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00063902;
-	data_array[1] = 0x0CB002BD;
-	data_array[2] = 0x0000000A;
-	dsi_set_cmdq(data_array, 3, 1);
-
-//superdragonpt: GAMMA / relative
-	data_array[0] = 0x00063902;
-	data_array[1] = 0x52AA55F0;
-	data_array[2] = 0x00000108;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x000505B0;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x000505B1;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x00013ABC;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x00013EBD;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x00CA1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x04C01500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x80BE1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x002828B3;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x001212B4;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x003434B9;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x00033902;
-	data_array[1] = 0x001414BA;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x00063902;
-	data_array[1] = 0x52AA55F0;
-	data_array[2] = 0x00000208;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x02EE1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00053902;
-	data_array[1] = 0x150609EF;
-	data_array[2] = 0x00000018;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x00073902;
-	data_array[1] = 0x000000B0;
-	data_array[2] = 0x00170008;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x066F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00073902;
-	data_array[1] = 0x002500B0;
-	data_array[2] = 0x00450030;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x0C6F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00053902;
-	data_array[1] = 0x005600B0;
-	data_array[2] = 0x0000007A;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x00073902;
-	data_array[1] = 0x00A300B1;
-	data_array[2] = 0x002001E7;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x066F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00073902;
-	data_array[1] = 0x017A01B1;
-	data_array[2] = 0x00C501C2;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x0C6F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00053902;
-	data_array[1] = 0x020602B1;
-	data_array[2] = 0x0000005F;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x00073902;
-	data_array[1] = 0x029202B2;
-	data_array[2] = 0x00FC02D0;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x066F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00073902;
-	data_array[1] = 0x033503B2;
-	data_array[2] = 0x008B035D;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x0C6F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00053902;
-	data_array[1] = 0x03A203B2;
-	data_array[2] = 0x000000BF;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x00053902;
-	data_array[1] = 0x03E803B3;
-	data_array[2] = 0x000000FF;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x00073902;
-	data_array[1] = 0x000000BC;
-	data_array[2] = 0x00180008;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x066F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00073902;
-	data_array[1] = 0x002700BC;
-	data_array[2] = 0x00490032;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x0C6F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00053902;
-	data_array[1] = 0x005C00BC;
-	data_array[2] = 0x00000083;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x00073902;
-	data_array[1] = 0x00AF00BD;
-	data_array[2] = 0x002A01F3;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x066F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00073902;
-	data_array[1] = 0x018401BD;
-	data_array[2] = 0x00CD01CA;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x0C6F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00053902;
-	data_array[1] = 0x020E02BD;
-	data_array[2] = 0x00000065;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x00073902;
-	data_array[1] = 0x029802BE;
-	data_array[2] = 0x000003D4;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x066F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00073902;
-	data_array[1] = 0x033703BE;
-	data_array[2] = 0x008D035F;
-	dsi_set_cmdq(data_array, 3, 1);
-
-	data_array[0] = 0x0C6F1500;
-	dsi_set_cmdq(&data_array,1,1);
-
-	//data_array[0] = 0x00053902; //superdragonpt: TODO user feedback: colors too bright
-	data_array[0] = 0x00053902;
-	data_array[1] = 0x03A403BE;
-	data_array[2] = 0x000000BF;
-	dsi_set_cmdq(data_array, 3, 1);
+	data_array[0] = 0x5FEF1500;
+	dsi_set_cmdq(data_array, 1, 1);
+	data_array[0] = 0x68F21500;
+	dsi_set_cmdq(data_array, 1, 1);
+	data_array[0] = 0x03A71500;
+	dsi_set_cmdq(data_array, 1, 1);
 
 	data_array[0] = 0x00053902;
 	data_array[1] = 0x03E803BF;
@@ -718,27 +434,6 @@ static void init_lcm_registers(void)
 
 	data_array[0] = 0x33ED1500;
 	dsi_set_cmdq(&data_array,1,1);
-
-	data_array[0] = 0x00110500;
-	dsi_set_cmdq(data_array, 1, 1);
-	MDELAY(20);
-	data_array[0] =0x00290500;
-	dsi_set_cmdq(data_array, 1, 1);
-
-	data_array[0] = 0x00130500;
-	dsi_set_cmdq(data_array, 1, 1);
-
-	data_array[0] = 0x00023902;
-	data_array[1] = 0x00000051;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x00023902;
-	data_array[1] = 0x00002453;
-	dsi_set_cmdq(data_array, 2, 1);
-
-	data_array[0] = 0x00023902;
-	data_array[1] = 0x0000FF51;
-	dsi_set_cmdq(data_array, 2, 1);
 	}
 
 
@@ -811,7 +506,7 @@ static void lcm_init_power(void)
 	SET_RESET_PIN(1);
 	SET_RESET_PIN(0);
 	MDELAY(1);
-	SET_RESET_PIN(1); //superdragonpt: check if this is needed for LG
+	SET_RESET_PIN(1);
 	MDELAY(115);
 }
 
@@ -844,9 +539,6 @@ static void lcm_suspend(void)
 	printk("[DDP] %s\n", __func__);
 #endif
 
-		/*lcd_backlight_en(0);
-		MDELAY(1);*/ // superdragonpt: User feedback: NOT used on LG
-
 		/* set display off */
 		data_array[0]=0x00280500;
 		dsi_set_cmdq(data_array, 1, 1);
@@ -869,7 +561,7 @@ static void lcm_resume_power(void)
 		SET_RESET_PIN(0);
 		MDELAY(1);
 		SET_RESET_PIN(1);
-		MDELAY(115); //superdragonpt: TODO maybe too much?
+		MDELAY(115);
 	}
 
 static void lcm_resume(void)
@@ -881,8 +573,6 @@ static void lcm_resume(void)
 #endif
 
 		init_lcm_registers();
-
-		//MDELAY(8); //superdragonpt: TODO should not be needed, avoid delay
 
 }
 
