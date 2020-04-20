@@ -780,7 +780,7 @@ static void lcm_get_params(LCM_PARAMS *params)
    //video mode timing
 
     params->dsi.PS						= LCM_PACKED_PS_24BIT_RGB888;
-    //params->dsi.word_count = 720*3;	
+    params->dsi.word_count = 720*3;	
 	params->dsi.packet_size=256;
     params->dsi.vertical_sync_active	= 2;
     params->dsi.vertical_backporch		= 12;
