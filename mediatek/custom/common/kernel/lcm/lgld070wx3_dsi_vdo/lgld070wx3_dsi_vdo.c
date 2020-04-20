@@ -782,9 +782,9 @@ static void lcm_get_params(LCM_PARAMS *params)
     params->dsi.PS						= LCM_PACKED_PS_24BIT_RGB888;
     params->dsi.word_count = 720*3;	
 	params->dsi.packet_size=256;
-    params->dsi.vertical_sync_active	= 2;
-    params->dsi.vertical_backporch		= 12;
-    params->dsi.vertical_frontporch		= 10;
+    params->dsi.vertical_sync_active	= 1;
+    params->dsi.vertical_backporch		= 3;
+    params->dsi.vertical_frontporch		= 3;
     params->dsi.vertical_active_line		= FRAME_HEIGHT;
 
     params->dsi.horizontal_sync_active	= 2;
