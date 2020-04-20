@@ -200,6 +200,196 @@ static void init_lcm_registers(void)
 	data_array[2] = 0x0000000A;
 	dsi_set_cmdq(data_array, 3, 1);
 
+//superdragonpt: GAMMA / relative
+	data_array[0] = 0x00063902;
+	data_array[1] = 0x52AA55F0;
+	data_array[2] = 0x00000108;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x000505B0;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x000505B1;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x00013ABC;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x00013EBD;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x00CA1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x04C01500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x80BE1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x002828B3;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x001212B4;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x003434B9;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x00033902;
+	data_array[1] = 0x001414BA;
+	dsi_set_cmdq(data_array, 2, 1);
+
+	data_array[0] = 0x00063902;
+	data_array[1] = 0x52AA55F0;
+	data_array[2] = 0x00000208;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x02EE1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00053902;
+	data_array[1] = 0x150609EF;
+	data_array[2] = 0x00000018;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x00073902;
+	data_array[1] = 0x000000B0;
+	data_array[2] = 0x00170008;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x066F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00073902;
+	data_array[1] = 0x002500B0;
+	data_array[2] = 0x00450030;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x0C6F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00053902;
+	data_array[1] = 0x005600B0;
+	data_array[2] = 0x0000007A;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x00073902;
+	data_array[1] = 0x00A300B1;
+	data_array[2] = 0x002001E7;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x066F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00073902;
+	data_array[1] = 0x017A01B1;
+	data_array[2] = 0x00C501C2;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x0C6F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00053902;
+	data_array[1] = 0x020602B1;
+	data_array[2] = 0x0000005F;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x00073902;
+	data_array[1] = 0x029202B2;
+	data_array[2] = 0x00FC02D0;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x066F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00073902;
+	data_array[1] = 0x033503B2;
+	data_array[2] = 0x008B035D;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x0C6F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00053902;
+	data_array[1] = 0x03A203B2;
+	data_array[2] = 0x000000BF;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x00053902;
+	data_array[1] = 0x03E803B3;
+	data_array[2] = 0x000000FF;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x00073902;
+	data_array[1] = 0x000000BC;
+	data_array[2] = 0x00180008;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x066F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00073902;
+	data_array[1] = 0x002700BC;
+	data_array[2] = 0x00490032;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x0C6F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00053902;
+	data_array[1] = 0x005C00BC;
+	data_array[2] = 0x00000083;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x00073902;
+	data_array[1] = 0x00AF00BD;
+	data_array[2] = 0x002A01F3;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x066F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00073902;
+	data_array[1] = 0x018401BD;
+	data_array[2] = 0x00CD01CA;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x0C6F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00053902;
+	data_array[1] = 0x020E02BD;
+	data_array[2] = 0x00000065;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x00073902;
+	data_array[1] = 0x029802BE;
+	data_array[2] = 0x000003D4;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x066F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	data_array[0] = 0x00073902;
+	data_array[1] = 0x033703BE;
+	data_array[2] = 0x008D035F;
+	dsi_set_cmdq(data_array, 3, 1);
+
+	data_array[0] = 0x0C6F1500;
+	dsi_set_cmdq(&data_array,1,1);
+
+	//data_array[0] = 0x00053902; //superdragonpt: TODO user feedback: colors too bright, then fade quickly
+
+
+
 
 
 // ---------------------------------------------------------------------------
