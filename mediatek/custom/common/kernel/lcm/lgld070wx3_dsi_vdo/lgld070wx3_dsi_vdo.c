@@ -32,7 +32,7 @@
 #define FRAME_WIDTH  (800)
 #define FRAME_HEIGHT (1280)
 
-#define LCM_ID_NT35521 (0x80)
+#define LCM_ID_NT35590 (0x90)
 
 #define LCM_DSI_CMD_MODE									0
 
