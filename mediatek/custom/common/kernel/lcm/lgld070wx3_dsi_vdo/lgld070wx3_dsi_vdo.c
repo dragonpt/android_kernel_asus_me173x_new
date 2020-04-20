@@ -36,7 +36,6 @@
 
 #define LCM_DSI_CMD_MODE									0
 
-#define GPIO_LCD_PANEL_RESETINNO    GPIO142 //reset
 // ---------------------------------------------------------------------------
 //  Local Variables
 // ---------------------------------------------------------------------------
@@ -939,9 +938,6 @@ static void lcm_suspend_power(void)
 #endif
 
 		MDELAY(105);
-		mt_set_gpio_mode(GPIO_LCD_PANEL_RESETINNO, GPIO_MODE_00);
-		mt_set_gpio_dir(GPIO_LCD_PANEL_RESETINNO, GPIO_DIR_OUT);
-		mt_set_gpio_out(GPIO_LCD_PANEL_RESETINNO, GPIO_OUT_ZERO);
 		MDELAY(1);
 
 		lcd_power_en(0);
@@ -994,20 +990,6 @@ static void lcm_resume(void)
 		dsi_set_cmdq(data_array, 1, 1);
 		MDELAY(50);
 
-		mt_set_gpio_mode(GPIO_LCD_PANEL_RESETINNO, GPIO_MODE_00);
-		mt_set_gpio_dir(GPIO_LCD_PANEL_RESETINNO, GPIO_DIR_OUT);
-		mt_set_gpio_out(GPIO_LCD_PANEL_RESETINNO, GPIO_OUT_ONE);
-
-		mt_set_gpio_mode(GPIO_LCD_PANEL_RESETINNO, GPIO_MODE_00);
-		mt_set_gpio_dir(GPIO_LCD_PANEL_RESETINNO, GPIO_DIR_OUT);
-		mt_set_gpio_out(GPIO_LCD_PANEL_RESETINNO, GPIO_OUT_ZERO);
-		MDELAY(10);
-
-		mt_set_gpio_mode(GPIO_LCD_PANEL_RESETINNO, GPIO_MODE_00);
-		mt_set_gpio_dir(GPIO_LCD_PANEL_RESETINNO, GPIO_DIR_OUT);
-		mt_set_gpio_out(GPIO_LCD_PANEL_RESETINNO, GPIO_OUT_ONE);
-		MDELAY(120);
-
 		init_lcm_registers();
 		MDELAY(8);
 
@@ -1027,5 +1009,4 @@ LCM_DRIVER lgld070wx3_dsi_vdo_lcm_drv=
 	.suspend_power	= lcm_suspend_power,
 	.resume_power	= lcm_resume_power,
 	.init_power		= lcm_init_power,
-	//.compare_id		= lcm_compare_id,
 };
