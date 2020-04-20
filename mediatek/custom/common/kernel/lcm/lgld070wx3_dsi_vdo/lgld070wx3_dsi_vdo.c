@@ -787,9 +787,9 @@ static void lcm_get_params(LCM_PARAMS *params)
     params->dsi.vertical_frontporch		= 3;
     params->dsi.vertical_active_line		= FRAME_HEIGHT;
 
-    params->dsi.horizontal_sync_active	= 2;
-    params->dsi.horizontal_backporch	= 40;
-    params->dsi.horizontal_frontporch	= 40;
+    params->dsi.horizontal_sync_active	= 1;
+    params->dsi.horizontal_backporch	= 57;
+    params->dsi.horizontal_frontporch	= 32; //or 33
     params->dsi.horizontal_active_pixel	= FRAME_WIDTH;
 
 		// Bit rate calculation
