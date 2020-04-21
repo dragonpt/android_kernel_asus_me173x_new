@@ -1,7 +1,7 @@
 /*
  *
  * Automatically generated file; DO NOT EDIT.
- * Linux/arm 3.4.20 Kernel Configuration
+ * Linux/arm 3.4.25 Kernel Configuration
  *
  */
 #define CONFIG_IP6_NF_SECURITY 1
