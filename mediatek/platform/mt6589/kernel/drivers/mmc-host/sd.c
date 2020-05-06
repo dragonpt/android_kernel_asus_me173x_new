@@ -1382,7 +1382,11 @@ static void msdc_sd_power(struct msdc_host *host,u32 on)
 			msdc_set_enio18(host,0);
 			msdc_ldo_power(on, MT65XX_POWER_LDO_VMC1, VOL_3300, &g_msdc1_io);
 			msdc_set_enio18(host,0);
+#if 0 //superdragonpt: For power saving
 			msdc_ldo_power(on, MT65XX_POWER_LDO_VMCH1, VOL_3300, &g_msdc1_flash);
+#endif
+            msdc_ldo_power(1, MT65XX_POWER_LDO_VMCH1, VOL_3300, &g_msdc1_flash);
+//superdragonpt: For power saving, END
 			break;
 		case 2:
 			msdc_set_smt(host,1);

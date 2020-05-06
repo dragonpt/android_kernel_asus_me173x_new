@@ -2136,8 +2136,16 @@ void pmic_ldo_enable(MT65XX_POWER powerId, kal_bool powerEnable)
 
     if(     powerId == MT65XX_POWER_LDO_VIO28)      { dct_pmic_VIO28_enable(powerEnable); }
     else if(powerId == MT65XX_POWER_LDO_VUSB)       { dct_pmic_VUSB_enable(powerEnable); }
+#if 0 //superdragonpt: For power saving
     else if(powerId == MT65XX_POWER_LDO_VMC1)        { dct_pmic_VMC1_enable(powerEnable); }
     else if(powerId == MT65XX_POWER_LDO_VMCH1)        { dct_pmic_VMCH1_enable(powerEnable); }
+#endif
+    else if(powerId == MT65XX_POWER_LDO_VMC1)	    { dct_pmic_VMC1_enable(powerEnable); }
+    else if( (powerId == MT65XX_POWER_LDO_VMCH1) && (powerEnable==1) )
+    {
+	dct_pmic_VMCH1_enable(powerEnable);
+    }
+//superdragonpt: For power saving, END
     else if(powerId == MT65XX_POWER_LDO_VEMC_3V3)    { dct_pmic_VEMC_3V3_enable(powerEnable); }
     else if(powerId == MT65XX_POWER_LDO_VEMC_1V8)    { dct_pmic_VEMC_1V8_enable(powerEnable); }
     else if(powerId == MT65XX_POWER_LDO_VGP1)        { dct_pmic_VGP1_enable(powerEnable); }
