@@ -67,7 +67,7 @@
 #include "dbg.h"
 
 #include <linux/proc_fs.h>
-#include "../../../../../drivers/mmc/card/queue.h"
+#include "../../../../../../drivers/mmc/card/queue.h"
 #include "partition_define.h"
 #include <mach/emi_mpu.h>
 #include <mach/memory.h>
@@ -5429,6 +5429,7 @@ static void msdc_ops_request_legacy(struct mmc_host *mmc, struct mmc_request *mr
     if (mrq->cmd->opcode == 53 && host->sdio_error == -EIO){    // sdio error bypass
         if((sdio_error_count++)%SDIO_ERROR_OUT_INTERVAL == 0){  
             if(host->sdio_error_rec.cmd.opcode == 53){
+#if 0 //superdragonpt: work-around emmc issue
                 spin_lock(&host->lock);
                 struct mmc_command err_cmd = host->sdio_error_rec.cmd;
                 struct mmc_data err_data = host->sdio_error_rec.data;
@@ -5440,6 +5441,18 @@ static void msdc_ops_request_legacy(struct mmc_host *mmc, struct mmc_request *mr
        }
        goto sdio_error_out;    
     }
+#endif
+                cmd = &host->sdio_error_rec.cmd;        
+                data = &host->sdio_error_rec.data;
+                if(!data->error)
+                    data = NULL;
+                if (data) stop = &host->sdio_error_rec.stop;
+                    msdc_dump_trans_error(host, cmd, data, stop); 
+                goto sdio_error_out;    
+            }
+       }
+    }
+//superdragonpt: work-around emmc issue, END
 #endif
         
     /* start to process */
