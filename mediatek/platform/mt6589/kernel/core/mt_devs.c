@@ -1460,6 +1460,8 @@ static struct platform_device actuator_dev = {
 	.id		  = -1,
 };
 
+#if 0 //superdragonpt this is for stock BQ src
+
 static struct platform_device actuator_dev0 = {
 	.name		  = "lens_actuator0",
 	.id		  = -1,
@@ -1489,6 +1491,7 @@ static struct platform_device actuator_dev5 = {
 	.name		  = "lens_actuator5",
 	.id		  = -1,
 };
+#endif
 
 
 /*=======================================================================*/
@@ -1521,6 +1524,7 @@ static struct platform_device mtk_nfc_6605_dev = {
     .id     = -1,
 };
 
+#if 0 //superdragonpt this is for i2c of original BQ source
 static struct i2c_board_info __initdata i2c_devs_af[]={
 		//{ I2C_BOARD_INFO("kd_camera_hw", 0xfe>>1), },
 //		{ I2C_BOARD_INFO("FM50AF", 0x18), },
@@ -1546,6 +1550,7 @@ static struct i2c_board_info __initdata i2c_devs_af[]={
 //		{ I2C_BOARD_INFO("EEPROM_S24CS64A", 0xAA>>1),},
 //		{ I2C_BOARD_INFO("MATV_I2C", 0x41), },	
 };
+#endif
 
 /*=======================================================================*/
 /* Sim switch driver                                                         */
@@ -1642,7 +1647,9 @@ __init int mt6589_board_init(void)
 
 #if defined(CONFIG_MTK_I2C)
 	//i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
+#if 0 //superdragonpt this is for stock BQ src
 	i2c_register_board_info(1, i2c_devs_af, ARRAY_SIZE(i2c_devs_af));
+#endif
 	//i2c_register_board_info(2, i2c_devs2, ARRAY_SIZE(i2c_devs2));
 		for (i = 0; i < ARRAY_SIZE(mt_device_i2c); i++){
 			retval = platform_device_register(&mt_device_i2c[i]);
@@ -2029,6 +2036,8 @@ retval = platform_device_register(&dummychar_device);
         return retval;
     }
 
+#if 0 //superdragonpt this is for stock BQ src
+
     retval = platform_device_register(&actuator_dev0);
     if (retval != 0){
         return retval;
@@ -2058,7 +2067,8 @@ retval = platform_device_register(&dummychar_device);
 	if (retval != 0){
 		return retval;
 	}
-	
+#endif
+
 #endif
 //
 //=======================================================================
