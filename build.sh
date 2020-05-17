@@ -194,7 +194,6 @@ for file in $(find ./ -name *.ko); do
 done
 
 echo "**** Patching all built modules (.ko) in /build_result/modules/ ****"
-cd ..
 find ./build_result/modules/ -type f -name '*.ko' | xargs -n 1 $TOOLCHAIN/arm-eabi-strip --strip-unneeded
 echo "**** Finnish ****"
 
