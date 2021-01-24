@@ -37,6 +37,7 @@
 #define LCM_DSI_CMD_MODE									0
 
 #define GPIO_LCD_PANEL_RESETINNO    GPIO142 //reset
+#define GPIO_LCD_PANEL_BKLTEN       GPIO177 //Backlight Enable
 // ---------------------------------------------------------------------------
 //  Local Variables
 // ---------------------------------------------------------------------------
@@ -88,6 +89,19 @@ static void lcd_power_en(unsigned char enabled)
 		upmu_set_rg_vgp6_vosel(0x0);
 
 		MDELAY(1);
+	}
+}
+
+static void lcd_backlight_en(unsigned char enabled)
+{
+	if (enabled) {
+		mt_set_gpio_mode(GPIO_LCD_PANEL_BKLTEN, GPIO_MODE_00);
+		mt_set_gpio_dir(GPIO_LCD_PANEL_BKLTEN, GPIO_DIR_OUT);
+		mt_set_gpio_out(GPIO_LCD_PANEL_BKLTEN, GPIO_OUT_ONE);
+	} else {
+		mt_set_gpio_mode(GPIO_LCD_PANEL_BKLTEN, GPIO_MODE_00);
+		mt_set_gpio_dir(GPIO_LCD_PANEL_BKLTEN, GPIO_DIR_OUT);
+		mt_set_gpio_out(GPIO_LCD_PANEL_BKLTEN, GPIO_OUT_ZERO);
 	}
 }
 
@@ -827,6 +841,10 @@ static void lcm_suspend(void)
 #ifndef BUILD_LK
 	printk("[DDP] %s\n", __func__);
 #endif
+
+		lcd_backlight_en(0);
+		MDELAY(1);
+
 		/* set display off */
 		data_array[0] = 0x00280500;
 		dsi_set_cmdq(data_array, 1, 1);
@@ -883,9 +901,9 @@ static void lcm_resume(void)
 		init_lcm_registers();
 		MDELAY(8);
 
+		lcd_backlight_en(1);
+
 }
-
-
 
 
 LCM_DRIVER nt35521_dsi_vdo_lcm_drv=
