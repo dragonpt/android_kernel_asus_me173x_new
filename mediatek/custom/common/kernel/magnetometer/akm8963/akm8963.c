@@ -48,9 +48,9 @@
 #include "akm8963.h"
 #include <linux/hwmsen_helper.h>
 
-
-
-
+/*superdragonpt: add for power ctrl*/
+#define GPIO_ASUS_MAG    GPIO138
+/*superdragonpt: add for power ctrl, END*/
 /*----------------------------------------------------------------------------*/
 #define DEBUG 0
 #define AKM8963_DEV_NAME         "akm8963"
@@ -1901,6 +1901,10 @@ static int __init akm8963_init(void)
 {
     	struct mag_hw *hw = get_cust_mag_hw();
 	printk("akm8963: i2c_number=%d\n",hw->i2c_num);
+/*superdragonpt: add for power ctrl*/
+		mdelay(10);
+		mt_set_gpio_out(GPIO_ASUS_MAG, GPIO_OUT_ONE);
+/*superdragonpt: add for power ctrl, END*/
 /*superdragonpt: add for function ecompass_status*/
 	// register cat /proc/ecompass_status
 	create_proc_read_entry("ecompass_status", 0, NULL, ecompass_status_read_proc, NULL);
