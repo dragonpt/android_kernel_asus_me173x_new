@@ -70,6 +70,10 @@ static int kxtj2_1009_i2c_probe(struct i2c_client *client, const struct i2c_devi
 static int kxtj2_1009_i2c_remove(struct i2c_client *client);
 static int kxtj2_1009_i2c_detect(struct i2c_client *client, int kind, struct i2c_board_info *info);
 
+/*superdragonpt: add from stock kernel*/
+static DEFINE_MUTEX(sensor_mutex);
+/*superdragonpt: add from stock kernel*/
+
 /*----------------------------------------------------------------------------*/
 typedef enum {
     ADX_TRC_FILTER  = 0x01,
@@ -115,11 +119,6 @@ struct kxtj2_1009_i2c_data {
     s8                      offset[KXTJ2_1009_AXES_NUM+1];  /*+1: for 4-byte alignment*/
     s16                     data[KXTJ2_1009_AXES_NUM+1];
 
-#if defined(CONFIG_KXTJ2_1009_LOWPASS)
-    atomic_t                firlen;
-    atomic_t                fir_en;
-    struct data_filter      fir;
-#endif 
     /*early suspend*/
 #if defined(CONFIG_HAS_EARLYSUSPEND)
     struct early_suspend    early_drv;
@@ -202,28 +201,47 @@ static int KXTJ2_1009_SetDataResolution(struct kxtj2_1009_i2c_data *obj)
 	int err;
 	u8  databuf[2], reso;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_lock(&sensor_mutex); //da funcao "kxtj2_1009_init_client_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	KXTJ2_1009_SetPowerMode(obj->client, false);
 
 	if(hwmsen_read_block(obj->client, KXTJ2_1009_REG_DATA_RESOLUTION, databuf, 0x01))
 	{
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_unlock(&sensor_mutex); //da funcao "kxtj2_1009_init_client_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		printk("kxtj2_1009 read Dataformat failt \n");
+		printk("SUPERDRAGONPT: kxtj2_1009 read Dataformat failt \n"); //LOG THIS MTFK
+
 		return KXTJ2_1009_ERR_I2C;
 	}
 
-	databuf[0] &= ~KXTJ2_1009_RANGE_DATA_RESOLUTION_MASK;
-	databuf[0] |= KXTJ2_1009_RANGE_DATA_RESOLUTION_MASK;//12bit
+	databuf[0] &= ~KXTJ2_1009_RANGE_DATA_RESOLUTION_MASK; 
+	databuf[0] |= KXTJ2_1009_RANGE_DATA_RESOLUTION_MASK;//12bit //superdragonpt reg 0x40
 	databuf[1] = databuf[0];
-	databuf[0] = KXTJ2_1009_REG_DATA_RESOLUTION;
+	databuf[0] = KXTJ2_1009_REG_DATA_RESOLUTION; //superdragonpt reg : 27 => 0x1B
 
 
 	err = i2c_master_send(obj->client, databuf, 0x2);
 
 	if(err <= 0)
 	{
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_unlock(&sensor_mutex); //da funcao "kxtj2_1009_init_client_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		return KXTJ2_1009_ERR_I2C;
 	}
 
 	KXTJ2_1009_SetPowerMode(obj->client, true);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_unlock(&sensor_mutex); //da funcao "kxtj2_1009_init_client_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      printk("SUPERDRAGONPT: CLIENT KXTJ2_1009_SetDataFormat! \n"); //LOGME MTFK
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //mutex_lock(&sensor_mutex); //da funcao "kxtj2_1009_init_client_" kernel orig  13/JAN/2021
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//kxtj2_1009_data_resolution[0] has been set when initialize: +/-2g  in 8-bit resolution:  15.6 mg/LSB*/   
 	obj->reso = &kxtj2_1009_data_resolution[0];
@@ -249,7 +267,7 @@ static int KXTJ2_1009_ReadData(struct i2c_client *client, s16 data[KXTJ2_1009_AX
 	}
 	else if(err = hwmsen_read_block(client, addr, buf, 0x06))
 	{
-		GSE_ERR("error: %d\n", err);
+		GSE_ERR("error: %d\n", err);////////////////////////////////////////////////////////////////////////////////////////////////DMESG ERRO////////////////////////////
 	}
 	else
 	{
@@ -278,57 +296,7 @@ static int KXTJ2_1009_ReadData(struct i2c_client *client, s16 data[KXTJ2_1009_AX
 		{
 			GSE_LOG("[%08X %08X %08X] => [%5d %5d %5d]\n", data[KXTJ2_1009_AXIS_X], data[KXTJ2_1009_AXIS_Y], data[KXTJ2_1009_AXIS_Z],
 		                               data[KXTJ2_1009_AXIS_X], data[KXTJ2_1009_AXIS_Y], data[KXTJ2_1009_AXIS_Z]);
-		}
-#ifdef CONFIG_KXTJ2_1009_LOWPASS
-		if(atomic_read(&priv->filter))
-		{
-			if(atomic_read(&priv->fir_en) && !atomic_read(&priv->suspend))
-			{
-				int idx, firlen = atomic_read(&priv->firlen);   
-				if(priv->fir.num < firlen)
-				{                
-					priv->fir.raw[priv->fir.num][KXTJ2_1009_AXIS_X] = data[KXTJ2_1009_AXIS_X];
-					priv->fir.raw[priv->fir.num][KXTJ2_1009_AXIS_Y] = data[KXTJ2_1009_AXIS_Y];
-					priv->fir.raw[priv->fir.num][KXTJ2_1009_AXIS_Z] = data[KXTJ2_1009_AXIS_Z];
-					priv->fir.sum[KXTJ2_1009_AXIS_X] += data[KXTJ2_1009_AXIS_X];
-					priv->fir.sum[KXTJ2_1009_AXIS_Y] += data[KXTJ2_1009IK_AXIS_Y];
-					priv->fir.sum[KXTJ2_1009_AXIS_Z] += data[KXTJ2_1009_AXIS_Z];
-					if(atomic_read(&priv->trace) & ADX_TRC_FILTER)
-					{
-						GSE_LOG("add [%2d] [%5d %5d %5d] => [%5d %5d %5d]\n", priv->fir.num,
-							priv->fir.raw[priv->fir.num][KXTJ2_1009_AXIS_X], priv->fir.raw[priv->fir.num][KXTJ2_1009_AXIS_Y], priv->fir.raw[priv->fir.num][KXTJ2_1009_AXIS_Z],
-							priv->fir.sum[KXTJ2_1009_AXIS_X], priv->fir.sum[KXTJ2_1009_AXIS_Y], priv->fir.sum[KXTJ2_1009_AXIS_Z]);
-					}
-					priv->fir.num++;
-					priv->fir.idx++;
-				}
-				else
-				{
-					idx = priv->fir.idx % firlen;
-					priv->fir.sum[KXTJ2_1009_AXIS_X] -= priv->fir.raw[idx][KXTJ2_1009_AXIS_X];
-					priv->fir.sum[KXTJ2_1009_AXIS_Y] -= priv->fir.raw[idx][KXTJ2_1009_AXIS_Y];
-					priv->fir.sum[KXTJ2_1009_AXIS_Z] -= priv->fir.raw[idx][KXTJ2_1009_AXIS_Z];
-					priv->fir.raw[idx][KXTJ2_1009_AXIS_X] = data[KXTJ2_1009_AXIS_X];
-					priv->fir.raw[idx][KXTJ2_1009_AXIS_Y] = data[KXTJ2_1009_AXIS_Y];
-					priv->fir.raw[idx][KXTJ2_1009_AXIS_Z] = data[KXTJ2_1009_AXIS_Z];
-					priv->fir.sum[KXTJ2_1009_AXIS_X] += data[KXTJ2_1009_AXIS_X];
-					priv->fir.sum[KXTJ2_1009_AXIS_Y] += data[KXTJ2_1009_AXIS_Y];
-					priv->fir.sum[KXTJ2_1009_AXIS_Z] += data[KXTJ2_1009_AXIS_Z];
-					priv->fir.idx++;
-					data[KXTJ2_1009_AXIS_X] = priv->fir.sum[KXTJ2_1009_AXIS_X]/firlen;
-					data[KXTJ2_1009_AXIS_Y] = priv->fir.sum[KXTJ2_1009_AXIS_Y]/firlen;
-					data[KXTJ2_1009_AXIS_Z] = priv->fir.sum[KXTJ2_1009_AXIS_Z]/firlen;
-					if(atomic_read(&priv->trace) & ADX_TRC_FILTER)
-					{
-						GSE_LOG("add [%2d] [%5d %5d %5d] => [%5d %5d %5d] : [%5d %5d %5d]\n", idx,
-						priv->fir.raw[idx][KXTJ2_1009_AXIS_X], priv->fir.raw[idx][KXTJ2_1009_AXIS_Y], priv->fir.raw[idx][KXTJ2_1009_AXIS_Z],
-						priv->fir.sum[KXTJ2_1009_AXIS_X], priv->fir.sum[KXTJ2_1009_AXIS_Y], priv->fir.sum[KXTJ2_1009_AXIS_Z],
-						data[KXTJ2_1009_AXIS_X], data[KXTJ2_1009_AXIS_Y], data[KXTJ2_1009_AXIS_Z]);
-					}
-				}
-			}
-		}	
-#endif         
+		}        
 	}
 	return err;
 }
@@ -569,11 +537,17 @@ static int KXTJ2_1009_SetDataFormat(struct i2c_client *client, u8 dataformat)
 
 	memset(databuf, 0, sizeof(u8)*10);  
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_lock(&sensor_mutex); //da funcao "kxtj2_1009_init_client_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	KXTJ2_1009_SetPowerMode(client, false);
 
 	if(hwmsen_read_block(client, KXTJ2_1009_REG_DATA_FORMAT, databuf, 0x01))
 	{
 		printk("kxtj2_1009 read Dataformat failt \n");
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_unlock(&sensor_mutex); //da funcao "kxtj2_1009_init_client_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		return KXTJ2_1009_ERR_I2C;
 	}
 
@@ -591,8 +565,12 @@ static int KXTJ2_1009_SetDataFormat(struct i2c_client *client, u8 dataformat)
 	}
 
 	KXTJ2_1009_SetPowerMode(client, true);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_unlock(&sensor_mutex); //da funcao "kxtj2_1009_init_client_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	printk("KXTJ2_1009_SetDataFormat OK! \n");
+	printk("SUPERDRAGONPT: KXTJ2_1009_SetDataFormat OK! \n"); /////LOG THIS MTFK
 	
 
 	return KXTJ2_1009_SetDataResolution(obj);    
@@ -604,12 +582,17 @@ static int KXTJ2_1009_SetBWRate(struct i2c_client *client, u8 bwrate)
 	int res = 0;
 
 	memset(databuf, 0, sizeof(u8)*10);    
-
 	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_lock(&sensor_mutex); //da funcao "KXTJ2_1009_SetBWRate_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	KXTJ2_1009_SetPowerMode(client, false);
 
 	if(hwmsen_read_block(client, KXTJ2_1009_REG_BW_RATE, databuf, 0x01))
 	{
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_unlock(&sensor_mutex); //da funcao "KXTJ2_1009_SetBWRate_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		printk("kxtj2_1009 read rate failt \n");
 		return KXTJ2_1009_ERR_I2C;
 	}
@@ -630,6 +613,9 @@ static int KXTJ2_1009_SetBWRate(struct i2c_client *client, u8 bwrate)
 	
 	KXTJ2_1009_SetPowerMode(client, true);
 	printk("KXTJ2_1009_SetBWRate OK! \n");
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_unlock(&sensor_mutex); //da funcao "KXTJ2_1009_SetBWRate_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	return KXTJ2_1009_SUCCESS;    
 }
@@ -702,9 +688,6 @@ static int kxtj2_1009_init_client(struct i2c_client *client, int reset_cali)
 		}
 	}
 	printk("kxtj2_1009_init_client OK!\n");
-#ifdef CONFIG_KXTJ2_1009_LOWPASS
-	memset(&obj->fir, 0x00, sizeof(obj->fir));  
-#endif
 
 	return KXTJ2_1009_SUCCESS;
 }
@@ -757,9 +740,15 @@ static int KXTJ2_1009_ReadSensorData(struct i2c_client *client, char *buf, int b
 		}
 	}
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //mutex_lock(&sensor_mutex); //da funcao "KXTJ2_1009_ReadSensorData_isra__" kernel orig NOTA: AMBOS OS SENSORES NAO FUNCIONAM AGORA...
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	if(res = KXTJ2_1009_ReadData(client, obj->data))
 	{        
-		GSE_ERR("I2C error: ret value=%d", res);
+		GSE_ERR("I2C error: ret value=%d", res);   ////////////////////////////////////////////////////////////////////////////////////////////////DMESG ERRO//////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //mutex_unlock(&sensor_mutex); //da funcao "KXTJ2_1009_ReadSensorData_isra__" kernel orig NOTA: AMBOS OS SENSORES NAO FUNCIONAM AGORA..
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		return -3;
 	}
 	else
@@ -792,6 +781,9 @@ static int KXTJ2_1009_ReadSensorData(struct i2c_client *client, char *buf, int b
 		if(atomic_read(&obj->trace) & ADX_TRC_IOCTL)
 		{
 			GSE_LOG("gsensor data: %s!\n", buf);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //mutex_unlock(&sensor_mutex); //da funcao "KXTJ2_1009_ReadSensorData_isra__" kernel orig NOTA: AMBOS OS SENSORES NAO FUNCIONAM AGORA..
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		}
 	}
 	
@@ -807,16 +799,25 @@ static int KXTJ2_1009_ReadRawData(struct i2c_client *client, char *buf)
 	{
 		return EINVAL;
 	}
-	
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_lock(&sensor_mutex); //da funcao "kxtj2_1009_unlocked_ioctl_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	if(res = KXTJ2_1009_ReadData(client, obj->data))
 	{        
 		GSE_ERR("I2C error: ret value=%d", res);
 		return EIO;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_unlock(&sensor_mutex); //da funcao "kxtj2_1009_unlocked_ioctl_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	}
 	else
 	{
 		sprintf(buf, "KXTJ2_1009_ReadRawData %04x %04x %04x", obj->data[KXTJ2_1009_AXIS_X], 
 			obj->data[KXTJ2_1009_AXIS_Y], obj->data[KXTJ2_1009_AXIS_Z]);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    mutex_unlock(&sensor_mutex); //da funcao "kxtj2_1009_unlocked_ioctl_" kernel orig
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	}
 	
@@ -846,7 +847,7 @@ static int KXTJ2_1009_InitSelfTest(struct i2c_client *client)
 		return res;
 	}
 	printk("step1: result = %x",result);
-	if(result != 0xaa)
+	if(result != 0xaa) //superdragonpt: 170 =>0xAA
 		return -EINVAL;
 
 //step 2
@@ -862,7 +863,7 @@ static int KXTJ2_1009_InitSelfTest(struct i2c_client *client)
 		return res;
 	}
 	printk("step3: result = %x",result);
-	if(result != 0xAA)
+	if(result != 0xAA) //superdragonpt: 170 =>0xAA
 		return -EINVAL;
 		
 //step 4
@@ -872,13 +873,13 @@ static int KXTJ2_1009_InitSelfTest(struct i2c_client *client)
 		return res;
 	}
 	printk("step4: result = %x",result);
-	if(result != 0x55)
+	if(result != 0x55) //superdragonpt: 85 =>0x55
 		return -EINVAL;
 	else
 		return KXTJ2_1009_SUCCESS;
 }
 /*----------------------------------------------------------------------------*/
-static int KXTJ2_1009_JudgeTestResult(struct i2c_client *client, s32 prv[KXTJ2_1009_AXES_NUM], s32 nxt[KXTJ2_1009_AXES_NUM])
+/*static int KXTJ2_1009_JudgeTestResult(struct i2c_client *client, s32 prv[KXTJ2_1009_AXES_NUM], s32 nxt[KXTJ2_1009_AXES_NUM])
 {
 
     int res=0;
@@ -894,6 +895,7 @@ static int KXTJ2_1009_JudgeTestResult(struct i2c_client *client, s32 prv[KXTJ2_1
     }
     return res;
 }
+*/
 /*----------------------------------------------------------------------------*/
 static ssize_t show_chipinfo_value(struct device_driver *ddri, char *buf)
 {
@@ -1168,57 +1170,11 @@ static ssize_t store_selftest_value(struct device_driver *ddri, char *buf, size_
 /*----------------------------------------------------------------------------*/
 static ssize_t show_firlen_value(struct device_driver *ddri, char *buf)
 {
-#ifdef CONFIG_KXTJ2_1009_LOWPASS
-	struct i2c_client *client = kxtj2_1009_i2c_client;
-	struct kxtj2_1009_i2c_data *obj = i2c_get_clientdata(client);
-	if(atomic_read(&obj->firlen))
-	{
-		int idx, len = atomic_read(&obj->firlen);
-		GSE_LOG("len = %2d, idx = %2d\n", obj->fir.num, obj->fir.idx);
-
-		for(idx = 0; idx < len; idx++)
-		{
-			GSE_LOG("[%5d %5d %5d]\n", obj->fir.raw[idx][KXTJ2_1009_AXIS_X], obj->fir.raw[idx][KXTJ2_1009_AXIS_Y], obj->fir.raw[idx][KXTJ2_1009_AXIS_Z]);
-		}
-		
-		GSE_LOG("sum = [%5d %5d %5d]\n", obj->fir.sum[KXTJ2_1009_AXIS_X], obj->fir.sum[KXTJ2_1009_AXIS_Y], obj->fir.sum[KXTJ2_1009_AXIS_Z]);
-		GSE_LOG("avg = [%5d %5d %5d]\n", obj->fir.sum[KXTJ2_1009_AXIS_X]/len, obj->fir.sum[KXTJ2_1009_AXIS_Y]/len, obj->fir.sum[KXTJ2_1009_AXIS_Z]/len);
-	}
-	return snprintf(buf, PAGE_SIZE, "%d\n", atomic_read(&obj->firlen));
-#else
 	return snprintf(buf, PAGE_SIZE, "not support\n");
-#endif
 }
 /*----------------------------------------------------------------------------*/
 static ssize_t store_firlen_value(struct device_driver *ddri, char *buf, size_t count)
-{
-#ifdef CONFIG_KXTJ2_1009_LOWPASS
-	struct i2c_client *client = kxtj2_1009_i2c_client;  
-	struct kxtj2_1009_i2c_data *obj = i2c_get_clientdata(client);
-	int firlen;
-
-	if(1 != sscanf(buf, "%d", &firlen))
-	{
-		GSE_ERR("invallid format\n");
-	}
-	else if(firlen > C_MAX_FIR_LENGTH)
-	{
-		GSE_ERR("exceeds maximum filter length\n");
-	}
-	else
-	{ 
-		atomic_set(&obj->firlen, firlen);
-		if(NULL == firlen)
-		{
-			atomic_set(&obj->fir_en, 0);
-		}
-		else
-		{
-			memset(&obj->fir, 0x00, sizeof(obj->fir));
-			atomic_set(&obj->fir_en, 1);
-		}
-	}
-#endif    
+{   
 	return count;
 }
 /*----------------------------------------------------------------------------*/
@@ -1487,14 +1443,6 @@ int gsensor_operate(void* self, uint32_t command, void* buff_in, int size_in,
 				}
 				else
 				{	
-				#if defined(CONFIG_KXTJ2_1009_LOWPASS)
-					priv->fir.num = 0;
-					priv->fir.idx = 0;
-					priv->fir.sum[KXTJ2_1009_AXIS_X] = 0;
-					priv->fir.sum[KXTJ2_1009_AXIS_Y] = 0;
-					priv->fir.sum[KXTJ2_1009_AXIS_Z] = 0;
-					atomic_set(&priv->filter, 1);
-				#endif
 				}
 			}
 			break;
@@ -1877,23 +1825,6 @@ static int kxtj2_1009_i2c_probe(struct i2c_client *client, const struct i2c_devi
 	
 	atomic_set(&obj->trace, 0);
 	atomic_set(&obj->suspend, 0);
-	
-#ifdef CONFIG_KXTJ2_1009_LOWPASS
-	if(obj->hw->firlen > C_MAX_FIR_LENGTH)
-	{
-		atomic_set(&obj->firlen, C_MAX_FIR_LENGTH);
-	}	
-	else
-	{
-		atomic_set(&obj->firlen, obj->hw->firlen);
-	}
-	
-	if(atomic_read(&obj->firlen) > 0)
-	{
-		atomic_set(&obj->fir_en, 1);
-	}
-	
-#endif
 
 	kxtj2_1009_i2c_client = new_client;	
 
@@ -1925,6 +1856,10 @@ static int kxtj2_1009_i2c_probe(struct i2c_client *client, const struct i2c_devi
 	}
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //mutex_lock(&sensor_mutex); //da funcao "kxtj2_1009_i2c_probe" kernel orig               NOTA: stuck on bootanim
+    //mutex_init(&sensor_mutex, &mutex_lock); //da funcao "kxtj2_1009_i2c_probe" kernel orig  NOTA: ERRO compilaco
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	obj->early_drv.level    = EARLY_SUSPEND_LEVEL_DISABLE_FB - 1,
 	obj->early_drv.suspend  = kxtj2_1009_early_suspend,
 	obj->early_drv.resume   = kxtj2_1009_late_resume,    
