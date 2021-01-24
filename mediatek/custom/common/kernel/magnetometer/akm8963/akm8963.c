@@ -29,6 +29,9 @@
 #include <linux/hwmsensor.h>
 #include <linux/hwmsen_dev.h>
 #include <linux/sensors_io.h>
+/*superdragonpt: add for function ecompass_status*/
+#include <linux/proc_fs.h> //superdragonpt: for `create_proc_read_entry'
+/*superdragonpt: add for function ecompass_status, END*/
 
 
 //#include <mach/mt_devs.h>
@@ -91,6 +94,9 @@ static atomic_t m_flag = ATOMIC_INIT(0);
 static atomic_t o_flag = ATOMIC_INIT(0);
 
 static int factory_mode=0;
+/*superdragonpt: add for function ecompass_status*/
+static int ecompass_status = 0;
+/*superdragonpt: add for function ecompass_status, END*/
 
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
@@ -1741,6 +1747,15 @@ static int akm8963_i2c_detect(struct i2c_client *client, struct i2c_board_info *
 	return 0;
 }
 
+/*superdragonpt: add for function ecompass_status*/
+static int ecompass_status_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data)
+{
+    int len = 0;
+    len += sprintf(page, "%d\n", ecompass_status);
+    return len;
+}
+/*superdragonpt: add for function ecompass_status, END*/
+
 /*----------------------------------------------------------------------------*/
 static int akm8963_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id)
 {
@@ -1821,6 +1836,9 @@ static int akm8963_i2c_probe(struct i2c_client *client, const struct i2c_device_
 #endif
 
 	AKMDBG("%s: OK\n", __func__);
+/*superdragonpt: add for function ecompass_status*/
+	ecompass_status = 1;
+/*superdragonpt: add for function ecompass_status, END*/
 	return 0;
 
 	exit_sysfs_create_group_failed:   
@@ -1830,6 +1848,9 @@ static int akm8963_i2c_probe(struct i2c_client *client, const struct i2c_device_
 	kfree(data);
 	exit:
 	printk(KERN_ERR "%s: err = %d\n", __func__, err);
+/*superdragonpt: add for function ecompass_status*/
+	ecompass_status = 0;
+/*superdragonpt: add for function ecompass_status, END*/
 	return err;
 }
 /*----------------------------------------------------------------------------*/
@@ -1879,7 +1900,11 @@ static int akm_remove(struct platform_device *pdev)
 static int __init akm8963_init(void)
 {
     	struct mag_hw *hw = get_cust_mag_hw();
-	printk("akm8963: i2c_number=%d\n",hw->i2c_num); 
+	printk("akm8963: i2c_number=%d\n",hw->i2c_num);
+/*superdragonpt: add for function ecompass_status*/
+	// register cat /proc/ecompass_status
+	create_proc_read_entry("ecompass_status", 0, NULL, ecompass_status_read_proc, NULL);
+/*superdragonpt: add for function ecompass_status, END*/
 	i2c_register_board_info(hw->i2c_num, &i2c_akm8963, 1);
 	if(platform_driver_register(&akm_sensor_driver))
 	{
