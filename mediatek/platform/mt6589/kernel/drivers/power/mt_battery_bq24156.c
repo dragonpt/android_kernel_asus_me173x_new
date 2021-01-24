@@ -1963,9 +1963,9 @@ void pchr_turn_off_charging_bq24156 (void)
 #endif
 
     /* enable Safety limit register reset */    
-    mt_set_gpio_mode(GPIO_OTG_DRVVBUS_PIN,GPIO_MODE_GPIO);  
-    mt_set_gpio_dir(GPIO_OTG_DRVVBUS_PIN,GPIO_DIR_OUT);
-    mt_set_gpio_out(GPIO_OTG_DRVVBUS_PIN,GPIO_OUT_ONE);
+    mt_set_gpio_mode(GPIO_OTG_DRVVBUS_PIN,GPIO_MODE_GPIO); //Asus me173x dct correct gpio: 130
+    mt_set_gpio_dir(GPIO_OTG_DRVVBUS_PIN,GPIO_DIR_OUT);    //Asus me173x dct correct gpio: 130
+    mt_set_gpio_out(GPIO_OTG_DRVVBUS_PIN,GPIO_OUT_ONE);    //Asus me173x dct correct gpio: 130
     
     if (Enable_BATDRV_LOG == 1) {
         xlog_printk(ANDROID_LOG_INFO, POWER_BATTERY_TAG, "%s\r\n", __FUNCTION__);

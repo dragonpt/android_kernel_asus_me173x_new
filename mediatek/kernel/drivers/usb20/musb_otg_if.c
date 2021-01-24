@@ -1331,7 +1331,7 @@ static int musb_host_test_mode(unsigned char cmd){
     #else
 
     #if !(defined(CONFIG_MT6585_FPGA) || defined(CONFIG_MT6577_FPGA) || defined(CONFIG_MT6589_FPGA) || defined(CONFIG_MT6582_FPGA))
-    mt_set_gpio_mode(GPIO_OTG_DRVVBUS_PIN,6);
+    mt_set_gpio_mode(GPIO_OTG_DRVVBUS_PIN,6); //asus me173x ok !
     //mt_set_gpio_out (GPIO_OTG_DRVVBUS_PIN, 1);
     #endif
     #endif
