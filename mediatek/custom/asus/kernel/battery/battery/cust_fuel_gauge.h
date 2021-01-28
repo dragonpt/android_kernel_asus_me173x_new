@@ -13,9 +13,9 @@
 /* cust battery meter parameters */
 #define CHANGE_TRACKING_POINT
 #define CUST_TRACKING_POINT  1
-#define AGING_TUNING_VALUE   103
+#define AGING_TUNING_VALUE   103 //superdragonpt OK from stock kernel reverse
 
-#define OCV_BOARD_COMPESATE	72 //mV 
+#define OCV_BOARD_COMPESATE	0 //mV 
 #define R_FG_BOARD_BASE		1000
 #define R_FG_BOARD_SLOPE	1000 //slope
 
@@ -36,7 +36,7 @@
 
 #define OSR_SELECT_7			0
 
-#define CAR_TUNE_VALUE			97 //100 //1.00
+#define CAR_TUNE_VALUE			98 //superdragonpt OK from stock kernel reverse
 
 /////////////////////////////////////////////////////////////////////
 // <DOD, Battery_Voltage> Table
