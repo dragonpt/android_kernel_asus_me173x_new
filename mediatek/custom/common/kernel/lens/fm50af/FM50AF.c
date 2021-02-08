@@ -15,7 +15,7 @@
 #include "../camera/kd_camera_hw.h"
 
 #define LENS_I2C_BUSNUM 1
-//static struct i2c_board_info __initdata kd_lens_dev={ I2C_BOARD_INFO("FM50AF", 0x18)};
+static struct i2c_board_info __initdata kd_lens_dev={ I2C_BOARD_INFO("FM50AF", 0x18)};
 
 
 #define FM50AF_DRVNAME "FM50AF"
@@ -338,7 +338,7 @@ inline static int Register_FM50AF_CharDrv(void)
         return -EAGAIN;
     }
 
-    actuator_class = class_create(THIS_MODULE, "actuatordrv2");
+    actuator_class = class_create(THIS_MODULE, "actuatordrv");
     if (IS_ERR(actuator_class)) {
         int ret = PTR_ERR(actuator_class);
         FM50AFDB("Unable to create class, err = %d\n", ret);
@@ -404,8 +404,7 @@ static int FM50AF_i2c_probe(struct i2c_client *client, const struct i2c_device_i
     /* Kirby: add new-style driver { */
     g_pstFM50AF_I2Cclient = client;
     
- //   g_pstFM50AF_I2Cclient->addr = g_pstFM50AF_I2Cclient->addr >> 1;
-	g_pstFM50AF_I2Cclient->addr = FM50AF_VCM_WRITE_ID >> 1;
+    g_pstFM50AF_I2Cclient->addr = g_pstFM50AF_I2Cclient->addr >> 1;
     
     //Register char driver
     i4RetValue = Register_FM50AF_CharDrv();
@@ -452,7 +451,7 @@ static struct platform_driver g_stFM50AF_Driver = {
     .suspend	= FM50AF_suspend,
     .resume	= FM50AF_resume,
     .driver		= {
-        .name	= "lens_actuator2",
+        .name	= "lens_actuator",
         .owner	= THIS_MODULE,
     }
 };
