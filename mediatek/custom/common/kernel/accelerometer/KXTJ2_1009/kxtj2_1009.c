@@ -524,7 +524,11 @@ static int KXTJ2_1009_SetPowerMode(struct i2c_client *client, bool enable)
 
 	sensor_power = enable;
 
-	mdelay(5);
+	mdelay(10);
+	mdelay(10);
+	mdelay(10);
+	mdelay(10);
+	mdelay(10);
 	
 	return KXTJ2_1009_SUCCESS;    
 }
