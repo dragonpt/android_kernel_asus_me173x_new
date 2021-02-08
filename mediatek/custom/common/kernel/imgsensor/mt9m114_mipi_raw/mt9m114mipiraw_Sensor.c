@@ -1,77 +1,11 @@
-/* Copyright Statement:
- *
- * This software/firmware and related documentation ("MediaTek Software") are
- * protected under relevant copyright laws. The information contained herein
- * is confidential and proprietary to MediaTek Inc. and/or its licensors.
- * Without the prior written permission of MediaTek inc. and/or its licensors,
- * any reproduction, modification, use or disclosure of MediaTek Software,
- * and information contained herein, in whole or in part, shall be strictly prohibited.
- */
-/* MediaTek Inc. (C) 2010. All rights reserved.
- *
- * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
- * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
- * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
- * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
- * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
- * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
- * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
- * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
- * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
- * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
- * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
- * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
- * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
- * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
- * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
- * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
- *
- * The following software/firmware and/or related documentation ("MediaTek Software")
- * have been modified by MediaTek Inc. All revisions are subject to any receiver's
- * applicable license agreements with MediaTek Inc.
- */
-
-/*****************************************************************************
-*  Copyright Statement:
-*  --------------------
-*  This software is protected by Copyright and the information contained
-*  herein is confidential. The software may not be copied and the information
-*  contained herein may not be used or disclosed except with the written
-*  permission of MediaTek Inc. (C) 2008
-*
-*  BY OPENING THIS FILE, BUYER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
-*  THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
-*  RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO BUYER ON
-*  AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
-*  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
-*  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
-*  NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
-*  SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
-*  SUPPLIED WITH THE MEDIATEK SOFTWARE, AND BUYER AGREES TO LOOK ONLY TO SUCH
-*  THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. MEDIATEK SHALL ALSO
-*  NOT BE RESPONSIBLE FOR ANY MEDIATEK SOFTWARE RELEASES MADE TO BUYER'S
-*  SPECIFICATION OR TO CONFORM TO A PARTICULAR STANDARD OR OPEN FORUM.
-*
-*  BUYER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND CUMULATIVE
-*  LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
-*  AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
-*  OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY BUYER TO
-*  MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
-*
-*  THE TRANSACTION CONTEMPLATED HEREUNDER SHALL BE CONSTRUED IN ACCORDANCE
-*  WITH THE LAWS OF THE STATE OF CALIFORNIA, USA, EXCLUDING ITS CONFLICT OF
-*  LAWS PRINCIPLES.  ANY DISPUTES, CONTROVERSIES OR CLAIMS ARISING THEREOF AND
-*  RELATED THERETO SHALL BE SETTLED BY ARBITRATION IN SAN FRANCISCO, CA, UNDER
-*  THE RULES OF THE INTERNATIONAL CHAMBER OF COMMERCE (ICC).
-*
+/*
 *****************************************************************************/
 /*****************************************************************************
  *
  * Filename:
  * ---------
  *   mt9m114mipiyuv_sensor.c
+ *   superdragonpt modified: mt9m114mipiyuv > mt9m114mipiraw
  *
  * Project:
  * --------
@@ -114,13 +48,13 @@
 #include "kd_imgsensor_errcode.h"
 #include "kd_camera_feature.h"
 
-#include "mt9m114mipiyuv_Sensor.h"
-#include "mt9m114mipiyuv_Camera_Sensor_para.h"
-#include "mt9m114mipiyuv_CameraCustomized.h"
+#include "mt9m114mipiraw_Sensor.h"
+#include "mt9m114mipiraw_Camera_Sensor_para.h"
+#include "mt9m114mipiraw_CameraCustomized.h"
 
-#define mt9m114mipiyuv_DEBUG
-#ifdef mt9m114mipiyuv_DEBUG
-	#define SENSORDB(fmt, arg...) printk( "[mt9m114mipiyuv] "  fmt, ##arg)
+#define mt9m114mipiraw_DEBUG
+#ifdef mt9m114mipiraw_DEBUG
+	#define SENSORDB(fmt, arg...) printk( "[mt9m114mipiraw] "  fmt, ##arg)
 #else
 	#define SENSORDB(x,...)
 #endif
@@ -137,7 +71,7 @@ typedef struct {
     kal_uint16 capPCLK; // x10
 
     kal_uint16 iFrameRate;
-    kal_uint16 iNightMode;
+    //kal_uint16 iNightMode;
     kal_uint16 iWB;
     kal_uint16 iEffect;
     kal_uint16 iEV;
@@ -155,7 +89,7 @@ kal_bool night_mode_flag;
 kal_bool video_mode_flag;
 kal_bool enter_nighthfuction_flag;
 
-static DEFINE_SPINLOCK(mt9m114mipiyuv_drv_lock);
+static DEFINE_SPINLOCK(mt9m114mipiraw_drv_lock);
 
 extern int iReadRegI2C(u8 *a_pSendData , u16 a_sizeSendData, u8 * a_pRecvData, u16 a_sizeRecvData, u16 i2cId);
 extern int iWriteRegI2C(u8 *a_pSendData , u16 a_sizeSendData, u16 i2cId);
@@ -320,20 +254,20 @@ static void MT9M114InitialPara(void)
 {
   /*Initial status setting 
    Can be better by sync with MT9M114InitialSetting*/
-  spin_lock(&mt9m114mipiyuv_drv_lock);
-  MT9M114_para.iNightMode = 0;
+  spin_lock(&mt9m114mipiraw_drv_lock);
+  //MT9M114_para.iNightMode = 0;
   MT9M114_para.iWB = AWB_MODE_AUTO;
   MT9M114_para.iEffect = MEFFECT_OFF;
   MT9M114_para.iBanding = AE_FLICKER_MODE_50HZ;
   MT9M114_para.iEV = AE_EV_COMP_00;
-  MT9M114_para.iMirror = IMAGE_NORMAL;
+  MT9M114_para.iMirror = IMAGE_HV_MIRROR;
   MT9M114_para.iFrameRate = 0; //No Fix FrameRate
 
   MT9M114_para.sensorMode = SENSOR_MODE_INIT;
   night_mode_flag=1;
   video_mode_flag=0;
   enter_nighthfuction_flag=1;
-  spin_unlock(&mt9m114mipiyuv_drv_lock);
+  spin_unlock(&mt9m114mipiraw_drv_lock);
 }
 
 
@@ -1442,7 +1376,7 @@ UINT32 MT9M114InitialSetting()
     MT9M114_write_cmos_sensor_8(0xB00D, 0x20); 	// CAM_LL_START_CONTRAST_GRADIENT
     //REG= 0xB00e, 0x34 	// CAM_LL_START_CONTRAST_GRADIENT
     MT9M114_write_cmos_sensor(0xC87C, 0x005A); 	// CAM_AET_BLACK_CLIPPING_TARGET
-    MT9M114_write_cmos_sensor_8(0xC87A, 0x3b); 	// CAM_AET_BLACK_CLIPPING_TARGET  ¡¢¡¢57 
+    MT9M114_write_cmos_sensor_8(0xC87A, 0x3b); 	// CAM_AET_BLACK_CLIPPING_TARGET
     MT9M114_write_cmos_sensor_8(0xC92A, 0xA0); 	// CAM_LL_START_SATURATION
 
     MT9M114_write_cmos_sensor_8(0xB42A, 0x05); 	// CCM_DELTA_GAIN
@@ -1486,9 +1420,9 @@ void MT9M114_Set_Mirror_Flip(kal_uint8 image_mirror)
 {
     kal_uint16 reg_value, new_value, mirror;
 
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     mirror = MT9M114_para.iMirror;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
 
     if (mirror == image_mirror)
     {
@@ -1528,9 +1462,9 @@ void MT9M114_Set_Mirror_Flip(kal_uint8 image_mirror)
     //MT9M114_write_cmos_sensor(0x0080, 0x8002);		// COMMAND_REGISTER
     MT9M114_change_config_command();
 
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     MT9M114_para.iMirror = image_mirror;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
 
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
 }
@@ -1552,6 +1486,7 @@ void MT9M114_Set_Mirror_Flip(kal_uint8 image_mirror)
 * GLOBALS AFFECTED
 *
 *************************************************************************/
+#if 0
 void MT9M114NightMode(kal_bool enable)
 {
     SENSORDB("[Enter]: %s \n", __FUNCTION__);
@@ -1561,9 +1496,9 @@ void MT9M114NightMode(kal_bool enable)
         SENSORDB("[%s]: enable night mode \n", __FUNCTION__);
         if(night_mode_flag||video_mode_flag)
 	   {
-			spin_lock(&mt9m114mipiyuv_drv_lock);
+			spin_lock(&mt9m114mipiraw_drv_lock);
 			night_mode_flag=0;
-			spin_unlock(&mt9m114mipiyuv_drv_lock);
+			spin_unlock(&mt9m114mipiraw_drv_lock);
 	        MT9M114_write_cmos_sensor(0x098E, 0x0000);      // LOGICAL_ADDRESS_ACCESS
 	        MT9M114_write_cmos_sensor(0xC80E, 0x00DB);      //cam_sensor_cfg_fine_integ_time_min
 	        MT9M114_write_cmos_sensor(0xC810, 0x05C1);      //cam_sensor_cfg_fine_integ_time_max
@@ -1582,10 +1517,10 @@ void MT9M114NightMode(kal_bool enable)
         SENSORDB("[%s]: disable night mode \n", __FUNCTION__);
         if((night_mode_flag==0)||video_mode_flag||enter_nighthfuction_flag)
 	    {   
-			spin_lock(&mt9m114mipiyuv_drv_lock);
+			spin_lock(&mt9m114mipiraw_drv_lock);
 			night_mode_flag=1;
 			enter_nighthfuction_flag=0;
-			spin_unlock(&mt9m114mipiyuv_drv_lock);
+			spin_unlock(&mt9m114mipiraw_drv_lock);
 	        MT9M114_write_cmos_sensor(0x098E, 0x0000);      // LOGICAL_ADDRESS_ACCESS
 	        MT9M114_write_cmos_sensor(0xC80E, 0x00DB);      //cam_sensor_cfg_fine_integ_time_min
 	        MT9M114_write_cmos_sensor(0xC810, 0x05C1);      //cam_sensor_cfg_fine_integ_time_max
@@ -1598,12 +1533,12 @@ void MT9M114NightMode(kal_bool enable)
 	        MT9M114_change_config_command();
 	    }
     }
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     MT9M114_para.iNightMode = enable;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
 }
-
+#endif
 /*************************************************************************
 * FUNCTION
 *   MT9M114Preview
@@ -1626,15 +1561,16 @@ UINT32 MT9M114Preview(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 {
     SENSORDB("[Enter]: %s \n", __FUNCTION__);
    // mDELAY(100);
+    mDELAY(100);
     MT9M114_write_cmos_sensor(0xC909, 0x0003);//enable AWB
     MT9M114_write_cmos_sensor(0xA804, 0x00ff);//ensable AE
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     MT9M114_para.sensorMode = SENSOR_MODE_PREVIEW;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
 
     // set Mirror & Flip
     //sensor_config_data->SensorImageMirror
-    MT9M114NightMode(MT9M114_para.iNightMode);
+    //MT9M114NightMode(MT9M114_para.iNightMode);
 	video_mode_flag=0;
     MT9M114_Set_Mirror_Flip(sensor_config_data->SensorImageMirror);	
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
@@ -1663,15 +1599,15 @@ UINT32 MT9M114Capture(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
     SENSORDB("[Enter]: %s \n", __FUNCTION__);
     MT9M114_write_cmos_sensor(0xC909, 0x0000);//Disable AWB
     MT9M114_write_cmos_sensor(0xA804, 0x0000);//Disable AE
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     if(MT9M114_para.sensorMode == SENSOR_MODE_CAPTURE)
     {
-        spin_unlock(&mt9m114mipiyuv_drv_lock);
+        spin_unlock(&mt9m114mipiraw_drv_lock);
         SENSORDB("Entering in burstshot mode!");
         return KAL_TRUE;
     }
     MT9M114_para.sensorMode = SENSOR_MODE_CAPTURE;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
     // set Mirror & Flip
     MT9M114_Set_Mirror_Flip(sensor_config_data->SensorImageMirror);
     
@@ -1680,7 +1616,7 @@ UINT32 MT9M114Capture(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 }
 /*************************************************************************
 * FUNCTION
-*   mt9m114mipiyuvSetVideoMode
+*   mt9m114mipirawSetVideoMode
 *
 * DESCRIPTION
 *   This function set the sensor video mode.
@@ -1695,7 +1631,7 @@ UINT32 MT9M114Capture(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 * GLOBALS AFFECTED
 *
 *************************************************************************/
-UINT32 mt9m114mipiyuvSetVideoMode(UINT16 u2FrameRate)
+UINT32 mt9m114mipirawSetVideoMode(UINT16 u2FrameRate)
 {
     SENSORDB("[Enter]: %s \n", __FUNCTION__);
 
@@ -1725,10 +1661,10 @@ UINT32 mt9m114mipiyuvSetVideoMode(UINT16 u2FrameRate)
     
     //change config
     MT9M114_change_config_command();
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     MT9M114_para.iFrameRate = u2FrameRate;
 	video_mode_flag=1;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
 
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
 
@@ -1758,15 +1694,15 @@ BOOL MT9M114_set_param_scene_mode(UINT16 para)
 
     switch (para)
     {
-        case SCENE_MODE_OFF:
+        /*case SCENE_MODE_OFF:
             MT9M114NightMode(0);
-			SENSORDB("[Enter] MT9M114_MIPI_YUV:enter auto mode \n");
+			SENSORDB("[Enter] MT9M114_MIPI_RAW:enter auto mode \n");
             break;
         case SCENE_MODE_NIGHTSCENE:
             MT9M114NightMode(1);
             break;
         default:
-            SENSORDB("[Error]: %s, not support scene mode = %d \n", __FUNCTION__, para);
+            SENSORDB("[Error]: %s, not support scene mode = %d \n", __FUNCTION__, para);*/
             return KAL_FALSE;
     }   
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
@@ -1795,9 +1731,9 @@ BOOL MT9M114_set_param_wb(UINT16 para)
 {
     kal_uint16 wb;
 
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     wb = MT9M114_para.iWB;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
     
     if (wb == para)
     {
@@ -1854,9 +1790,9 @@ BOOL MT9M114_set_param_wb(UINT16 para)
     }
 
 
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     MT9M114_para.iWB = para;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
 
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
 
@@ -1884,9 +1820,9 @@ BOOL MT9M114_set_param_effect(UINT16 para)
 {
     kal_uint16 effect;
 
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     effect = MT9M114_para.iEffect;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
     
     if (effect == para)
     {
@@ -1937,9 +1873,9 @@ BOOL MT9M114_set_param_effect(UINT16 para)
     // refresh command
     MT9M114_write_cmos_sensor(0x0080, 0x8004);		// COMMAND_REGISTER
 
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     MT9M114_para.iEffect = para;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
 
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
 
@@ -1966,9 +1902,9 @@ BOOL MT9M114_set_param_exposure(UINT16 para)
 {
     kal_uint16 base_target = 0, exposureValue;
 
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     exposureValue = MT9M114_para.iEV;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
 
     if (exposureValue == para)
     {
@@ -2006,9 +1942,9 @@ BOOL MT9M114_set_param_exposure(UINT16 para)
             return KAL_FALSE;      
     }
 
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     MT9M114_para.iEV = para;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
 
 	SENSORDB("[Exit]: %s \n", __FUNCTION__);
 
@@ -2035,9 +1971,9 @@ BOOL MT9M114_set_param_banding(UINT16 para)
 {
     kal_uint16 banding;
 
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     banding = MT9M114_para.iBanding;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
 
     if (banding == para)
     {
@@ -2067,9 +2003,9 @@ BOOL MT9M114_set_param_banding(UINT16 para)
     //change config
     MT9M114_change_config_command();
 
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     MT9M114_para.iBanding = para;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
     
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
     
@@ -2077,7 +2013,7 @@ BOOL MT9M114_set_param_banding(UINT16 para)
     
 }
 
-UINT32 mt9m114mipiyuvSensorSetting(FEATURE_ID iCmd, UINT32 iPara)
+UINT32 mt9m114mipirawSensorSetting(FEATURE_ID iCmd, UINT32 iPara)
 {
     SENSORDB("[Enter]: %s \n", __FUNCTION__);
 
@@ -2111,7 +2047,7 @@ UINT32 mt9m114mipiyuvSensorSetting(FEATURE_ID iCmd, UINT32 iPara)
 
 /*************************************************************************
 * FUNCTION
-*    mt9m114mipiyuvGetEvAwbRef
+*    mt9m114mipirawGetEvAwbRef
 *
 * DESCRIPTION
 *    This function get sensor Ev/Awb (EV05/EV13) for auto scene detect
@@ -2125,7 +2061,7 @@ UINT32 mt9m114mipiyuvSensorSetting(FEATURE_ID iCmd, UINT32 iPara)
 * LOCAL AFFECTED
 *
 *************************************************************************/
-static void mt9m114mipiyuvGetEvAwbRef(UINT32 pSensorAEAWBRefStruct/*PSENSOR_AE_AWB_REF_STRUCT Ref*/)
+static void mt9m114mipirawGetEvAwbRef(UINT32 pSensorAEAWBRefStruct/*PSENSOR_AE_AWB_REF_STRUCT Ref*/)
 {
     PSENSOR_AE_AWB_REF_STRUCT Ref = (PSENSOR_AE_AWB_REF_STRUCT)pSensorAEAWBRefStruct;
     
@@ -2145,7 +2081,7 @@ static void mt9m114mipiyuvGetEvAwbRef(UINT32 pSensorAEAWBRefStruct/*PSENSOR_AE_A
 
 /*************************************************************************
 * FUNCTION
-*    mt9m114mipiyuvGetCurAeAwbInfo
+*    mt9m114mipirawGetCurAeAwbInfo
 *
 * DESCRIPTION
 *    This function get sensor cur Ae/Awb for auto scene detect
@@ -2159,7 +2095,7 @@ static void mt9m114mipiyuvGetEvAwbRef(UINT32 pSensorAEAWBRefStruct/*PSENSOR_AE_A
 * LOCAL AFFECTED
 *
 *************************************************************************/
-static void mt9m114mipiyuvGetCurAeAwbInfo(UINT32 pSensorAEAWBCurStruct/*PSENSOR_AE_AWB_CUR_STRUCT Info*/)
+static void mt9m114mipirawGetCurAeAwbInfo(UINT32 pSensorAEAWBCurStruct/*PSENSOR_AE_AWB_CUR_STRUCT Info*/)
 {
     PSENSOR_AE_AWB_CUR_STRUCT Info = (PSENSOR_AE_AWB_CUR_STRUCT)pSensorAEAWBCurStruct;
 
@@ -2213,7 +2149,7 @@ void MT9M114GetExifInfo(UINT32 exifAddr)
 
     SENSORDB("[Enter]: %s \n", __FUNCTION__);
 
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     
     pExifInfo->FNumber = 24;
     pExifInfo->AEISOSpeed = AE_ISO_100;
@@ -2222,7 +2158,7 @@ void MT9M114GetExifInfo(UINT32 exifAddr)
     pExifInfo->FlashLightTimeus = 0;
     pExifInfo->RealISOValue = AE_ISO_100;
     
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
 
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
 }
@@ -2355,8 +2291,8 @@ UINT32 MT9M114GetInfo(MSDK_SCENARIO_ID_ENUM ScenarioId,
     pSensorInfo->PreviewDelayFrame = 4; 
     pSensorInfo->VideoDelayFrame = 2;
 	
-	pSensorInfo->YUVAwbDelayFrame = 2; 
-    pSensorInfo->YUVEffectDelayFrame = 2;
+	//pSensorInfo->RAWAwbDelayFrame = 2; //superdragonpt: build error YUV feature only
+    //pSensorInfo->RAWEffectDelayFrame = 2; //superdragonpt: build error YUV feature only
 
     pSensorInfo->SensorMasterClockSwitch = 0; /* not use */
     pSensorInfo->SensorDrivingCurrent = ISP_DRIVING_4MA;
@@ -2417,9 +2353,9 @@ UINT32 MT9M114Control(MSDK_SCENARIO_ID_ENUM ScenarioId, MSDK_SENSOR_EXPOSURE_WIN
 {
     SENSORDB("[Enter]: %s, ScenarioId = %d \n", __FUNCTION__, ScenarioId);
     
-    spin_lock(&mt9m114mipiyuv_drv_lock);
+    spin_lock(&mt9m114mipiraw_drv_lock);
     MT9M114_CurrentScenarioId = ScenarioId;
-    spin_unlock(&mt9m114mipiyuv_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);
 
     switch (ScenarioId)
     {
@@ -2489,9 +2425,9 @@ UINT32 MT9M114FeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId,
         case SENSOR_FEATURE_SET_ESHUTTER:
             // for raw sensor
             break;
-        case SENSOR_FEATURE_SET_NIGHTMODE:
+        /*case SENSOR_FEATURE_SET_NIGHTMODE:
             MT9M114NightMode((BOOL)*pFeatureData16);
-            break;
+            break;*/
         case SENSOR_FEATURE_SET_GAIN:
             // for raw sensor
             break;
@@ -2531,11 +2467,11 @@ UINT32 MT9M114FeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId,
             *pFeatureReturnPara32 = LENS_DRIVER_ID_DO_NOT_CARE;
             *pFeatureParaLen = 4;
             break;
-        case SENSOR_FEATURE_SET_YUV_CMD:
-            mt9m114mipiyuvSensorSetting((FEATURE_ID)*pFeatureData32, *(pFeatureData32 + 1));
-            break;
+        /*case SENSOR_FEATURE_SET_RAW_CMD: //superdragonpt: build error YUV feature only
+            mt9m114mipirawSensorSetting((FEATURE_ID)*pFeatureData32, *(pFeatureData32 + 1));
+            break;*/
         case SENSOR_FEATURE_SET_VIDEO_MODE:
-            mt9m114mipiyuvSetVideoMode(*pFeatureData16);
+            mt9m114mipirawSetVideoMode(*pFeatureData16);
             break;
         case SENSOR_FEATURE_SET_CALIBRATION_DATA:
         case SENSOR_FEATURE_SET_SENSOR_SYNC:  
@@ -2559,10 +2495,10 @@ UINT32 MT9M114FeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId,
             // not use
             break;        
         case SENSOR_FEATURE_GET_EV_AWB_REF:
-            mt9m114mipiyuvGetEvAwbRef(*pFeatureData32);
+            mt9m114mipirawGetEvAwbRef(*pFeatureData32);
             break;
         case SENSOR_FEATURE_GET_SHUTTER_GAIN_AWB_GAIN:
-            mt9m114mipiyuvGetCurAeAwbInfo(*pFeatureData32);	
+            mt9m114mipirawGetCurAeAwbInfo(*pFeatureData32);	
             break;
         case SENSOR_FEATURE_GET_AF_MAX_NUM_FOCUS_AREAS:
             MT9M114GetAFMaxNumFocusAreas(pFeatureReturnPara32);                    
@@ -2598,7 +2534,7 @@ SENSOR_FUNCTION_STRUCT	SensorFuncMT9M114=
 	MT9M114Close
 };
 
-UINT32 MT9M114_MIPI_YUV_SensorInit(PSENSOR_FUNCTION_STRUCT * pfFunc)
+UINT32 MT9M114_MIPI_RAW_SensorInit(PSENSOR_FUNCTION_STRUCT * pfFunc)
 {
 	/* To Do : Check Sensor status here */
 	if (pfFunc!=NULL)
