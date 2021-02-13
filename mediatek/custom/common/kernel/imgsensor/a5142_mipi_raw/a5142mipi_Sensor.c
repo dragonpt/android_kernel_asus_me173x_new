@@ -27,6 +27,15 @@
  * Upper this line, this part is controlled by CC/CQ. DO NOT MODIFY!!
  *============================================================================
  ****************************************************************************/
+
+/*superdragonpt:
+Custom Asus device changes, includes HAL changes & OTP, External Camera Hardware ISP (SPCA7002)
+Missing known sensor functions:
+'A5142MIPIGetOTPValueBank'
+'A5142MIPIGetOTPValue'
+'readFWVer'
+/*superdragonpt, END*/
+
 #include <linux/videodev2.h>
 #include <linux/i2c.h>
 #include <linux/platform_device.h>
@@ -250,7 +259,7 @@ static kal_uint16 A5142gain2reg(kal_uint16 gain)
 * GLOBALS AFFECTED
 *
 *************************************************************************/
-kal_uint16 read_A5142MIPI_gain(void)
+kal_uint16 read_A5142MIPI_gain(void) //superdragonpt OK
 {
     /*
     // Aptina Gain Model
@@ -288,7 +297,7 @@ kal_uint16 read_A5142MIPI_gain(void)
 /*******************************************************************************
 * 
 ********************************************************************************/
-void write_A5142MIPI_gain(kal_uint16 gain)
+void write_A5142MIPI_gain(kal_uint16 gain) //superdragonpt OK
 {
     kal_uint16 reg_gain;
   
@@ -367,7 +376,7 @@ kal_uint16 A5142MIPI_Set_gain(kal_uint16 gain)
 * GLOBALS AFFECTED
 *
 *************************************************************************/
-void A5142MIPI_SetShutter(kal_uint16 iShutter)
+void A5142MIPI_SetShutter(kal_uint16 iShutter) //superdragonpt OK
 {
     unsigned long flags;
 
@@ -414,7 +423,7 @@ UINT16 A5142MIPI_read_shutter(void)
 
 
 
-UINT32 A5142MIPISetMaxFramerateByScenario(MSDK_SCENARIO_ID_ENUM scenarioId,UINT32 frameRate)
+UINT32 A5142MIPISetMaxFramerateByScenario(MSDK_SCENARIO_ID_ENUM scenarioId,UINT32 frameRate) //superdragonpt: OK
 {
     kal_uint32 pclk;
     kal_int16 dummyLine;
@@ -422,33 +431,33 @@ UINT32 A5142MIPISetMaxFramerateByScenario(MSDK_SCENARIO_ID_ENUM scenarioId,UINT3
 
     printk("A5142SetMaxFramerate: scenarioID = %d, frame rate = %d\n",scenarioId,frameRate);
     switch(scenarioId) {
-        case MSDK_SCENARIO_ID_CAMERA_PREVIEW:
+        case MSDK_SCENARIO_ID_CAMERA_PREVIEW: //superdragonpt:  A5142MIPI_SetDummy(0, 1855, 1040000000 / v3 / 0xC4F - 3151)  OK
             pclk = 104000000;  
             lineLength = A5142MIPI_PV_PERIOD_PIXEL_NUMS;  //3151
             frameHeight = (10*pclk)/frameRate/lineLength;
             dummyLine = frameHeight - A5142MIPI_PV_PERIOD_PIXEL_NUMS;
             A5142MIPI_SetDummy(0, 1855,dummyLine);
             break;
-        case MSDK_SCENARIO_ID_VIDEO_PREVIEW:
+        case MSDK_SCENARIO_ID_VIDEO_PREVIEW: //superdragonpt:  A5142MIPI_SetDummy(0, 1855, 1040000000 / 3151)  OK
             pclk = 104000000;  
             lineLength = A5142MIPI_PV_PERIOD_PIXEL_NUMS;  // 3151
             frameHeight = (10*pclk)/frameRate/lineLength;
             dummyLine = frameHeight - A5142MIPI_PV_PERIOD_PIXEL_NUMS;
             A5142MIPI_SetDummy(0, 1855,dummyLine);
             break;  
-        case MSDK_SCENARIO_ID_CAMERA_CAPTURE_JPEG:
+        case MSDK_SCENARIO_ID_CAMERA_CAPTURE_JPEG: //superdragonpt: A5142MIPI_SetDummy(0, 1102, 1118000000 / v3 / 0xE6E - 3694) OK
             pclk = 111800000; 
             lineLength = A5142MIPI_FULL_PERIOD_PIXEL_NUMS;  //3694
             frameHeight = (10*pclk)/frameRate/lineLength;
             dummyLine = frameHeight - A5142MIPI_FULL_PERIOD_PIXEL_NUMS;
             A5142MIPI_SetDummy(0, 1102,dummyLine);
             break;  
-        case MSDK_SCENARIO_ID_CAMERA_3D_PREVIEW:
+        /*case MSDK_SCENARIO_ID_CAMERA_3D_PREVIEW: //superdragonpt: NOT supported on this device
             break;
         case MSDK_SCENARIO_ID_CAMERA_3D_VIDEO:
             break;
         case MSDK_SCENARIO_ID_CAMERA_3D_CAPTURE:
-            break;  
+            break;*/
             
         default:
             break;
@@ -458,7 +467,7 @@ UINT32 A5142MIPISetMaxFramerateByScenario(MSDK_SCENARIO_ID_ENUM scenarioId,UINT3
     
 }
 
-UINT32 A5142MIPIGetDefaultFramerateByScenario(MSDK_SCENARIO_ID_ENUM scenarioId,UINT32 *pframeRate)
+UINT32 A5142MIPIGetDefaultFramerateByScenario(MSDK_SCENARIO_ID_ENUM scenarioId,UINT32 *pframeRate) //superdragonpt: OK
 {
     switch(scenarioId) {
         case MSDK_SCENARIO_ID_CAMERA_PREVIEW:
@@ -469,11 +478,11 @@ UINT32 A5142MIPIGetDefaultFramerateByScenario(MSDK_SCENARIO_ID_ENUM scenarioId,U
         case MSDK_SCENARIO_ID_CAMERA_ZSD:   
             *pframeRate = 150;
             break;  
-        case MSDK_SCENARIO_ID_CAMERA_3D_PREVIEW:
+        /*case MSDK_SCENARIO_ID_CAMERA_3D_PREVIEW: //superdragonpt: NOT supported on this device
         case MSDK_SCENARIO_ID_CAMERA_3D_VIDEO:
         case MSDK_SCENARIO_ID_CAMERA_3D_CAPTURE:
             *pframeRate = 300;
-            break;  
+            break;*/
             
         default:
             break;
@@ -486,7 +495,7 @@ UINT32 A5142MIPIGetDefaultFramerateByScenario(MSDK_SCENARIO_ID_ENUM scenarioId,U
 /*******************************************************************************
 * 
 ********************************************************************************/
-void A5142MIPI_camera_para_to_sensor(void)
+void A5142MIPI_camera_para_to_sensor(void) //superdragonpt OK
 {
     kal_uint32    i;
 
@@ -522,9 +531,9 @@ void A5142MIPI_camera_para_to_sensor(void)
 * GLOBALS AFFECTED
 *
 *************************************************************************/
-void A5142MIPI_sensor_to_camera_para(void)
+void A5142MIPI_sensor_to_camera_para(void) //superdragonpt OK
 {
-    kal_uint32    i;
+    /*kal_uint32    i;
     
     for(i=0; 0xFFFFFFFF!=A5142MIPISensorReg[i].Addr; i++)
     {
@@ -537,7 +546,7 @@ void A5142MIPI_sensor_to_camera_para(void)
         spin_lock(&a5142mipiraw_drv_lock);
         A5142MIPISensorReg[i].Para = A5142MIPI_read_cmos_sensor(A5142MIPISensorReg[i].Addr);
         spin_unlock(&a5142mipiraw_drv_lock);
-    }
+    }*/
 }
 
 
@@ -563,7 +572,7 @@ kal_int32  A5142MIPI_get_sensor_group_count(void)
 }
 
 
-void A5142MIPI_get_sensor_group_info(kal_uint16 group_idx, kal_int8* group_name_ptr, kal_int32* item_count_ptr)
+void A5142MIPI_get_sensor_group_info(kal_uint16 group_idx, kal_int8* group_name_ptr, kal_int32* item_count_ptr) //superdragonpt OK
 {
     switch (group_idx)
     {
@@ -589,7 +598,7 @@ void A5142MIPI_get_sensor_group_info(kal_uint16 group_idx, kal_int8* group_name_
 }
 
 
-void A5142MIPI_get_sensor_item_info(kal_uint16 group_idx,kal_uint16 item_idx, MSDK_SENSOR_ITEM_INFO_STRUCT* info_ptr)
+void A5142MIPI_get_sensor_item_info(kal_uint16 group_idx,kal_uint16 item_idx, MSDK_SENSOR_ITEM_INFO_STRUCT* info_ptr) //superdragonpt TODO
 {
     kal_int16 temp_reg=0;
     kal_uint16 temp_gain=0, temp_addr=0, temp_para=0;
@@ -600,23 +609,23 @@ void A5142MIPI_get_sensor_item_info(kal_uint16 group_idx,kal_uint16 item_idx, MS
            switch (item_idx)
           {
               case 0:
-                sprintf((char *)info_ptr->ItemNamePtr,"Pregain-R");
+                sprintf((char *)info_ptr->ItemNamePtr,"Pregain-R"); //superdragonpt =>10
                   temp_addr = PRE_GAIN_R_INDEX;
               break;
               case 1:
-                sprintf((char *)info_ptr->ItemNamePtr,"Pregain-Gr");
+                sprintf((char *)info_ptr->ItemNamePtr,"Pregain-Gr"); //superdragonpt =>11
                   temp_addr = PRE_GAIN_Gr_INDEX;
               break;
               case 2:
-                sprintf((char *)info_ptr->ItemNamePtr,"Pregain-Gb");
+                sprintf((char *)info_ptr->ItemNamePtr,"Pregain-Gb"); //superdragonpt =>11
                   temp_addr = PRE_GAIN_Gb_INDEX;
               break;
               case 3:
-                sprintf((char *)info_ptr->ItemNamePtr,"Pregain-B");
+                sprintf((char *)info_ptr->ItemNamePtr,"Pregain-B"); //superdragonpt =>10
                   temp_addr = PRE_GAIN_B_INDEX;
               break;
               case 4:
-                 sprintf((char *)info_ptr->ItemNamePtr,"SENSOR_BASEGAIN");
+                 sprintf((char *)info_ptr->ItemNamePtr,"SENSOR_BASEGAIN"); //superdragonpt =>16
                  temp_addr = SENSOR_BASEGAIN;
               break;
               default:
@@ -730,7 +739,7 @@ void A5142MIPI_get_sensor_item_info(kal_uint16 group_idx,kal_uint16 item_idx, MS
 }
 
 
-kal_bool A5142MIPI_set_sensor_item_info(kal_uint16 group_idx, kal_uint16 item_idx, kal_int32 ItemValue)
+kal_bool A5142MIPI_set_sensor_item_info(kal_uint16 group_idx, kal_uint16 item_idx, kal_int32 ItemValue) //superdragonpt OK
 {
 //   kal_int16 temp_reg;
    kal_uint16  temp_gain=0,temp_addr=0, temp_para=0;
@@ -817,7 +826,7 @@ kal_bool A5142MIPI_set_sensor_item_info(kal_uint16 group_idx, kal_uint16 item_id
 /*******************************************************************************
 *
 ********************************************************************************/
-static void A5142MIPI_Init_setting(void)
+static void A5142MIPI_Init_setting(void) //superdragonpt OK
 {
     kal_uint16 status = 0;
     
@@ -825,6 +834,10 @@ static void A5142MIPI_Init_setting(void)
     
     A5142MIPI_write_cmos_sensor_8(0x0103, 0x01);    //SOFTWARE_RESET (clears itself)
     mDELAY(5);      //Initialization Time
+    mDELAY(5);
+    mDELAY(5);
+    mDELAY(5);
+    mDELAY(5);
     
     //[Demo Initialization 1296 x 972 MCLK= 26MHz, PCLK=104MHz]
     //stop_streaming
@@ -992,9 +1005,7 @@ static void A5142MIPI_Init_setting(void)
     //A5142MIPI_write_cmos_sensor(0x0404, 0x0010);  // SCALE_M
     
     A5142MIPI_write_cmos_sensor(0x305E, 0x112E);    // global gain
-    //BIRD_0001
-    //A5142MIPI_write_cmos_sensor(0x30F0, 0x0000);    // disable AF  A5142 have not internal AF IC
-	A5142MIPI_write_cmos_sensor(0x30F0, 0x8000);    // disable AF  A5142 have not internal AF IC
+    A5142MIPI_write_cmos_sensor(0x30F0, 0x0000);    // disable AF  A5142 have not internal AF IC
 
     //PLL MCLK = 26MHZ, PCLK = 104MHZ, VT = 104MHZ
     #ifdef RAW10
@@ -1025,6 +1036,10 @@ static void A5142MIPI_Init_setting(void)
     //A5142MIPI_write_cmos_sensor_8(0x0100, 0x01);  // MODE_SELECT
 
     mDELAY(5);              // Allow PLL to lock
+    mDELAY(5);
+    mDELAY(5);
+    mDELAY(5);
+    mDELAY(5);
 }   /*  A5142MIPI_Sensor_Init  */
 
 
@@ -1072,10 +1087,17 @@ UINT32 A5142MIPIGetSensorID(UINT32 *sensorID)
         *sensorID = 0xFFFFFFFF; 
         return ERROR_SENSOR_CONNECT_FAIL;
     }
-    
+//superdragonpt: TODO support Asus Custom external ISP chip and Camera Firmware HAL
+#if 0
+  {
+    readFWVer = 0x800000;
+    A5142MIPIGetOTPValue();
+    result = 0;
+  }
+#endif
+//superdragonpt: TODO support Asus Custom external ISP chip and Camera Firmware HAL, END    
     return ERROR_NONE;
 }
-
 
 /*************************************************************************
 * FUNCTION
@@ -1093,7 +1115,7 @@ UINT32 A5142MIPIGetSensorID(UINT32 *sensorID)
 * GLOBALS AFFECTED
 *
 *************************************************************************/
-UINT32 A5142MIPIOpen(void)
+UINT32 A5142MIPIOpen(void) //superdragonpt OK
 {
     kal_uint16 sensor_id = 0;
 
@@ -1155,20 +1177,20 @@ void A5142MIPI_NightMode(kal_bool bEnable)
 * GLOBALS AFFECTED
 *
 *************************************************************************/
-UINT32 A5142MIPIClose(void)
+UINT32 A5142MIPIClose(void) //superdragonpt OK
 {
     return ERROR_NONE;
 }   /* A5142MIPIClose() */
 
 
-void A5142MIPI_Set_Mirror_Flip(kal_uint8 image_mirror)
+void A5142MIPI_Set_Mirror_Flip(kal_uint8 image_mirror) //superdragonpt OK
 {
     SENSORDB("image_mirror = %d", image_mirror);
     
     switch (image_mirror)
     {
         case IMAGE_NORMAL:
-            A5142MIPI_write_cmos_sensor_8(0x0101,0x03);
+            A5142MIPI_write_cmos_sensor_8(0x0101,0x00);
         break;
         case IMAGE_H_MIRROR:
             A5142MIPI_write_cmos_sensor_8(0x0101,0x01);
@@ -1177,13 +1199,13 @@ void A5142MIPI_Set_Mirror_Flip(kal_uint8 image_mirror)
             A5142MIPI_write_cmos_sensor_8(0x0101,0x02);
         break;
         case IMAGE_HV_MIRROR:
-            A5142MIPI_write_cmos_sensor_8(0x0101,0x00);
+            A5142MIPI_write_cmos_sensor_8(0x0101,0x03);
         break;
     }
 }
 
 
-static void A5142MIPI_preview_setting(void)
+static void A5142MIPI_preview_setting(void) //superdragonpt OK
 {
     kal_uint16 temp;
 
@@ -1262,7 +1284,7 @@ static void A5142MIPI_preview_setting(void)
     mDELAY(50); 
 }
 
-static void A5142MIPI_capture_setting(void)
+static void A5142MIPI_capture_setting(void) //superdragonpt check OK with IDA reverse stock kernel
 {
     kal_uint16 temp;
 
@@ -1358,7 +1380,7 @@ static void A5142MIPI_capture_setting(void)
 * GLOBALS AFFECTED
 *
 *************************************************************************/
-static void A5142MIPI_SetDummy(kal_bool mode,const kal_uint16 iDummyPixels, const kal_uint16 iDummyLines)
+static void A5142MIPI_SetDummy(kal_bool mode,const kal_uint16 iDummyPixels, const kal_uint16 iDummyLines) //superdragonpt OK
 {
     kal_uint16 Line_length, Frame_length;
     
@@ -1443,7 +1465,7 @@ UINT32 A5142MIPIPreview(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 *
 ********************************************************************************/
 UINT32 A5142MIPICapture(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
-                                                MSDK_SENSOR_CONFIG_STRUCT *sensor_config_data)
+                                                MSDK_SENSOR_CONFIG_STRUCT *sensor_config_data) //superdragonpt TODO
 {
     //kal_uint32 shutter = A5142MIPI_exposure_lines;
 
@@ -1481,7 +1503,7 @@ UINT32 A5142MIPICapture(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 }   /* A5142MIPICapture() */
 
 
-UINT32 A5142MIPIGetResolution(MSDK_SENSOR_RESOLUTION_INFO_STRUCT *pSensorResolution)
+UINT32 A5142MIPIGetResolution(MSDK_SENSOR_RESOLUTION_INFO_STRUCT *pSensorResolution) //superdragonpt OK
 {
     pSensorResolution->SensorFullWidth     =  A5142MIPI_IMAGE_SENSOR_FULL_WIDTH;
     pSensorResolution->SensorFullHeight    =  A5142MIPI_IMAGE_SENSOR_FULL_HEIGHT;
@@ -1521,33 +1543,34 @@ UINT32 A5142MIPIGetInfo(MSDK_SCENARIO_ID_ENUM ScenarioId,
     pSensorInfo->SensorStillCaptureFrameRate= 15; /* not use */
     pSensorInfo->SensorWebCamCaptureFrameRate= 15; /* not use */
 
-    pSensorInfo->SensorClockPolarity = SENSOR_CLOCK_POLARITY_LOW;
-    pSensorInfo->SensorClockFallingPolarity = SENSOR_CLOCK_POLARITY_LOW; /* not use */
-    pSensorInfo->SensorHsyncPolarity = SENSOR_CLOCK_POLARITY_LOW; // inverse with datasheet
-    pSensorInfo->SensorVsyncPolarity = SENSOR_CLOCK_POLARITY_HIGH;
-    pSensorInfo->SensorInterruptDelayLines = 1; /* not use */
-    pSensorInfo->SensorResetActiveHigh = FALSE; /* not use */
-    pSensorInfo->SensorResetDelayCount = 5; /* not use */
+    pSensorInfo->SensorClockPolarity = SENSOR_CLOCK_POLARITY_LOW;                           //superdragonpt > 1
+    pSensorInfo->SensorClockFallingPolarity = SENSOR_CLOCK_POLARITY_LOW; /* not use */      //superdragonpt > 1
+    pSensorInfo->SensorHsyncPolarity = SENSOR_CLOCK_POLARITY_LOW; // inverse with datasheet //superdragonpt > 1
+    pSensorInfo->SensorVsyncPolarity = SENSOR_CLOCK_POLARITY_HIGH;                          //superdragonpt > 0
+    pSensorInfo->SensorInterruptDelayLines = 1; /* not use */                               //superdragonpt > 1
+    pSensorInfo->SensorResetActiveHigh = FALSE; /* not use */                               //superdragonpt > 0
+    pSensorInfo->SensorResetDelayCount = 5; /* not use */                                   //superdragonpt > 5
 
     #ifdef MIPI_INTERFACE
-        pSensorInfo->SensroInterfaceType        = SENSOR_INTERFACE_TYPE_MIPI;
+        pSensorInfo->SensroInterfaceType        = SENSOR_INTERFACE_TYPE_MIPI; //superdragonpt > 1
     #else
         pSensorInfo->SensroInterfaceType        = SENSOR_INTERFACE_TYPE_PARALLEL;
     #endif
-    pSensorInfo->SensorOutputDataFormat     = A5142MIPI_DATA_FORMAT;
 
-    pSensorInfo->CaptureDelayFrame = 1; 
-    pSensorInfo->PreviewDelayFrame = 2; 
-    pSensorInfo->VideoDelayFrame = 5; 
-    pSensorInfo->SensorMasterClockSwitch = 0; /* not use */
-    pSensorInfo->SensorDrivingCurrent = ISP_DRIVING_6MA;      
-    pSensorInfo->AEShutDelayFrame = 0;          /* The frame of setting shutter default 0 for TG int */
-    pSensorInfo->AESensorGainDelayFrame = 1;    /* The frame of setting sensor gain */
-    pSensorInfo->AEISPGainDelayFrame = 2;
+    pSensorInfo->SensorOutputDataFormat     = A5142MIPI_DATA_FORMAT; //superdragonpt > 0 >SENSOR_OUTPUT_FORMAT_RAW_B
+
+    pSensorInfo->CaptureDelayFrame = 1;                                                                  //superdragonpt > 1
+    pSensorInfo->PreviewDelayFrame = 2;                                                                  //superdragonpt > 2
+    pSensorInfo->VideoDelayFrame = 5;                                                                    //superdragonpt > 5
+    pSensorInfo->SensorMasterClockSwitch = 0; /* not use */                                              //superdragonpt > 0
+    pSensorInfo->SensorDrivingCurrent = ISP_DRIVING_6MA;                                                 //superdragonpt > 2
+    pSensorInfo->AEShutDelayFrame = 0;          /* The frame of setting shutter default 0 for TG int */  //superdragonpt > 0
+    pSensorInfo->AESensorGainDelayFrame = 1;    /* The frame of setting sensor gain */                   //superdragonpt > 1
+    pSensorInfo->AEISPGainDelayFrame = 2;                                                                //superdragonpt > 2
        
     switch (ScenarioId)
     {
-        case MSDK_SCENARIO_ID_CAMERA_CAPTURE_JPEG:      
+        case MSDK_SCENARIO_ID_CAMERA_CAPTURE_JPEG:
         case MSDK_SCENARIO_ID_CAMERA_ZSD:
             pSensorInfo->SensorClockFreq=26;
             pSensorInfo->SensorClockDividCount= 3; /* not use */
@@ -1559,13 +1582,13 @@ UINT32 A5142MIPIGetInfo(MSDK_SCENARIO_ID_ENUM ScenarioId,
             pSensorInfo->SensorGrabStartY = A5142MIPI_FULL_START_Y;   
             
             #ifdef MIPI_INTERFACE
-                pSensorInfo->SensorMIPILaneNumber = SENSOR_MIPI_2_LANE;         
-                pSensorInfo->MIPIDataLowPwr2HighSpeedTermDelayCount = 0; 
-                pSensorInfo->MIPIDataLowPwr2HighSpeedSettleDelayCount = 14; 
-                pSensorInfo->MIPICLKLowPwr2HighSpeedTermDelayCount = 0; 
-                pSensorInfo->SensorWidthSampling = 0;
-                pSensorInfo->SensorHightSampling = 0;
-                pSensorInfo->SensorPacketECCOrder = 1;
+                pSensorInfo->SensorMIPILaneNumber = SENSOR_MIPI_2_LANE;      //superdragonpt > 1     
+                pSensorInfo->MIPIDataLowPwr2HighSpeedTermDelayCount = 0;     //superdragonpt > 0
+                pSensorInfo->MIPIDataLowPwr2HighSpeedSettleDelayCount = 14;  //superdragonpt > 14
+                pSensorInfo->MIPICLKLowPwr2HighSpeedTermDelayCount = 0;      //superdragonpt > 0
+                pSensorInfo->SensorWidthSampling = 0;                        //superdragonpt > 0
+                pSensorInfo->SensorHightSampling = 0;                        //superdragonpt > 0
+                pSensorInfo->SensorPacketECCOrder = 1;                       //superdragonpt > 1
             #endif
             break;
         default:
@@ -1579,13 +1602,13 @@ UINT32 A5142MIPIGetInfo(MSDK_SCENARIO_ID_ENUM ScenarioId,
             pSensorInfo->SensorGrabStartY = A5142MIPI_PV_START_Y;    
             
             #ifdef MIPI_INTERFACE
-                pSensorInfo->SensorMIPILaneNumber = SENSOR_MIPI_2_LANE;         
-                pSensorInfo->MIPIDataLowPwr2HighSpeedTermDelayCount = 0; 
-                pSensorInfo->MIPIDataLowPwr2HighSpeedSettleDelayCount = 14; 
-                pSensorInfo->MIPICLKLowPwr2HighSpeedTermDelayCount = 0;
-                pSensorInfo->SensorWidthSampling = 0;
-                pSensorInfo->SensorHightSampling = 0;
-                pSensorInfo->SensorPacketECCOrder = 1;
+                pSensorInfo->SensorMIPILaneNumber = SENSOR_MIPI_2_LANE;      //superdragonpt > 1     
+                pSensorInfo->MIPIDataLowPwr2HighSpeedTermDelayCount = 0;     //superdragonpt > 0
+                pSensorInfo->MIPIDataLowPwr2HighSpeedSettleDelayCount = 14;  //superdragonpt > 14
+                pSensorInfo->MIPICLKLowPwr2HighSpeedTermDelayCount = 0;      //superdragonpt > 0
+                pSensorInfo->SensorWidthSampling = 0;                        //superdragonpt > 0
+                pSensorInfo->SensorHightSampling = 0;                        //superdragonpt > 0
+                pSensorInfo->SensorPacketECCOrder = 1;                       //superdragonpt > 1
             #endif
             break;
     }
@@ -1597,7 +1620,7 @@ UINT32 A5142MIPIGetInfo(MSDK_SCENARIO_ID_ENUM ScenarioId,
 
 
 UINT32 A5142MIPIControl(MSDK_SCENARIO_ID_ENUM ScenarioId, MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *pImageWindow,
-                                                MSDK_SENSOR_CONFIG_STRUCT *pSensorConfigData)
+                                                MSDK_SENSOR_CONFIG_STRUCT *pSensorConfigData) //superdragonpt OK
 {
     spin_lock(&a5142mipiraw_drv_lock);
     A5142_CurrentScenarioId = ScenarioId;
@@ -1659,7 +1682,7 @@ UINT32 A5142MIPISetVideoMode(UINT16 u2FrameRate)
     return KAL_TRUE;
 }
 
-UINT32 A5142MIPISetAutoFlickerMode(kal_bool bEnable, UINT16 u2FrameRate)
+UINT32 A5142MIPISetAutoFlickerMode(kal_bool bEnable, UINT16 u2FrameRate) //superdragonpt OK
 {
     SENSORDB("frame rate(10base) = %d %d", bEnable, u2FrameRate);
 
@@ -1681,7 +1704,7 @@ UINT32 A5142MIPISetAutoFlickerMode(kal_bool bEnable, UINT16 u2FrameRate)
 
 
 UINT32 A5142MIPIFeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId,
-                                                                UINT8 *pFeaturePara,UINT32 *pFeatureParaLen)
+                                                                UINT8 *pFeaturePara,UINT32 *pFeatureParaLen) //superdragonpt OK
 {    
     UINT16 *pFeatureReturnPara16=(UINT16 *) pFeaturePara;
     UINT16 *pFeatureData16=(UINT16 *) pFeaturePara;
@@ -1736,17 +1759,17 @@ UINT32 A5142MIPIFeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId,
         case SENSOR_FEATURE_SET_ESHUTTER:
             A5142MIPI_SetShutter(*pFeatureData16);
             break;
-        case SENSOR_FEATURE_SET_NIGHTMODE:
+        /*case SENSOR_FEATURE_SET_NIGHTMODE: //superdragonpt: NOT supported on this device
             A5142MIPI_NightMode((BOOL) *pFeatureData16);
-            break;
+            break;*/
         case SENSOR_FEATURE_SET_GAIN:
             A5142MIPI_Set_gain((UINT16) *pFeatureData16);
             break;
-        case SENSOR_FEATURE_SET_FLASHLIGHT:
+        /*case SENSOR_FEATURE_SET_FLASHLIGHT: //superdragonpt: NOT supported on this device
             break;
-        case SENSOR_FEATURE_SET_ISP_MASTER_CLOCK_FREQ:
+        case SENSOR_FEATURE_SET_ISP_MASTER_CLOCK_FREQ: //superdragonpt: NOT supported on this device
             // A5142MIPI_isp_master_clock=*pFeatureData32;
-            break;
+            break;*/
         case SENSOR_FEATURE_SET_REGISTER:
             A5142MIPI_write_cmos_sensor(pSensorRegData->RegAddr, pSensorRegData->RegData);
             break;
@@ -1842,12 +1865,12 @@ UINT32 A5142MIPIFeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId,
             *pFeatureParaLen=sizeof(MSDK_SENSOR_ITEM_INFO_STRUCT);
             break;
 
-        case SENSOR_FEATURE_GET_ENG_INFO:
+        /*case SENSOR_FEATURE_GET_ENG_INFO:
             pSensorEngInfo->SensorId = 221;
             pSensorEngInfo->SensorType = CMOS_SENSOR;
             pSensorEngInfo->SensorOutputDataFormat = A5142MIPI_DATA_FORMAT;
             *pFeatureParaLen=sizeof(MSDK_SENSOR_ENG_INFO_STRUCT);
-            break;
+            break;*/
         case SENSOR_FEATURE_GET_LENS_DRIVER_ID:
             // get the lens driver ID from EEPROM or just return LENS_DRIVER_ID_DO_NOT_CARE
             // if EEPROM does not exist in camera module.
@@ -1887,7 +1910,7 @@ SENSOR_FUNCTION_STRUCT  SensorFuncA5142MIPI=
     A5142MIPIClose
 };
 
-UINT32 A5142_MIPI_RAW_SensorInit(PSENSOR_FUNCTION_STRUCT *pfFunc)
+UINT32 A5142_MIPI_RAW_SensorInit(PSENSOR_FUNCTION_STRUCT *pfFunc) //superdragonpt ok
 {
     /* To Do : Check Sensor status here */
     if (pfFunc!=NULL)
