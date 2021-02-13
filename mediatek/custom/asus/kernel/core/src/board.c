@@ -446,9 +446,9 @@ EXPORT_SYMBOL(mt_wifi_power_off);
 #if defined(CONFIG_MTK_WCN_CMB_SDIO_SLOT) && (CONFIG_MTK_WCN_CMB_SDIO_SLOT == 0)
     struct msdc_hw msdc0_hw = {	    
 		.clk_src        = MSDC_CLKSRC_200MHZ,
-	    .cmd_edge       = MSDC_SMPL_FALLING,
-	    .rdata_edge     = MSDC_SMPL_FALLING,
-	    .wdata_edge     = MSDC_SMPL_FALLING,
+	    .cmd_edge       = MSDC_SMPL_RISING,
+	    .rdata_edge     = MSDC_SMPL_RISING,
+	    .wdata_edge     = MSDC_SMPL_RISING,
 	    .clk_drv        = 2,//2
 	    .cmd_drv        = 2,//2
 	    .dat_drv        = 2,//2
@@ -506,9 +506,9 @@ EXPORT_SYMBOL(mt_wifi_power_off);
     #if defined(CONFIG_MTK_WCN_CMB_SDIO_SLOT) && (CONFIG_MTK_WCN_CMB_SDIO_SLOT == 1)
     struct msdc_hw msdc1_hw = {	    
         .clk_src        = MSDC_CLKSRC_200MHZ,
-	      .cmd_edge       = MSDC_SMPL_FALLING,
-	      .rdata_edge     = MSDC_SMPL_FALLING,
-    	  .wdata_edge     = MSDC_SMPL_FALLING,
+	      .cmd_edge       = MSDC_SMPL_RISING,
+	      .rdata_edge     = MSDC_SMPL_RISING,
+    	  .wdata_edge     = MSDC_SMPL_RISING,
 	      .clk_drv        = 5,//0
     	  .cmd_drv        = 3,//0
     	  .dat_drv        = 3,//0
