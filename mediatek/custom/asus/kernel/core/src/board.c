@@ -648,17 +648,17 @@ struct msdc_hw msdc2_hw = {
 	    .data_offset    = 0,
 	    //MT6620 use External IRQ, wifi uses high speed. here wifi manage his own suspend and resume, does not support hot plug
 	    .flags          = MSDC_SDIO_FLAG,//MSDC_SYS_SUSPEND | MSDC_WP_PIN_EN | MSDC_CD_PIN_EN | MSDC_REMOVABLE,
-	        .dat0rddly		= 0, //rdata_edge  = MSDC_SMPL_RISIN
-			.dat1rddly		= 0, //rdata_edge  = MSDC_SMPL_RISIN
-			.dat2rddly		= 0, //rdata_edge  = MSDC_SMPL_RISIN
-			.dat3rddly		= 0, //rdata_edge  = MSDC_SMPL_RISIN
+	        .dat0rddly		= 15, //rdata_edge  = MSDC_SMPL_RISIN
+			.dat1rddly		= 15, //rdata_edge  = MSDC_SMPL_RISIN
+			.dat2rddly		= 15, //rdata_edge  = MSDC_SMPL_RISIN
+			.dat3rddly		= 15, //rdata_edge  = MSDC_SMPL_RISIN
 			.dat4rddly		= 0,
 			.dat5rddly		= 0,
 			.dat6rddly		= 0,
 			.dat7rddly		= 0,
-			.datwrddly		= 0, //write data delay
-			.cmdrrddly		= 0, //cmd internal async delay
-			.cmdrddly		= 0, //cmd pad delay
+			.datwrddly		= 15, //write data delay
+			.cmdrrddly		= 15, //cmd internal async delay
+			.cmdrddly		= 15, //cmd pad delay
 	    .host_function	= MSDC_SDIO,
 	    .boot			= 0,
 	    .request_sdio_eirq = mtk_wcn_cmb_sdio_request_eirq,
