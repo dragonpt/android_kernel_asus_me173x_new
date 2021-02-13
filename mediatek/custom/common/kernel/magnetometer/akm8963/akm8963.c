@@ -48,6 +48,9 @@
 #include "akm8963.h"
 #include <linux/hwmsen_helper.h>
 
+static DEFINE_MUTEX(akm8963_i2c_mutex);
+static DEFINE_MUTEX(akm8963_op_mutex);
+
 /*superdragonpt: add for power ctrl*/
 #define GPIO_ASUS_MAG    GPIO138
 /*superdragonpt: add for power ctrl, END*/
@@ -56,10 +59,10 @@
 #define AKM8963_DEV_NAME         "akm8963"
 #define DRIVER_VERSION          "1.0.1"
 /*----------------------------------------------------------------------------*/
-#define AKM8963_DEBUG		0 //1
+#define AKM8963_DEBUG		1 //1
 #define AKM8963_DEBUG_MSG	0
 #define AKM8963_DEBUG_FUNC	0
-#define AKM8963_DEBUG_DATA	0 //1
+#define AKM8963_DEBUG_DATA	1 //1
 #define MAX_FAILURE_COUNT	3
 #define AKM8963_RETRY_COUNT	10
 #define AKM8963_DEFAULT_DELAY	100
@@ -113,6 +116,8 @@ static struct i2c_board_info __initdata i2c_akm8963={ I2C_BOARD_INFO("akm8963", 
 static int akm8963_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id); 
 static int akm8963_i2c_remove(struct i2c_client *client);
 static int akm8963_i2c_detect(struct i2c_client *client, struct i2c_board_info *info);
+static int akm8963_suspend(struct i2c_client *client, pm_message_t msg);
+static int akm8963_resume(struct i2c_client *client);
 static int akm_probe(struct platform_device *pdev);
 static int akm_remove(struct platform_device *pdev);
 
@@ -208,10 +213,11 @@ static long AKI2C_RxData(char *rxData, int length)
 	char addr = rxData[0];
 #endif
 
-
+	mutex_lock(&akm8963_i2c_mutex);
 	/* Caller should check parameter validity.*/
 	if((rxData == NULL) || (length < 1))
 	{
+		mutex_unlock(&akm8963_i2c_mutex);
 		return -EINVAL;
 	}
 
@@ -225,6 +231,7 @@ static long AKI2C_RxData(char *rxData, int length)
 		}
 		mdelay(10);
 	}
+	mutex_unlock(&akm8963_i2c_mutex);
 	
 	if(loop_i >= AKM8963_RETRY_COUNT)
 	{
@@ -255,9 +262,11 @@ static long AKI2C_TxData(char *txData, int length)
 	struct akm8963_i2c_data *data = i2c_get_clientdata(client);
 #endif
 
+	mutex_lock(&akm8963_i2c_mutex);
 	/* Caller should check parameter validity.*/
 	if ((txData == NULL) || (length < 2))
 	{
+		mutex_unlock(&akm8963_i2c_mutex);
 		return -EINVAL;
 	}
 
@@ -270,6 +279,7 @@ static long AKI2C_TxData(char *txData, int length)
 		}
 		mdelay(10);
 	}
+	mutex_unlock(&akm8963_i2c_mutex);
 	
 	if(loop_i >= AKM8963_RETRY_COUNT)
 	{
@@ -421,10 +431,10 @@ static int AKECS_CheckDevice(void)
 		return ret;
 	}
 	/* Check read data */
-	if(buffer[0] != 0x48)
+	/*if(buffer[0] != 0x48)
 	{
 		return -ENXIO;
-	}
+	}*/
 	
 	return 0;
 }
@@ -1498,7 +1508,9 @@ int akm8963_operate(void* self, uint32_t command, void* buff_in, int size_in,
 				{
 					akmd_delay = 20;
 				}
+				else{
 				akmd_delay = value;
+			}
 			}	
 			break;
 
@@ -1603,7 +1615,9 @@ int akm8963_orientation_operate(void* self, uint32_t command, void* buff_in, int
 				{
 					akmd_delay = 20;
 				}
+				else{
 				akmd_delay = value;
+			}
 			}	
 			break;
 
@@ -1902,8 +1916,8 @@ static int __init akm8963_init(void)
     	struct mag_hw *hw = get_cust_mag_hw();
 	printk("akm8963: i2c_number=%d\n",hw->i2c_num);
 /*superdragonpt: add for power ctrl*/
-		mdelay(10);
 		mt_set_gpio_out(GPIO_ASUS_MAG, GPIO_OUT_ONE);
+		mdelay(10); //let power get stable
 /*superdragonpt: add for power ctrl, END*/
 /*superdragonpt: add for function ecompass_status*/
 	// register cat /proc/ecompass_status
