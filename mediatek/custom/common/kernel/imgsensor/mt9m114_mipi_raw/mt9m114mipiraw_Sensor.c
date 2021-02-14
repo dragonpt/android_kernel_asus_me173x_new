@@ -320,10 +320,11 @@ UINT32 MT9M114InitialSetting()
 
     MT9M114_write_cmos_sensor(0xC80C, 0x0001);		//cam_sensor_cfg_row_speed = 1
     MT9M114_write_cmos_sensor(0xC80E, 0x00DB);		//cam_sensor_cfg_fine_integ_time_min = 219
-    MT9M114_write_cmos_sensor(0xC810, 0x05C1);		//cam_sensor_cfg_fine_integ_time_max = 1637
+
+    MT9M114_write_cmos_sensor(0xC810, 0x05B3);		//cam_sensor_cfg_fine_integ_time_max = 1637
     
-    MT9M114_write_cmos_sensor(0xC812, 0x03F3);		//cam_sensor_cfg_frame_length_lines = 1011
-    MT9M114_write_cmos_sensor(0xC814, 0x0644);		//cam_sensor_cfg_line_length_pck = 1604
+    MT9M114_write_cmos_sensor(0xC812, 0x03EE);		//cam_sensor_cfg_frame_length_lines = 1011
+    MT9M114_write_cmos_sensor(0xC814, 0x0636);		//cam_sensor_cfg_line_length_pck = 1604
     
     MT9M114_write_cmos_sensor(0xC816, 0x0060);		//cam_sensor_cfg_fine_correction = 96
     MT9M114_write_cmos_sensor(0xC818, 0x03C3);		//cam_sensor_cfg_cpipe_last_row = 963
