@@ -165,7 +165,7 @@ void MT9M114_wait_command_0()
     // wait HOST_COMMAND_0
     time = 0;
     do {
-        command_register_value = MT9M114_read_cmos_sensor(0x0080);
+        command_register_value = MT9M114_read_cmos_sensor(0x0080); //0x80 OK
 
         // time out 100 ms
         time += 10;
@@ -178,7 +178,7 @@ void MT9M114_wait_command_0()
 
 
 
-kal_uint16 MT9M114GetSensorID(void)
+kal_uint16 MT9M114MIPIGetSensorID(void)
 {
     kal_uint16 sensor_id = 0xFFFF;
 
@@ -212,7 +212,7 @@ UINT32 MT9M114CheckSensorID(UINT32 *sensorID)
     
     // check if sensor ID correct
     do {
-        *sensorID = MT9M114GetSensorID();
+        *sensorID = MT9M114MIPIGetSensorID();
         
         if (*sensorID == MT9M114MIPI_SENSOR_ID)
         {
@@ -260,7 +260,7 @@ static void MT9M114InitialPara(void)
   MT9M114_para.iEffect = MEFFECT_OFF;
   MT9M114_para.iBanding = AE_FLICKER_MODE_50HZ;
   MT9M114_para.iEV = AE_EV_COMP_00;
-  MT9M114_para.iMirror = IMAGE_HV_MIRROR;
+  MT9M114_para.iMirror = IMAGE_NORMAL;
   MT9M114_para.iFrameRate = 0; //No Fix FrameRate
 
   MT9M114_para.sensorMode = SENSOR_MODE_INIT;
@@ -1541,7 +1541,7 @@ void MT9M114NightMode(kal_bool enable)
 #endif
 /*************************************************************************
 * FUNCTION
-*   MT9M114Preview
+*   MT9M114MIPIPreview
 *
 * DESCRIPTION
 *   This function start the sensor preview.
@@ -1556,14 +1556,13 @@ void MT9M114NightMode(kal_bool enable)
 * GLOBALS AFFECTED
 *
 *************************************************************************/
-UINT32 MT9M114Preview(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
+UINT32 MT9M114MIPIPreview(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
                     MSDK_SENSOR_CONFIG_STRUCT *sensor_config_data)
 {
     SENSORDB("[Enter]: %s \n", __FUNCTION__);
    // mDELAY(100);
-    mDELAY(100);
-    MT9M114_write_cmos_sensor(0xC909, 0x0003);//enable AWB
-    MT9M114_write_cmos_sensor(0xA804, 0x00ff);//ensable AE
+    //MT9M114_write_cmos_sensor(0xC909, 0x0003);//enable AWB
+    //MT9M114_write_cmos_sensor(0xA804, 0x00ff);//ensable AE
     spin_lock(&mt9m114mipiraw_drv_lock);
     MT9M114_para.sensorMode = SENSOR_MODE_PREVIEW;
     spin_unlock(&mt9m114mipiraw_drv_lock);
@@ -1578,7 +1577,7 @@ UINT32 MT9M114Preview(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 
 /*************************************************************************
 * FUNCTION
-*   MT9M114Capture
+*   MT9M114MIPICapture
 *
 * DESCRIPTION
 *   This function start the sensor capture mode.
@@ -1593,12 +1592,12 @@ UINT32 MT9M114Preview(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 * GLOBALS AFFECTED
 *
 *************************************************************************/
-UINT32 MT9M114Capture(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
+UINT32 MT9M114MIPICapture(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
                              MSDK_SENSOR_CONFIG_STRUCT *sensor_config_data)
 {
     SENSORDB("[Enter]: %s \n", __FUNCTION__);
-    MT9M114_write_cmos_sensor(0xC909, 0x0000);//Disable AWB
-    MT9M114_write_cmos_sensor(0xA804, 0x0000);//Disable AE
+    //MT9M114_write_cmos_sensor(0xC909, 0x0000);//Disable AWB
+    //MT9M114_write_cmos_sensor(0xA804, 0x0000);//Disable AE
     spin_lock(&mt9m114mipiraw_drv_lock);
     if(MT9M114_para.sensorMode == SENSOR_MODE_CAPTURE)
     {
@@ -1616,7 +1615,7 @@ UINT32 MT9M114Capture(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 }
 /*************************************************************************
 * FUNCTION
-*   mt9m114mipirawSetVideoMode
+*   MT9M114MIPISetVideoMode
 *
 * DESCRIPTION
 *   This function set the sensor video mode.
@@ -1631,7 +1630,7 @@ UINT32 MT9M114Capture(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 * GLOBALS AFFECTED
 *
 *************************************************************************/
-UINT32 mt9m114mipirawSetVideoMode(UINT16 u2FrameRate)
+UINT32 MT9M114MIPISetVideoMode(UINT16 u2FrameRate)
 {
     SENSORDB("[Enter]: %s \n", __FUNCTION__);
 
@@ -2166,7 +2165,7 @@ void MT9M114GetExifInfo(UINT32 exifAddr)
 
 /*************************************************************************
 * FUNCTION
-*	MT9M114Open
+*	MT9M114MIPIOpen
 *
 * DESCRIPTION
 *	This function initialize the registers of CMOS sensor
@@ -2180,15 +2179,15 @@ void MT9M114GetExifInfo(UINT32 exifAddr)
 * GLOBALS AFFECTED
 *
 *************************************************************************/
-UINT32 MT9M114Open(void)
+UINT32 MT9M114MIPIOpen(void)
 {
     kal_uint16 sensor_id;
 
     SENSORDB("[Enter]: %s \n", __FUNCTION__);
 
-    sensor_id = MT9M114GetSensorID();
+    sensor_id = MT9M114MIPIGetSensorID();
     
-    SENSORDB("yulianfeng : MT9M114Open sensor_id is %x \n", sensor_id);
+    SENSORDB("MT9M114MIPIOpen sensor_id is %x \n", sensor_id);
     
     if (sensor_id != MT9M114MIPI_SENSOR_ID)
     {
@@ -2204,9 +2203,9 @@ UINT32 MT9M114Open(void)
 
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
 
-    SENSORDB("yulianfeng : MT9M114Open sensor_id is\n");
+    SENSORDB("MT9M114MIPIOpen sensor_id is\n");
 	return ERROR_NONE;
-} /* MT9M114Open() */
+} /* MT9M114MIPIOpen() */
 
 /*************************************************************************
 * FUNCTION
@@ -2231,7 +2230,7 @@ UINT32 MT9M114Close(void)
 } /* MT9M114Close() */
 
 
-UINT32 MT9M114GetResolution(MSDK_SENSOR_RESOLUTION_INFO_STRUCT *pSensorResolution)
+UINT32 MT9M114MIPIGetResolution(MSDK_SENSOR_RESOLUTION_INFO_STRUCT *pSensorResolution)
 {
     SENSORDB("[Enter]: %s \n", __FUNCTION__);
 
@@ -2245,9 +2244,9 @@ UINT32 MT9M114GetResolution(MSDK_SENSOR_RESOLUTION_INFO_STRUCT *pSensorResolutio
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
     
 	return ERROR_NONE;
-} /* MT9M114GetResolution() */
+} /* MT9M114MIPIGetResolution() */
 
-UINT32 MT9M114GetInfo(MSDK_SCENARIO_ID_ENUM ScenarioId,
+UINT32 MT9M114MIPIGetInfo(MSDK_SCENARIO_ID_ENUM ScenarioId,
 					  MSDK_SENSOR_INFO_STRUCT *pSensorInfo,
 					  MSDK_SENSOR_CONFIG_STRUCT *pSensorConfigData)
 {
@@ -2345,30 +2344,30 @@ UINT32 MT9M114GetInfo(MSDK_SCENARIO_ID_ENUM ScenarioId,
 	SENSORDB("[Exit]: %s \n", __FUNCTION__);
 	
 	return ERROR_NONE;
-}	/* MT9M114GetInfo() */
+}	/* MT9M114MIPIGetInfo() */
 
 
-UINT32 MT9M114Control(MSDK_SCENARIO_ID_ENUM ScenarioId, MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *pImageWindow,
+UINT32 MT9M114MIPIControl(MSDK_SCENARIO_ID_ENUM ScenarioId, MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *pImageWindow,
 					  MSDK_SENSOR_CONFIG_STRUCT *pSensorConfigData)
 {
     SENSORDB("[Enter]: %s, ScenarioId = %d \n", __FUNCTION__, ScenarioId);
     
-    spin_lock(&mt9m114mipiraw_drv_lock);
+    /*spin_lock(&mt9m114mipiraw_drv_lock);
     MT9M114_CurrentScenarioId = ScenarioId;
-    spin_unlock(&mt9m114mipiraw_drv_lock);
+    spin_unlock(&mt9m114mipiraw_drv_lock);*/
 
     switch (ScenarioId)
     {
         case MSDK_SCENARIO_ID_CAMERA_PREVIEW:
         case MSDK_SCENARIO_ID_VIDEO_PREVIEW:
         //case MSDK_SCENARIO_ID_VIDEO_CAPTURE_MPEG4:
-            MT9M114Preview(pImageWindow, pSensorConfigData);
+            MT9M114MIPIPreview(pImageWindow, pSensorConfigData);
             break;
 
         case MSDK_SCENARIO_ID_CAMERA_CAPTURE_JPEG:
         //case MSDK_SCENARIO_ID_CAMERA_CAPTURE_MEM:
         case MSDK_SCENARIO_ID_CAMERA_ZSD:
-            MT9M114Capture(pImageWindow, pSensorConfigData);
+            MT9M114MIPICapture(pImageWindow, pSensorConfigData);
             break;
         default:
             SENSORDB("Error ScenarioId!!\n");
@@ -2378,10 +2377,10 @@ UINT32 MT9M114Control(MSDK_SCENARIO_ID_ENUM ScenarioId, MSDK_SENSOR_EXPOSURE_WIN
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
 
     return ERROR_NONE;
-}	/* MT9M114Control() */
+}	/* MT9M114MIPIControl() */
 
 
-UINT32 MT9M114FeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId,
+UINT32 MT9M114MIPIFeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId,
 							 UINT8 *pFeaturePara,UINT32 *pFeatureParaLen)
 {
     UINT16 u2Temp = 0; 
@@ -2418,10 +2417,10 @@ UINT32 MT9M114FeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId,
 				     break;
 			}
 			break;
-        case SENSOR_FEATURE_GET_PIXEL_CLOCK_FREQ:
+        /*case SENSOR_FEATURE_GET_PIXEL_CLOCK_FREQ:
             *pFeatureReturnPara32 = 96000000;
             *pFeatureParaLen = 4;
-            break;
+            break;*/
         case SENSOR_FEATURE_SET_ESHUTTER:
             // for raw sensor
             break;
@@ -2471,7 +2470,7 @@ UINT32 MT9M114FeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId,
             mt9m114mipirawSensorSetting((FEATURE_ID)*pFeatureData32, *(pFeatureData32 + 1));
             break;*/
         case SENSOR_FEATURE_SET_VIDEO_MODE:
-            mt9m114mipirawSetVideoMode(*pFeatureData16);
+            MT9M114MIPISetVideoMode(*pFeatureData16);
             break;
         case SENSOR_FEATURE_SET_CALIBRATION_DATA:
         case SENSOR_FEATURE_SET_SENSOR_SYNC:  
@@ -2521,16 +2520,16 @@ UINT32 MT9M114FeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId,
     //SENSORDB("[Exit]: %s \n", __FUNCTION__);
     
 	return ERROR_NONE;
-}	/* MT9M114FeatureControl() */
+}	/* MT9M114MIPIFeatureControl() */
 
 
 SENSOR_FUNCTION_STRUCT	SensorFuncMT9M114=
 {
-	MT9M114Open,
-	MT9M114GetInfo,
-	MT9M114GetResolution,
-	MT9M114FeatureControl,
-	MT9M114Control,
+	MT9M114MIPIOpen,
+	MT9M114MIPIGetInfo,
+	MT9M114MIPIGetResolution,
+	MT9M114MIPIFeatureControl,
+	MT9M114MIPIControl,
 	MT9M114Close
 };
 
