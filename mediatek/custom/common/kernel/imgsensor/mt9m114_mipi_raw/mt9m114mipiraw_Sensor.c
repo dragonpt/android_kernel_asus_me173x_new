@@ -2274,31 +2274,26 @@ UINT32 MT9M114MIPIGetInfo(MSDK_SCENARIO_ID_ENUM ScenarioId,
 	pSensorInfo->SensorStillCaptureFrameRate=30; /* not use */
 	pSensorInfo->SensorWebCamCaptureFrameRate=30; /* not use */
 
-    pSensorInfo->SensorClockPolarity = SENSOR_CLOCK_POLARITY_LOW;
-    pSensorInfo->SensorClockFallingPolarity = SENSOR_CLOCK_POLARITY_LOW; /* not use */
-    pSensorInfo->SensorHsyncPolarity = SENSOR_CLOCK_POLARITY_LOW; // inverse with datasheet
-    pSensorInfo->SensorVsyncPolarity = SENSOR_CLOCK_POLARITY_HIGH;
-    pSensorInfo->SensorInterruptDelayLines = 1; /* not use */
-    pSensorInfo->SensorResetActiveHigh = FALSE; /* not use */
-    pSensorInfo->SensorResetDelayCount = 5; /* not use */
+    pSensorInfo->SensorClockPolarity = SENSOR_CLOCK_POLARITY_LOW;                           //superdragonpt: >1
+    pSensorInfo->SensorClockFallingPolarity = SENSOR_CLOCK_POLARITY_LOW; /* not use */      //superdragonpt: >1
+    pSensorInfo->SensorHsyncPolarity = SENSOR_CLOCK_POLARITY_LOW; // inverse with datasheet //superdragonpt: >1
+    pSensorInfo->SensorVsyncPolarity = SENSOR_CLOCK_POLARITY_HIGH;                          //superdragonpt: >0
+    pSensorInfo->SensorInterruptDelayLines = 1; /* not use */                               //superdragonpt: >1
+    pSensorInfo->SensorResetActiveHigh = FALSE; /* not use */                               //superdragonpt: >0
+    pSensorInfo->SensorResetDelayCount = 5; /* not use */                                   //superdragonpt: >5
 
-    pSensorInfo->SensorInterruptDelayLines = 1;
-    pSensorInfo->SensroInterfaceType=SENSOR_INTERFACE_TYPE_MIPI;
-    pSensorInfo->SensorOutputDataFormat = SENSOR_OUTPUT_FORMAT_VYUY;
+    pSensorInfo->SensroInterfaceType=SENSOR_INTERFACE_TYPE_MIPI;                                  //superdragonpt: >1
+    pSensorInfo->SensorOutputDataFormat = SENSOR_OUTPUT_FORMAT_VYUY; //SENSOR_OUTPUT_FORMAT_RAW_B //superdragonpt: >0 CAN'T APPLY RAW OUTPUT...
 	
-    pSensorInfo->CaptureDelayFrame = 2; 
-    pSensorInfo->PreviewDelayFrame = 4; 
-    pSensorInfo->VideoDelayFrame = 2;
-	
-	//pSensorInfo->RAWAwbDelayFrame = 2; //superdragonpt: build error YUV feature only
-    //pSensorInfo->RAWEffectDelayFrame = 2; //superdragonpt: build error YUV feature only
+    pSensorInfo->CaptureDelayFrame = 2;     //superdragonpt: >2
+    pSensorInfo->PreviewDelayFrame = 2; //4 //superdragonpt: >2
+    pSensorInfo->VideoDelayFrame = 5; //2   //superdragonpt: >5
 
-    pSensorInfo->SensorMasterClockSwitch = 0; /* not use */
-    pSensorInfo->SensorDrivingCurrent = ISP_DRIVING_4MA;
-    //pSensorInfo->SensorDriver3D = 0; /* not use */
-    pSensorInfo->AEShutDelayFrame = 0;          /* The frame of setting shutter default 0 for TG int */
-    pSensorInfo->AESensorGainDelayFrame = 1;    /* The frame of setting sensor gain */
-    pSensorInfo->AEISPGainDelayFrame = 2;   
+    pSensorInfo->SensorMasterClockSwitch = 0; /* not use */                                              //superdragonpt: >0
+    pSensorInfo->SensorDrivingCurrent = ISP_DRIVING_6MA; //ISP_DRIVING_4MA                               //superdragonpt: >2
+    pSensorInfo->AEShutDelayFrame = 0;          /* The frame of setting shutter default 0 for TG int */  //superdragonpt: >0
+    pSensorInfo->AESensorGainDelayFrame = 1;    /* The frame of setting sensor gain */                   //superdragonpt: >1
+    pSensorInfo->AEISPGainDelayFrame = 2;                                                                //superdragonpt: >2
 
 
     switch (ScenarioId)
@@ -2314,6 +2309,7 @@ UINT32 MT9M114MIPIGetInfo(MSDK_SCENARIO_ID_ENUM ScenarioId,
 			pSensorInfo->SensorDataLatchCount = 2; /* not use */
 	        pSensorInfo->SensorGrabStartX = MT9M114_FULL_START_X; 
 	        pSensorInfo->SensorGrabStartY = MT9M114_FULL_START_Y;
+
 			pSensorInfo->SensorMIPILaneNumber = SENSOR_MIPI_1_LANE;			
             pSensorInfo->MIPIDataLowPwr2HighSpeedTermDelayCount = 0; 
 	        pSensorInfo->MIPIDataLowPwr2HighSpeedSettleDelayCount = 14; 
@@ -2329,8 +2325,10 @@ UINT32 MT9M114MIPIGetInfo(MSDK_SCENARIO_ID_ENUM ScenarioId,
 			pSensorInfo->SensorClockFallingCount = 2; /* not use */
 			pSensorInfo->SensorPixelClockCount = 3; /* not use */
 			pSensorInfo->SensorDataLatchCount = 2; /* not use */
+
 	        pSensorInfo->SensorGrabStartX = MT9M114_PV_START_X; 
 	        pSensorInfo->SensorGrabStartY = MT9M114_PV_START_Y;
+
 			pSensorInfo->SensorMIPILaneNumber = SENSOR_MIPI_1_LANE;			
             pSensorInfo->MIPIDataLowPwr2HighSpeedTermDelayCount = 0; 
 	        pSensorInfo->MIPIDataLowPwr2HighSpeedSettleDelayCount = 14; 
