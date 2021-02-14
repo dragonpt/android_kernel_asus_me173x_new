@@ -341,7 +341,7 @@ UINT32 MT9M114InitialSetting()
     MT9M114_write_cmos_sensor(0xC85A, 0x03C0);		//cam_crop_window_height = 960
 
     // AWB and AE stats window auto resize
-    MT9M114_write_cmos_sensor(0xC85C, 0x0342);		//cam_crop_cropmode = 3
+    MT9M114_write_cmos_sensor_8(0xC85C, 0x0003);		//cam_crop_cropmode = 3
 
     // output size
     MT9M114_write_cmos_sensor(0xC868, 0x0500);		//cam_output_width = 1280
