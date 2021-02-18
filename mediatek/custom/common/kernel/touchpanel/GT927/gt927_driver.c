@@ -1395,9 +1395,15 @@ static s8 gtp_enter_sleep(struct i2c_client *client)
             //printk("superdragonpt gtp_enter_sleep\n ");
 	
 #if GTP_POWER_CTRL_SLEEP
-    hwPowerDown(MT65XX_POWER_LDO_VGP5, "TP");
-    hwPowerDown(MT65XX_POWER_LDO_VGP3, "TP");
-    GTP_INFO("GTP enter sleep!");
+      mt_set_gpio_mode(GPIO140, 0);
+      mt_set_gpio_dir(GPIO140, GPIO_DIR_OUT);
+      mt_set_gpio_out(GPIO140, GPIO_OUT_ZERO);
+      msleep(5);
+      mt_set_gpio_mode(GPIO118, 0);
+      mt_set_gpio_mode(GPIO119, 0);
+      hwPowerDown(MT65XX_POWER_LDO_VGP5,"TP");
+      hwPowerDown(MT65XX_POWER_LDO_VGP3,"TP");
+      printk("<<-GTP-INFO->> GTP enter sleep!");
     return 0;
 #else
     GTP_GPIO_OUTPUT(GTP_INT_PORT, 0);
@@ -1438,7 +1444,10 @@ static s8 gtp_wakeup_sleep(struct i2c_client *client)
 
             //printk("superdragonpt gtp_wakeup_sleep\n ");
 
-    GTP_INFO("GTP wakeup begin.");
+      printk("<<-GTP-INFO->> GTP wakeup begin");
+      mt_set_gpio_mode(GPIO118, 1);
+      mt_set_gpio_mode(GPIO119, 1);
+
 #if GTP_POWER_CTRL_SLEEP
 
     while (retry++ < 5)
