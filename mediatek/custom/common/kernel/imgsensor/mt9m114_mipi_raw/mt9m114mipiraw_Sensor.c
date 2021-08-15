@@ -71,7 +71,7 @@ typedef struct {
     kal_uint16 capPCLK; // x10
 
     kal_uint16 iFrameRate;
-    //kal_uint16 iNightMode;
+    kal_uint16 iNightMode;
     kal_uint16 iWB;
     kal_uint16 iEffect;
     kal_uint16 iEV;
@@ -255,7 +255,7 @@ static void MT9M114InitialPara(void)
   /*Initial status setting 
    Can be better by sync with MT9M114InitialSetting*/
   spin_lock(&mt9m114mipiraw_drv_lock);
-  //MT9M114_para.iNightMode = 0;
+  MT9M114_para.iNightMode = 0;
   MT9M114_para.iWB = AWB_MODE_AUTO;
   MT9M114_para.iEffect = MEFFECT_OFF;
   MT9M114_para.iBanding = AE_FLICKER_MODE_50HZ;
@@ -1487,7 +1487,7 @@ void MT9M114_Set_Mirror_Flip(kal_uint8 image_mirror)
 * GLOBALS AFFECTED
 *
 *************************************************************************/
-#if 0
+#if 1
 void MT9M114NightMode(kal_bool enable)
 {
     SENSORDB("[Enter]: %s \n", __FUNCTION__);
@@ -1507,7 +1507,7 @@ void MT9M114NightMode(kal_bool enable)
 	        MT9M114_write_cmos_sensor(0xC814, 0x0644);      //cam_sensor_cfg_line_length_pck
 	        MT9M114_write_cmos_sensor(0xC88C, 0x1D99);      //cam_aet_max_frame_rate
 	        MT9M114_write_cmos_sensor(0xC88E, 0x0500);      //cam_aet_min_frame_rate
-	        MT9M114_write_cmos_sensor(0xC882, 0x00C0);      // max_dgain        
+	        MT9M114_write_cmos_sensor(0xC882, 0x00C0);      // max_dgain  
 
 	        //change config
 	        MT9M114_change_config_command();
@@ -1570,7 +1570,7 @@ UINT32 MT9M114MIPIPreview(MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *image_window,
 
     // set Mirror & Flip
     //sensor_config_data->SensorImageMirror
-    //MT9M114NightMode(MT9M114_para.iNightMode);
+    MT9M114NightMode(MT9M114_para.iNightMode);
 	video_mode_flag=0;
     MT9M114_Set_Mirror_Flip(sensor_config_data->SensorImageMirror);	
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
@@ -1694,7 +1694,7 @@ BOOL MT9M114_set_param_scene_mode(UINT16 para)
 
     switch (para)
     {
-        /*case SCENE_MODE_OFF:
+        case SCENE_MODE_OFF:
             MT9M114NightMode(0);
 			SENSORDB("[Enter] MT9M114_MIPI_RAW:enter auto mode \n");
             break;
@@ -1702,7 +1702,7 @@ BOOL MT9M114_set_param_scene_mode(UINT16 para)
             MT9M114NightMode(1);
             break;
         default:
-            SENSORDB("[Error]: %s, not support scene mode = %d \n", __FUNCTION__, para);*/
+            SENSORDB("[Error]: %s, not support scene mode = %d \n", __FUNCTION__, para);
             return KAL_FALSE;
     }   
     SENSORDB("[Exit]: %s \n", __FUNCTION__);
@@ -2423,9 +2423,9 @@ UINT32 MT9M114MIPIFeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId,
         case SENSOR_FEATURE_SET_ESHUTTER:
             // for raw sensor
             break;
-        /*case SENSOR_FEATURE_SET_NIGHTMODE:
+        case SENSOR_FEATURE_SET_NIGHTMODE:
             MT9M114NightMode((BOOL)*pFeatureData16);
-            break;*/
+            break;
         case SENSOR_FEATURE_SET_GAIN:
             // for raw sensor
             break;
@@ -2540,5 +2540,3 @@ UINT32 MT9M114_MIPI_RAW_SensorInit(PSENSOR_FUNCTION_STRUCT * pfFunc)
 
 	return ERROR_NONE;
 }	/* SensorInit() */
-
-
