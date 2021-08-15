@@ -1502,11 +1502,11 @@ void MT9M114NightMode(kal_bool enable)
 			spin_unlock(&mt9m114mipiraw_drv_lock);
 	        MT9M114_write_cmos_sensor(0x098E, 0x0000);      // LOGICAL_ADDRESS_ACCESS
 	        MT9M114_write_cmos_sensor(0xC80E, 0x00DB);      //cam_sensor_cfg_fine_integ_time_min
-	        MT9M114_write_cmos_sensor(0xC810, 0x05C1);      //cam_sensor_cfg_fine_integ_time_max
-	        MT9M114_write_cmos_sensor(0xC812, 0x03F3);      //cam_sensor_cfg_frame_length_lines
-	        MT9M114_write_cmos_sensor(0xC814, 0x0644);      //cam_sensor_cfg_line_length_pck
-	        MT9M114_write_cmos_sensor(0xC88C, 0x1D99);      //cam_aet_max_frame_rate
-	        MT9M114_write_cmos_sensor(0xC88E, 0x0500);      //cam_aet_min_frame_rate
+	        MT9M114_write_cmos_sensor(0xC810, 0x05B3);      //cam_sensor_cfg_fine_integ_time_max
+	        MT9M114_write_cmos_sensor(0xC812, 0x03EE);      //cam_sensor_cfg_frame_length_lines
+	        MT9M114_write_cmos_sensor(0xC814, 0x0636);      //cam_sensor_cfg_line_length_pck
+	        MT9M114_write_cmos_sensor(0xC88C, 0x1E02);      //cam_aet_max_frame_rate
+	        MT9M114_write_cmos_sensor(0xC88E, 0x0780);      //cam_aet_min_frame_rate
 	        MT9M114_write_cmos_sensor(0xC882, 0x00C0);      // max_dgain  
 
 	        //change config
@@ -1524,11 +1524,11 @@ void MT9M114NightMode(kal_bool enable)
 			spin_unlock(&mt9m114mipiraw_drv_lock);
 	        MT9M114_write_cmos_sensor(0x098E, 0x0000);      // LOGICAL_ADDRESS_ACCESS
 	        MT9M114_write_cmos_sensor(0xC80E, 0x00DB);      //cam_sensor_cfg_fine_integ_time_min
-	        MT9M114_write_cmos_sensor(0xC810, 0x05C1);      //cam_sensor_cfg_fine_integ_time_max
-	        MT9M114_write_cmos_sensor(0xC812, 0x03F3);      //cam_sensor_cfg_frame_length_lines
-	        MT9M114_write_cmos_sensor(0xC814, 0x0644);      //cam_sensor_cfg_line_length_pck
-	        MT9M114_write_cmos_sensor(0xC88C, 0x1D99);      //cam_aet_max_frame_rate
-	        MT9M114_write_cmos_sensor(0xC88E, 0x0A00);      //cam_aet_min_frame_rate
+	        MT9M114_write_cmos_sensor(0xC810, 0x05B3);      //cam_sensor_cfg_fine_integ_time_max
+	        MT9M114_write_cmos_sensor(0xC812, 0x03EE);      //cam_sensor_cfg_frame_length_lines
+	        MT9M114_write_cmos_sensor(0xC814, 0x0636);      //cam_sensor_cfg_line_length_pck
+	        MT9M114_write_cmos_sensor(0xC88C, 0x1E02);      //cam_aet_max_frame_rate
+	        MT9M114_write_cmos_sensor(0xC88E, 0x0F00);      //cam_aet_min_frame_rate
 	        MT9M114_write_cmos_sensor(0xC882, 0x00C0);      // max_dgain
 	        //change config
 	        MT9M114_change_config_command();
