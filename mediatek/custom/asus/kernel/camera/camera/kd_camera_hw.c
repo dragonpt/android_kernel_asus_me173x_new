@@ -37,6 +37,16 @@
 
 extern void ISP_MCLK1_EN(BOOL En); //ME173X Device is GATED
 
+/******************************************************************************
+#define GPIO_CAMERA_CMRST1_PIN          GPIO126 //GPIO_CAMERA_CMRST1_PIN
+#define GPIO_CAMERA_CMPDN1_PIN          GPIO120 //GPIO_CAMERA_CMPDN1_PIN
+
+#define MAIN_AF_EN_PIN                  GPIO122 //GPIO_CAMERA_AF_EN_PIN
+
+#define GPIO_CAMERA_CMRST_PIN           GPIO211 //GPIO_CAMERA_CMRST_PIN
+#define GPIO_CAMERA_CMPDN_PIN           GPIO212 //GPIO_CAMERA_CMPDN_PIN
+******************************************************************************/
+
 int kdCISModulePowerOn(CAMERA_DUAL_CAMERA_SENSOR_ENUM SensorIdx, char *currSensorName, BOOL On, char* mode_name)
 {
 	u32 pinSetIdx = 0;//default main sensor
@@ -109,15 +119,19 @@ int kdCISModulePowerOn(CAMERA_DUAL_CAMERA_SENSOR_ENUM SensorIdx, char *currSenso
 
 		PK_DBG_FUNC("camera sensor-pinSetIdx:%d\n",pinSetIdx);
 
-		if(pinSetIdx == 1) //MT9M114_MIPI_RAW - Sub
+#if 1
+        if (currSensorName && ((0 == strcmp(SENSOR_DRVNAME_MT9M114_MIPI_RAW,currSensorName)) || (0 == strcmp(SENSOR_DRVNAME_GC0339_RAW,currSensorName))))
+#endif
+		if(pinSetIdx == 1) //MT9M114_MIPI_RAW / GC0339_RAW - Sub
 		{
-            PK_DBG("[ON_MT9M114 case 2.8V]sensorIdx:%d \n",SensorIdx);
+            PK_DBG("[ON_MT9M114 / GC0339_RAW case 2.8V]sensorIdx:%d \n",SensorIdx);
 
             ISP_MCLK1_EN(0); //Device is GATED
 
  			if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_D, VOL_1800,mode_name)) //VGP1
 			{
 				PK_DBG("[CAMERA SENSOR] Fail to enable SUB digital power\n");
+                goto _kdCISModulePowerOn_exit_;
 			}
 			
 			mdelay(10);
@@ -125,6 +139,7 @@ int kdCISModulePowerOn(CAMERA_DUAL_CAMERA_SENSOR_ENUM SensorIdx, char *currSenso
 			if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_A, VOL_2800,mode_name))  //VCAMA
 			{
 				PK_DBG("[CAMERA SENSOR] Fail to enable SUB analog power\n");
+                goto _kdCISModulePowerOn_exit_;
 			}
 			mdelay(10);
 
@@ -142,24 +157,30 @@ int kdCISModulePowerOn(CAMERA_DUAL_CAMERA_SENSOR_ENUM SensorIdx, char *currSenso
 		}
 	}
 	else {
-		if(pinSetIdx == 1) { //MT9M114_MIPI_RAW - Sub
+
+#if 1
+        if (currSensorName && ((0 == strcmp(SENSOR_DRVNAME_MT9M114_MIPI_RAW,currSensorName)) || (0 == strcmp(SENSOR_DRVNAME_GC0339_RAW,currSensorName))))
+#endif
+		if(pinSetIdx == 1) { //MT9M114_MIPI_RAW / GC0339_RAW - Sub
             ISP_MCLK1_EN(0); //Device is GATED
 
             mdelay(2);
 
-            if(TRUE != hwPowerDown(CAMERA_POWER_VCAM_A, mode_name)) { //VCAMA
+            if(TRUE != hwPowerDown(CAMERA_POWER_VCAM_A, mode_name)) //VCAMA
+			{
                 PK_DBG("[CAMERA SENSOR] Fail to OFF SUB digital power\n");
-                //return -EIO;
-			mdelay(10);
                 goto _kdCISModulePowerOn_exit_;
-            }
+			}
 
-            if(TRUE != hwPowerDown(CAMERA_POWER_VCAM_D,mode_name)) { //VGP1
-                PK_DBG("[CAMERA SENSOR] Fail to OFF SUB analog power\n");
-                //return -EIO;
 			mdelay(10);
+
+            if(TRUE != hwPowerDown(CAMERA_POWER_VCAM_D,mode_name)) //VGP1
+			{
+                PK_DBG("[CAMERA SENSOR] Fail to OFF SUB analog power\n");
                 goto _kdCISModulePowerOn_exit_;
-            }
+			}
+
+			mdelay(10);
 		}
 	}
 
@@ -170,11 +191,3 @@ int kdCISModulePowerOn(CAMERA_DUAL_CAMERA_SENSOR_ENUM SensorIdx, char *currSenso
 }
 
 EXPORT_SYMBOL(kdCISModulePowerOn);
-
-
-//!--
-//
-
-
-
-

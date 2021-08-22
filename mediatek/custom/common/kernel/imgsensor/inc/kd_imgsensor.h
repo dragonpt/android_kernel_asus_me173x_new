@@ -70,7 +70,7 @@ Asus uses External ISP IC SPCA7002 for camera Image Signal Processing
 #define A5142MIPI_SENSOR_ID                     0x4800
 #define HM2056MIPI_SENSOR_ID					0x2056
 #define MT9M114MIPI_SENSOR_ID                   0x2481
-#define GC0339_SENSOR_ID				        0xc8
+#define GC0339_SENSOR_ID				        0xC8 //0xc8
 
 /* CAMERA DRIVER NAME */
 #define CAMERA_HW_DEVNAME            "kd_camera_hw"
