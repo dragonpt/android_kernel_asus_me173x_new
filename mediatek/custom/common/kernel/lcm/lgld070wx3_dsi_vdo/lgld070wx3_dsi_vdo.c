@@ -571,8 +571,17 @@ static void lcm_resume(void)
 #ifndef BUILD_LK
 	printk("[DDP] %s\n", __func__);
 #endif
-
-		init_lcm_registers();
+		data_array[0] = 0x0BAE1500;
+		dsi_set_cmdq(data_array, 1, 1);
+		data_array[0] = 0xEAEE1500;
+		dsi_set_cmdq(data_array, 1, 1);
+		data_array[0] = 0x5FEF1500;
+		dsi_set_cmdq(data_array, 1, 1);
+		data_array[0] = 0x68F21500;
+		dsi_set_cmdq(data_array, 1, 1);
+		data_array[0] = 0x03A71500;
+		dsi_set_cmdq(data_array, 1, 1);
+		//init_lcm_registers();
 
 }
 
